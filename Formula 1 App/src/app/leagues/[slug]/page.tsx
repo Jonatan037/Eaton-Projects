@@ -31,11 +31,12 @@ function getFlagUrl(countryCode: string | null, size: number = 24): string {
   return `https://flagcdn.com/w${size}/${countryCode.toLowerCase()}.png`;
 }
 
-// Get track mini image (white outline) - local or F1 CDN fallback
-function getTrackMiniUrl(countryCode: string | null, layoutImageUrl: string | null): string | null {
-  if (!countryCode) return layoutImageUrl;
-  // Try local first, F1 CDN as fallback
-  return `/images/tracks/mini/${countryCode.toLowerCase()}.png`;
+// Get track mini image (white outline) - uses shortName for unique circuit identification
+// This handles countries with multiple circuits (US: MIA, COTA, LVS | IT: IMO, MNZ)
+function getTrackMiniUrl(shortName: string | null, layoutImageUrl: string | null): string | null {
+  if (!shortName) return layoutImageUrl;
+  // Use shortName (e.g., "MIA", "COTA", "IMO") as filename
+  return `/images/tracks/mini/${shortName.toLowerCase()}.png`;
 }
 
 interface LeaguePageProps {
@@ -334,9 +335,9 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   <div className="flex gap-6">
                     {/* Circuit Layout Image - White outline */}
                     <div className="hidden md:block relative w-32 h-24 bg-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      {nextRace.track.countryCode ? (
+                      {nextRace.track.shortName ? (
                         <Image
-                          src={getTrackMiniUrl(nextRace.track.countryCode, nextRace.track.layoutImageUrl) || ""}
+                          src={getTrackMiniUrl(nextRace.track.shortName, nextRace.track.layoutImageUrl) || ""}
                           alt={nextRace.track.name}
                           fill
                           className="object-contain p-2 invert"
@@ -533,9 +534,9 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
 
                       {/* Track Mini Image - White outline */}
                       <div className="hidden md:block relative w-20 h-14 bg-white/5 rounded-lg overflow-hidden">
-                        {round.track.countryCode ? (
+                        {round.track.shortName ? (
                           <Image
-                            src={getTrackMiniUrl(round.track.countryCode, round.track.layoutImageUrl) || ""}
+                            src={getTrackMiniUrl(round.track.shortName, round.track.layoutImageUrl) || ""}
                             alt={round.track.name}
                             fill
                             className="object-contain p-1 group-hover:scale-105 transition-transform invert"
