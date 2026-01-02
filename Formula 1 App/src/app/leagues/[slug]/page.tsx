@@ -25,10 +25,11 @@ import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/db";
 import { formatRaceDateTime } from "@/lib/date-utils";
 
-// Get flag image URL from FlagCDN
-function getFlagUrl(countryCode: string | null, size: number = 24): string {
+// Get flag image URL from FlagCDN (supports w20, w40, w80, w160, w320)
+function getFlagUrl(countryCode: string | null): string {
   if (!countryCode) return "";
-  return `https://flagcdn.com/w${size}/${countryCode.toLowerCase()}.png`;
+  // Use w40 for good quality at small sizes
+  return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 }
 
 // Get track mini image (white outline) - uses shortName for unique circuit identification
@@ -357,7 +358,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                         <MapPin className="h-4 w-4" />
                         {nextRace.track.countryCode && (
                           <Image
-                            src={getFlagUrl(nextRace.track.countryCode, 20)}
+                            src={getFlagUrl(nextRace.track.countryCode)}
                             alt={nextRace.track.country}
                             width={20}
                             height={14}
@@ -547,7 +548,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                         <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors flex items-center gap-2">
                           {round.track.countryCode && (
                             <Image
-                              src={getFlagUrl(round.track.countryCode, 24)}
+                              src={getFlagUrl(round.track.countryCode)}
                               alt={round.track.country}
                               width={24}
                               height={16}
