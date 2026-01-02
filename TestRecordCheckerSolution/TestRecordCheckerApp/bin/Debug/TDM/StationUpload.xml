@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDM_StationUpload xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <line>Client_Verification_Line</line>
+  <parent>Client Verification Tester Station_Parent</parent>
+  <workstation>Client Verification Tester Station</workstation>
+  <machineName>USRALWHP6114504.eaton.ad.etn.com</machineName>
+  <machineModel>HP ZBook 15 G6</machineModel>
+  <machineMfg>HP</machineMfg>
+  <userName>NASA\E9988721</userName>
+  <os>Microsoft Windows 10 Enterprise</os>
+  <osversion>10.0.17763 N/A Build 17763</osversion>
+  <niLicenseStatus>N/A</niLicenseStatus>
+  <serviceUrl>http://usstcstdmappq01</serviceUrl>
+  <osreleaseid>1809</osreleaseid>
+  <cpu>2.53</cpu>
+  <memory>16</memory>
+  <webservice>PCaT</webservice>
+  <stationType>RWO 2.0</stationType>
+  <timestamp>2021-04-01T09:43:08.9766184-04:00</timestamp>
+</TDM_StationUpload>

@@ -1,0 +1,198 @@
+NASA\RA1NC-DataDog    E@1on!12# 
+
+
+**************************************************************************************************************************
+
+** BEGIN Datadog generic Setup  ---------------------------------------------------
+ *  DONE - Submit IT request to Add Generic user (NASA\RA1NC-DataDog ) to PC (USYOUWHP6106519) Password:  E@1on!12#
+      Link:  http://itsc7.tcc.etn.com/ServiceCatalog/navigation.do?go=sd&entry=000000000006378#
+
+ *  DONE - Create local folder to store all installed files C:\_YPOTestSupport\InstallFiles\
+ *  DONE - Map and Share:
+    -  Share folder _TestEngineering (file://USYOUWHP6106519/_TestEngineering), 
+	-  Share folder Web App Development (file://USYOUWHP6106519/Web%20App%20Development)
+	-  Share folder _TestEngineering (file://USYOUWHP6106519/Tracks)
+    -  May -> \\youncsfp01\DATA -> Z
+ *  DONE - Create folder structure
+    - Create Folder C:\_TestEngineering
+    - Create Folder C:\a_scrap
+** END Datadog generic Setup  -----------------------------------------------------
+
+**************************************************************************************************************************
+
+** Begin Setup SQL Server for Datadog  ---------------------------------------------------
+
+Copy over lasted backups 
+      -  Copy Z:\TestEngDoc\9170 and Ferrups\YOUNCWHP5013525 BACKUP\latest file and save to C:\_YPOTestSupport\InstallFiles\TestEngineerFolderFromNetwork
+      -  Extract zipped file -> move "_TestEngineering" to C:
+      -  Note - Will mount databases after SQL studio is installed 
+	  
+SQL Server 2022 (Run as admin)
+  - \\youncsfp01\data\TestEngDoc\_PowerShellScript\StandardStuff\SQL\SQL Server Express 2022\SQLEXPR_x64_ENU.exe copy to C Drive.
+  - Default except
+    - Service Account -> SQL Server Brower -> Set to Automatic
+	- Server Configuration -> Mixed Mode -> Password = FloorUPSTst1
+
+SQL Management Studio (Run as admin)
+  - \\youncsfp01\data\TestEngDoc\_PowerShellScript\StandardStuff\SQL\SQL Management Studio19p1\SSMS-Setup-ENU.exe
+
+Mount backup from DataDog
+  - \\youncsfp01\data\TestEngDoc\9170 and Ferrups\USYOUWHP6140713 BACKUP -> Unzip to C drive
+  - Mount database at C:\_TestEngineering\Database\SQLServerBackups:  Eagle.., ePDU.., ODMS.., RPO.., TestVerification.., WebApp.., YPOSupport.
+		* Microsoft SQl Server -> Database -> Restore Database -> Device -> 
+
+Mount backup from Tracks
+  - \\youncsfp01\DATA\TestEngDoc\_PowerShellScript\StandardStuff\SQL\TracksStuff -> Unzip to C drive
+  - Mount database at C:\_Work\application\SQL\TracksStuff  Tracks_FULL...
+		* Microsoft SQl Server -> Database -> Restore Database -> Device -> 
+	  
+	  
+	  
+	  
+ *  D - Install SQL server Management Studio 2022 to PC -> Use all defaults -> 
+    -  Copy Z:\TestEngDoc\_PowerShellScript\NonStandardStuff\SQL Full Download\SQLEXPRADV_x64_ENU to C:\_YPOTestSupport\InstallFiles\SQL Full Download
+    -  Select database instance in Object explorer -> Right click -> Properties -> Security -> Check SQL Server and WIndows Authentication mode
+    -  after install, start SQL Server Management studio and verify USYOUWHP6106519\SQLEXPRESS will connect (Green arrow)
+    -  Create Login Accounts ->
+      * NASA\RA1NC-DataDog
+      * NASA\E0089491  (ME)
+      * NASA\C9980140  (Robert)
+ *  DONE - Restore Database from location C:\_TestEngineering\Database\SQLServerBackups
+    - Open SQL Server management -> Select Database in object explorer -> Righ click -> Restore Database
+    - Select Device -> Select "..." -> ADD -> Point to backup location  -> Do in the order listed below  - Only restore table listed!!!!
+    - EagleTestData, ePDU, QDMS, RPO_Inventory, TestVerificationChecklist, WebAppSecurity
+        -  Create Login Accounts ->
+      * NASA\RA1NC-DataDog
+      * WebApp
+          General:  Login name:  WebApp,  Select:  SQL Server authentication -> Password:  FloorUPSTst1,  Deselect enforce password expiration
+       Server Roles:  Defaults
+       User Mapping:  Default (These are set in each database)
+      if WebApp login issue occurs (orphin user issue)
+       *  Create WebAppTest login: 
+        - General: SQL Server authentication Password=FloorUPSTst1
+        -User Mapping set (EagleTestData, ePDU, QDMS,TestVerificationChecklist) to db_datareader, Set (QDMS) to datareader and datawriter
+        -if file C:\_TestEngineering\WebSite\Global.asa change WebApp to WebAppTest
+       
+       
+      *  General -> Login name: NASA\E0089491,  Server Roles -> Check sysadmin
+      *  General -> Login name: NASA\E0089491,NASA\C9980140  Server Roles -> Check sysadmin
+      *  General -> Login name: NASA\YPOTEST1
+      *  General -> Login name: NASA\YPOTEST2
+ 
+ *  DONE - Set SQL instance for remote connection
+   -  Start SQL Server Network Configuration -> Expand SQL Server Network Configuration -> Select Protocols for SQLEXPRESS -> Enable TCP/IP
+   -  Select TCP/IP -> properties -> IP address tab -> IPALL:TCP Dynamic Ports = "" (blank), TCP Port 1433
+   -  Restart in SQL Server with Sql Server Configuration Manager -> SQL Server Services -> SQL Server(SQLEXPRESS) -> Right click -> Restart 
+   -  Turn on Brower:  In Sql Server Configuration Manager -> SQL Server Services -> Right Click SQL Server Browser -> Properties -> Service Tab -> Start Mode -> Automatic
+   -  Power cycle and verify that SQL Server Brower is running
+   -  Via SQL studio for a remote machine verify you can connect to sql instance
+   -  See this for more details: http://blog.citrix24.com/configure-sql-express-to-accept-remote-connections/
+   
+   
+ *  DONE - Create Backup store procedure:
+              1.  In SQL Server Manager select Database-> Master -> Programmability -> Stored Procedures  then Right click and select 'New Stored Procedure'
+     2.  Delete text copy in text from \\youncsfp01\data\TestEngDoc\_PowerShellScript\ManualSetup\DataDog\Support\Create_spBackup.txt then execute
+   
+ *  TODO - Request NASA\RA1NC-DataDog user have permission to Databases
+      Please add user NASA\RA1NC-DataDog to the listed database: 
+     - DONE Empower RPO Database: Data Source=rpo-proddata;Database=rpo_proddata;
+     - DONE Empower TPO Database: Data Source=rpo-proddata;Database=tpo_proddata;
+     - DONE TDM Database:         Data Source=rpo-proddata;Database=tdm;
+     - ra1ncssql1      (SQL database for FerrUPS Birth Certificate)
+     Give NASA\RA1NC-DataDog the same permission/profile as NASA\C9980140
+ *  TODO Modify Datadog application so it only effect local machine for debugging 
+    - Only email notification to me
+    -  ePDU label Printer?, ????
+ *  TODO - Verify:
+    -  Email notification
+    -  Webpage functions
+    -  Preflight 
+    -  Birth Certificate transfer
+ *  TODO - Need to make this an alias so we can smoothly switch over?
+ *  TODO - Can we run two datadog machines in parrallel during the switch over?
+ *  TODO – Delete and Restore lastest .bak before switch over
+
+
+** End Setup SQL Server for Datadog  -----------------------------------------------------
+
+*************************************************************************************************************************
+
+** BEGIN Setup Webpage server for Datadog ---------------------------------------------------
+
+ Turn on IIS: 
+  - DONE Search Turn Windows Features on or off
+  - DONE Select Internet Information Service and set as:
+   *  FTP Server:  OFF
+   *  Web Management:  IIS Management Console:ON
+   *  World Wide Web Services:
+   *  Application Development Features:  All ON except:   CGI:OFF, Server Side Includes:OFF
+   *  Common HTTP Features: All on except HTTP Redirection and webDAV Publishing
+   *  Health and Diagnostics:All On
+   *  Performance Features:OFF
+   *  Security: IP Security:ON, Request Filtering:ON, URL Authorization:ON
+  - DONE Copy Z:\TestEngDoc\_PowerShellScript\ManualSetup\DataDog\Support\Web App Development to C:
+  - DONE Change Web.config to use local database (Changed PC Name from YOUNCWHP5013525 to USYOUWHP6106519) in file Web.config at C:\Web App Development\Preflight\ and C:\Web App Development\TestEngApps\
+  - DONE Open IIS Manager 
+  - DONE Default Web Site-> manage Website -> advance Settings -> Physical Path = C:\_TestEngineering\WebSite -> OK 
+  - DONE Replace old PC references
+     * Open C:\_TestEngineering\WebSite\Global.asa  replace "YOUNCWHP5013525" with "USYOUWHP6106519"  (3 locations)
+     * Open C:\_TestEngineering\WebSite\Default.asp  replace "YOUNCWHP5013525" with "USYOUWHP6106519"  (1 locations)
+  - DONE Setup Application Pools -> Select Application Pools -> 
+   - Select .Net v4.5 -> advance setting -> Enable 32-Bit application = True -> Set Identity = NASA\RA1NC-DataDog and System password -> Idle Time-out (minutes) = 480   
+  - DONE Create pf and RAP webpage
+     - in IIS:  Select Default Web Site -> Add Application: Alias=pf, Physical Path = C:\Web App Development\Preflight -> Application Poool = .Net v4.5 ->OK
+     - in IIS:  Select Default Web Site -> Add Application: Alias=RAP, Physical Path = C:\Web App Development\TestEngApps -> Application Poool = .Net v4.5 ->OK
+  -  Setup DefaultAppPool:  >.NET CLR Version = v2.0, Enable 32-bit application = True
+  -  Set Authentication for pf and RAP
+       - Authentication-> Open Feature -> Anonymous Authentication -> Enable -> Select Specific User:  nasa\RA1NC-DataDog, Password:  E@1on!12#
+
+
+ Current Issue:  Webpage unable to use stored procedures (Access database??)
+
+** END Setup Webpage server for Datadog -----------------------------------------------------
+
+*************************************************************************************************************************
+** BEGIN Setup Backup ---------------------------------------------------
+
+ *   TODO - Ask Robert about autoback - I thought he had create a bat/task to do this but I can't find it. (all backups are a month old)
+    -  Batch file at _TestEngineering\Database\DataDog\_Backup.bat - Not sure what calls it?
+    -  Will need to change C:\Program Files (x86)\Microsoft Office\Office14\MSACCESS.exe to C:\Program Files (x86)\Microsoft Office\Office15\MSACCESS.exe
+
+
+** END Setup Backup  -----------------------------------------------------
+
+*************************************************************************************************************************
+
+** BEGIN Setup Backup and BirthCerticiate  ---------------------------------------------------
+
+ *   TODO - retest.exe to not working - "Cannot load DLL: MSRDO20.DLL"  (I tried installing visual studio 6 with not success)  
+ *   TODO - Create ODBC connect to for BirthCerticate:  ODBC Data Source _> System DSN -> ADD -> SQL Server -> Finish-> Name=BirthCert, Server=ra1ncssql1  
+   -  TODO:  Connection Failed (need to request access for user "NASA\RA1NC-DataDog" to Server ra1ncssql1 
+
+** END Setup Backup and BirthCerticiate  -----------------------------------------------------
+
+**************************************************************************************************************************
+
+** BEGIN NAME HERE  ---------------------------------------------------
+
+** END NAME HERE  -----------------------------------------------------
+**************************************************************************************************************************
+** BEGIN NAME HERE  ---------------------------------------------------
+
+** END NAME HERE  -----------------------------------------------------
+**************************************************************************************************************************
+** BEGIN NAME HERE  ---------------------------------------------------
+
+** END NAME HERE  -----------------------------------------------------
+**************************************************************************************************************************
+Notes:
+  *  DataDog was compiled in Visual Studio 2013  (I think 2017 does not change the file format - Both can be used)
+  *  Datadog account needed credentials
+     -  YPO I drive
+  -  epdu label database  
+  -  Tony's (CPO Database)
+  -  Eagle data  ?
+  -  (Give NASA\RA1NC-DataDog account same credentials as NASA\C9980140)
+  
+  USYOUWHP6140713
+USYOUWHP6106519

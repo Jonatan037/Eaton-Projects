@@ -1,0 +1,12 @@
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\bin\x64\Debug\TestRecordCheckerApp.exe.config
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\bin\x64\Debug\TestRecordCheckerApp.exe
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\bin\x64\Debug\TestRecordCheckerApp.pdb
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.csproj.AssemblyReference.cache
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.mainForm.resources
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.logInForm.resources
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.VerifiedResultsForm.resources
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.Properties.Resources.resources
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.csproj.GenerateResource.cache
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.csproj.CoreCompileInputs.cache
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.exe
+C:\Users\e9952624\Desktop\Test - TDM Check Record\Windows Form App\TestRecordCheckerSolution 1.10\TestRecordCheckerApp\obj\x64\Debug\TestRecordCheckerApp.pdb

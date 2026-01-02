@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Store>
+  <BatteryData>
+    <ID>1</ID>
+    <PartNumber>05146035-4-5501</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>49.76</LowerLimit>
+	<UpperLimit>52.5</UpperLimit>
+	<Harness>BTLN-03</Harness>
+	<Notes>MOD BATTERY 48V PW9125 (GS)</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>2</ID>
+    <PartNumber>05146035-5-5501</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>24.88</LowerLimit>
+	<UpperLimit>26</UpperLimit>
+	<Harness>BTLN-03</Harness>
+	<Notes>MOD BATTERY 24V PW9125 (GS)</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>3</ID>
+    <PartNumber>05147499-1593</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>132</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>KIT BATT SPARE 3KV NCR W/ INSU</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>4</ID>
+    <PartNumber>05147499-1593-0</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>130</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>KIT BATT SPARE 3KV NCR W/INSUL</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>5</ID>
+    <PartNumber>103003217-001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>131</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>ASSY PACKED BATTERY TRAY BO</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>6</ID>
+    <PartNumber>103002479-395</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>130</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>IBM MOD BATTERY 3KVA</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>7</ID>
+    <PartNumber>103002033-2491</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>131</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>Same as 05147499-1593-0</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>8</ID>
+    <PartNumber>103002479-3994</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>130</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>MOD BATT 2.4-3KVA DISCON (IBM:</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>9</ID>
+    <PartNumber>103003438-2491</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>122</LowerLimit>
+	<UpperLimit>138</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>SPARE BATT MODULE HP PUMA PW51</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>10</ID>
+    <PartNumber>103005977-551</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>124</LowerLimit>
+	<UpperLimit>137</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>BladeUPS GA</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>11</ID>
+    <PartNumber>103005977-552</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>137</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>Blank</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>12</ID>
+    <PartNumber>103005977-5591</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>124</LowerLimit>
+	<UpperLimit>137</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>Spare GE</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>13</ID>
+    <PartNumber>103005977-5592</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>126.0</LowerLimit>
+	<UpperLimit>132.0</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes>Limits are set in the measurement routine.</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>14</ID>
+    <PartNumber>103005977-241</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125.0</LowerLimit>
+	<UpperLimit>132.0</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes> BladeUPS HP 103005977-241 aka 451934-001 HP Battery Module Assembly</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>15</ID>
+    <PartNumber>706892-001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125.0</LowerLimit>
+	<UpperLimit>132.0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> Same as BladeUPS HP 103005977-241</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>16</ID>
+    <PartNumber>1420-0866</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>126</LowerLimit>
+	<UpperLimit>130</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> MGE BATT PACK POWER TRUST II MR </Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>17</ID>
+    <PartNumber>349171-001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>132</UpperLimit>
+	<Harness>BTLN-02</Harness>
+	<Notes> BladeUPS HP 103005977-241 aka 451934-001 HP Battery Module Assembly</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>18</ID>
+    <PartNumber>ASY-0529</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>62.5</LowerLimit>
+	<UpperLimit>66.4</UpperLimit>
+	<Harness>BTLN-01</Harness>
+	<Notes> 9170 Battery</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>19</ID>
+    <PartNumber>407407-001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>131</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>Cheetah Battery Pack P/N R3000/ 103002033-2491 / 407407-001 same as 05147499-1593-0</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>20</ID>
+    <PartNumber>407419-001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>132</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>PUMA Battery Pack P/N R5500/ 103003438-2491 / 407419-001 same as 103005977-241</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>21</ID>
+    <PartNumber>P-103002043</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>48</LowerLimit>
+	<UpperLimit>56</UpperLimit>
+	<Harness>BTLN-04</Harness>
+	<Notes>Spare Battery for 5PX 1000/1500/1500i</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>22</ID>
+    <PartNumber>P-103002044</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>49.76</LowerLimit>
+	<UpperLimit>56</UpperLimit>
+	<Harness>BTLN-04</Harness>
+	<Notes> Spare Battery for 5PX 2200</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>23</ID>
+    <PartNumber>P-103002045</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>74.64</LowerLimit>
+	<UpperLimit>83</UpperLimit>
+	<Harness>BTLN-04</Harness>
+	<Notes> Spare Battery for 5PX 3000</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>24</ID>
+    <PartNumber>EBP-0694</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>40.8</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> Spare 5115 1400i GE MED</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>25</ID>
+    <PartNumber>P-103001778</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>41.1</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>9130</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>26</ID>
+    <PartNumber>P-103001780</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>24.88</LowerLimit>
+	<UpperLimit>27.4</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>9130</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>27</ID>
+    <PartNumber>P-103001782</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>12.44</LowerLimit>
+	<UpperLimit>13.7</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>9130</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>28</ID>
+    <PartNumber>P-103001784</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>74.64</LowerLimit>
+	<UpperLimit>83</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>9130</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>29</ID>
+    <PartNumber>EBP-1001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>50.4</LowerLimit>
+	<UpperLimit>54.4</UpperLimit>
+	<Harness>BTLN-04</Harness>
+	<Notes>Battery Pack for 5PX 1000/1500/1500i RT2U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>30</ID>
+    <PartNumber>EBP-1002</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>49.76</LowerLimit>
+	<UpperLimit>54.4</UpperLimit>
+	<Harness>BTLN-04</Harness>
+	<Notes>Battery Pack for 5PX 2200 RT2U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>31</ID>
+    <PartNumber>EBP-1003</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>74.64</LowerLimit>
+	<UpperLimit>81.6</UpperLimit>
+	<Harness>BTLN-04</Harness>
+	<Notes> Battery for 5PX 3000 RT2U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>32</ID>
+    <PartNumber>EBP-0691</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>25.2</LowerLimit>
+	<UpperLimit>27.2</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> PW5115 750 120V USB</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>33</ID>
+    <PartNumber>EBP-0693</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>40.8</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> PW5115 1400 120V USB</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>34</ID>
+    <PartNumber>EBP-1605</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>40.8</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes> PW9130 700/1000 120V RACK</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>35</ID>
+    <PartNumber>EBP-1606</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>49.76</LowerLimit>
+	<UpperLimit>54.4</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes>PW9130 1500 120V RACK - Changed limits per Ross Belloff request 12/5/2017</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>36</ID>
+    <PartNumber>EBP-1607</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>74.64</LowerLimit>
+	<UpperLimit>81.6</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes> PW9130 2000/3000 120V RACK</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>37</ID>
+    <PartNumber>EBP-0807</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>43.8</UpperLimit>
+	<Harness>BTLN-07</Harness>
+	<Notes>EATON 5P 1000/1500/1550G RACK1U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>38</ID>
+    <PartNumber>EBP-0892</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>43.8</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes>PW5115 1500 RM 120V BLK</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>39</ID>
+    <PartNumber>EBP-1601</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>24.88</LowerLimit>
+	<UpperLimit>27.2</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes>PW9130 700 120V TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>40</ID>
+    <PartNumber>EBP-1602</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.8</LowerLimit>
+	<UpperLimit>40.8</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes> PW9130 1000 120V TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>41</ID>
+    <PartNumber>EBP-1603</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>49.76</LowerLimit>
+	<UpperLimit>54.4</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes> PW9130 1500 120V TOWER (UPS)</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>42</ID>
+    <PartNumber>EBP-1604</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>99.52</LowerLimit>
+	<UpperLimit>108.8</UpperLimit>
+	<Harness>BTLN-06</Harness>
+	<Notes>PW9130 2000/3000  120V TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>43</ID>
+    <PartNumber>EBP-0690</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>12.44</LowerLimit>
+	<UpperLimit>13.6</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> PW5115 500 120V USB</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>44</ID>
+    <PartNumber>EBP-1890</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> PW9135 5000/6000/EBM</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>45</ID>
+    <PartNumber>EBP-1801</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> 9PX 5000/6000/EBM UPS</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>46</ID>
+    <PartNumber>EBP-2001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>9PXEBM240RT</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>47</ID>
+    <PartNumber>EBP-0801</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>EATON 5P 550 RACK1U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>48</ID>
+    <PartNumber>EBP-0802</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>EATON 5P 750 TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>49</ID>
+    <PartNumber>EBP-0803</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5P 1000 TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>50</ID>
+    <PartNumber>EBP-0805</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5P 750 RACK1U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>51</ID>
+    <PartNumber>EBP-0806</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5P 1000 RACK1U</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>52</ID>
+    <PartNumber>EBP-0804</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5P 1500/1550G TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>53</ID>
+    <PartNumber>EBP-0001</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>12.6</LowerLimit>
+	<UpperLimit>13.6</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>350VA US</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>54</ID>
+    <PartNumber>EBP-0002</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>12.6</LowerLimit>
+	<UpperLimit>13.6</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> 550VA US (LOW VOLTAGE)</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>55</ID>
+    <PartNumber>EBP-0003</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>12.6</LowerLimit>
+	<UpperLimit>13.6</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>750VA US (LOW VOLTAGE)</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>56</ID>
+    <PartNumber>EBP-0401</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>EATON 5S 550 USB</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>57</ID>
+    <PartNumber>EBP-0402</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>EATON 5S 700/700LCD/700G 5SC 500/500G</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>58</ID>
+    <PartNumber>EBP-0403</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>EATON 5S 1000/1000LCD</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>59</ID>
+    <PartNumber>EBP-0404</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5S 1500 LCD UPS</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>60</ID>
+    <PartNumber>EBP-0601</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5SC 750 TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>61</ID>
+    <PartNumber>EBP-0602</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5SC 1000 TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>62</ID>
+    <PartNumber>EBP-0603</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes> EATON 5SC 1500 TOWER</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>63</ID>
+    <PartNumber>EBP-0604</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>24.88</LowerLimit>
+	<UpperLimit>27.2</UpperLimit>
+	<Harness>BTLN-07</Harness>
+	<Notes> Requested by Nicki Rice 6/13</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>64</ID>
+    <PartNumber>EBP-0889</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>PW5115 500 RM 120V BLK</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>65</ID>
+    <PartNumber>EBP-0890</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>PW5115 750 RM 120V BLK</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>66</ID>
+    <PartNumber>EBP-0692</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>0</UpperLimit>
+	<Harness>Not Listed</Harness>
+	<Notes>PW5115 1000 120V USB</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>67</ID>
+    <PartNumber>P-103000900</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>99</LowerLimit>
+	<UpperLimit>106</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes>9x55 Spare battery</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>68</ID>
+    <PartNumber>P-106000226</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>99.52</LowerLimit>
+	<UpperLimit>106</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes> 9x55 Spare battery</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>69</ID>
+    <PartNumber>103007316</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>131</UpperLimit>
+	<Harness>BTLN-12</Harness>
+	<Notes> Crimea stage 2</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>70</ID>
+    <PartNumber>744-A0446</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>25.2</LowerLimit>
+	<UpperLimit>27.2</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> Crimea stage 2</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>71</ID>
+    <PartNumber>744-A0447</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>24.88</LowerLimit>
+	<UpperLimit>27.2</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> Crimea stage 2</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>72</ID>
+    <PartNumber>744-A0448</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>37.32</LowerLimit>
+	<UpperLimit>40.8</UpperLimit>
+	<Harness>BTLN-05</Harness>
+	<Notes> Crimea stage 2</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>73</ID>
+    <PartNumber>P-103000933</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>226.8</LowerLimit>
+	<UpperLimit>244.8</UpperLimit>
+	<Harness>BTLN-01</Harness>
+	<Notes>9355 spare batteries</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>74</ID>
+    <PartNumber>P-103002237</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>187.5</LowerLimit>
+	<UpperLimit>202.5</UpperLimit>
+	<Harness>BTLN-13</Harness>
+	<Notes>9PX6K</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>75</ID>
+    <PartNumber>P-103002954</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>55</LowerLimit>
+	<UpperLimit>69</UpperLimit>
+	<Harness>BTLN-14</Harness>
+	<Notes>9PX6K</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>76</ID>
+    <PartNumber>P-103002495</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>55</LowerLimit>
+	<UpperLimit>69</UpperLimit>
+	<Harness>BTLN-14</Harness>
+	<Notes> Cardinal Battery Pack</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>77</ID>
+    <PartNumber>TEST</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>250</UpperLimit>
+	<Harness>TEST</Harness>
+	<Notes> TestScript for system Debug</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>78</ID>
+    <PartNumber>BATTERYTEST</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>0</LowerLimit>
+	<UpperLimit>15</UpperLimit>
+	<Harness>TEST</Harness>
+	<Notes> TestScript for system Debug </Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>79</ID>
+    <PartNumber>P-106000220</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>111.96</LowerLimit>
+	<UpperLimit>122.4</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes> New 9355 spare batteries</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>80</ID>
+    <PartNumber>P-103001258</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>113.4</LowerLimit>
+	<UpperLimit>122.4</UpperLimit>
+	<Harness>BTLN-01</Harness>
+	<Notes> 93 spare batteries</Notes>
+  </BatteryData>
+  <BatteryData>
+    <ID>81</ID>
+    <PartNumber>P-103002225</PartNumber>
+    <TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>189</LowerLimit>
+	<UpperLimit>204</UpperLimit>
+	<Harness>BTLN-13</Harness>
+	<Notes>New 9355 spare batteries</Notes>
+  </BatteryData>
+    <BatteryData>
+	<ID>82</ID>
+	<PartNumber>P-103001949</PartNumber>
+	<TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>113</LowerLimit>
+	<UpperLimit>122</UpperLimit>
+	<Harness>BTLN-01</Harness>
+	<Notes>Transition from RPO</Notes>
+   </BatteryData>
+   <BatteryData>
+	<ID>83</ID>
+	<PartNumber>P-103002531</PartNumber>
+	<TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>137</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes>Transition from RPO</Notes>
+   </BatteryData>
+   <BatteryData>
+	<ID>84</ID>
+	<PartNumber>P-103000931</PartNumber>
+	<TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>113</LowerLimit>
+	<UpperLimit>122</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes>Transition from RPO</Notes>
+   </BatteryData>
+    <BatteryData>
+	<ID>85</ID>
+	<PartNumber>P-103000931-004</PartNumber>
+	<TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>50.4</LowerLimit>
+	<UpperLimit>54.4</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes>Transition from RPO</Notes>
+   </BatteryData>
+      <BatteryData>
+	<ID>86</ID>
+	<PartNumber>P-103004016</PartNumber>
+	<TestScript>GenericBatteryTest</TestScript>
+	<LowerLimit>125</LowerLimit>
+	<UpperLimit>137</UpperLimit>
+	<Harness>BTLN-11</Harness>
+	<Notes>Battery tray assembly for Pink Panther 50kW</Notes>
+   </BatteryData>
+  <RevisionHistory>
+	<ID>1</ID>
+	<Modified_By>04/27/2022</Modified_By>
+	<Notes>Original - Converted BatteryTestScript_cpp table to xml file</Notes>
+  </RevisionHistory>
+  <RevisionHistory>
+  	<ID>2</ID>
+	<Modified_By>04/27/2022</Modified_By>
+	<Notes>Original - Listed twice to make excel file look cleaner</Notes>
+  </RevisionHistory>
+    <RevisionHistory>
+  	<ID>3</ID>
+	<Modified_By>05/17/2022</Modified_By>
+	<Notes>Update lower limimt to match VC application - Which was update per Brian's Given request on 3/6/2023</Notes>
+  </RevisionHistory>
+    <RevisionHistory>
+  	<ID>4</ID>
+	<Modified_By>06/19/2023</Modified_By>
+	<Notes>Updated limits for EBP-0807, EBP-0892 per Webb Burgess email</Notes>
+  </RevisionHistory>
+   <RevisionHistory>
+  	<ID>5</ID>
+	<Modified_By>06/03/2024</Modified_By>
+	<Notes>Adding Battery Packs transferring from RPO (82,83,84)</Notes>
+  </RevisionHistory>
+     <RevisionHistory>
+  	<ID>6</ID>
+	<Modified_By>07/01/2024</Modified_By>
+	<Notes>Adding Battery Pack transferring from RPO (85)</Notes>
+  </RevisionHistory>
+  <RevisionHistory>
+  	<ID>7</ID>
+	<Modified_By>07/08/2024</Modified_By>
+	<Notes>Modifing Battery Part Number(85)</Notes>
+  </RevisionHistory>
+</Store>

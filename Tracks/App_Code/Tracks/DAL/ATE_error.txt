@@ -1,0 +1,199 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+
+using System.Data;
+using System.Configuration;
+using System.Data.SqlClient;
+
+namespace Tracks.DAL
+{
+    /// <summary>
+    /// Summary description for ATE
+    /// </summary>
+    public class ATE
+    {
+        private string _error_message = "";
+        private DbAccess _db;
+
+        public string ErrorMessage
+        {
+            get { return _error_message; }
+        }
+
+        public ATE()
+        {
+            _db = new DbAccess();
+        }
+
+
+        public void Add(string SerialNumber, string PartNumber, string TimeStamp, string PassedTest, string EmployeeID, string RecordType, string ProgramName = "")
+        {
+            string MasterIndexID = "0";
+            string IssueReportID = "0";
+            string FirstChar = "";
+			bool isNumeric;
+
+            string Note = "Automatically generated on " + TimeStamp + " for " + EmployeeID + ".";
+
+            // If the program is not blank then include it in the failure note for the issue report.
+            if (ProgramName != "")
+                Note += "\r\n\r\nFailed  " + ProgramName + " program.\r\n\r\n";
+
+            MasterIndex MI = new MasterIndex();
+            IssueReports IR = new IssueReports();
+
+            // Upper case
+            SerialNumber = SerialNumber.ToUpper();
+            PartNumber = PartNumber.ToUpper();
+
+            // Get the first character of the serial number.
+            FirstChar = SerialNumber.Substring(0, 1);
+
+			// Is the serial number a numeric - these are SPD units
+			isNumeric = TryParse(SerialNumber, out _)
+
+            // Only allow serial numbers starting with "B" and isNumeric (SPD).
+            if (FirstChar != "B") return;
+			
+			if ((isNumeric != True) return;
+
+            // Get rid of _Assembly_Test tag for RPO.
+            //if (FirstChar == "E" && SerialNumber.Length >= 10)
+            //{
+            //   SerialNumber = SerialNumber.Substring(0, 10);
+            //}
+
+            // Do not save results for serial numbers that start with "Z".
+            if (SerialNumber.Substring(0, 1) == "Z") return;
+
+            // 04/29/2021 Do not save results for TDM OBA or Tester Verifications records.
+            if (RecordType == "111" || RecordType == "102") return;
+ 
+            // Add the new serial number to the master index.
+            MI.AddFromATE(SerialNumber, PartNumber, TimeStamp);
+
+
+            // Get the master index id for this serial number.
+            MasterIndexID = MI.GetMasterIndexID(SerialNumber);
+
+            // 02/25/2020 Always try to set test date with ATE time stamp.
+            MI.SetFirstTestDate(MasterIndexID, TimeStamp, "ATE");
+
+            // ----------------------------------------------------------------------------------------------------------------------
+
+            // For RPO serial numbers ...
+            // If RecordType is a production record then update the LAST_TEST_STATUS flag
+            // 2 = empower 
+            // 30 = shark
+            // 101 = tdm
+            // 109 = tdm subassembly.
+
+            //if (SerialNumber.Substring(0, 1) == "E")
+            {
+                if (RecordType == "2" || RecordType == "30" || RecordType == "101" || RecordType == "109")
+                {
+                    if (PassedTest == "1")
+                        MI.UpdateFlag(MasterIndexID, MasterIndex.FlagName.LAST_TEST_STATUS, true);
+                    else
+                        MI.UpdateFlag(MasterIndexID, MasterIndex.FlagName.LAST_TEST_STATUS, false);
+                }
+            }
+
+
+            // ----------------------------------------------------------------------------------------------------------------------
+
+            // Stop here if this is a passing test record.
+            if (PassedTest == "1") return;
+
+
+            // Set the HAS_ATE_FAILURE_REPORT flag to true.
+            MI.UpdateFlag(MasterIndexID, MasterIndex.FlagName.HAS_ATE_FAILURE_REPORT, true);
+
+            // Set the FAILED flag to true.
+            MI.UpdateFlag(MasterIndexID, MasterIndex.FlagName.FAILED, true);
+
+
+            // Do not create an issue report if this unit already has an issue report.
+            if (MI.GetFlagBySerialNumber(SerialNumber, MasterIndex.FlagName.HAS_ISSUE_REPORT)) return;
+
+
+            // Use E# if it is available, other set E# to ATE.
+            if (EmployeeID == "") EmployeeID = "ATE";
+
+            // Create issue report.
+            IssueReportID = IR.Add(MasterIndexID, EmployeeID, Note, false, TimeStamp).ToString();
+
+            // Set first test date.
+            SetFirstTestDate(IssueReportID);
+        }
+
+
+#if false
+        // Original version that has now been replaced.
+        public void Add(string SerialNumber, string PartNumber)
+        {
+
+            string MasterIndexID = "0";
+            string IssueReportID = "0";
+
+            string Note = "This issue report was automatically generated when the unit failed on the ATE.";
+
+            MasterIndex MI = new MasterIndex();
+            IssueReports IR = new IssueReports();
+
+            // Do not save results for serial numbers that start with "Z".
+            if (SerialNumber.Substring(0, 1) == "Z") return;
+
+            // Do not save results if this unit already has an issue report.
+            if ( MI.GetFlagBySerialNumber( SerialNumber, MasterIndex.FlagName.HAS_ISSUE_REPORT ) ) return;
+
+            // Add the new serial number to the master index.
+            MI.Add(SerialNumber, PartNumber, "", "", "");
+
+            // Get the master index id for this serial number.
+            MasterIndexID = MI.GetMasterIndexID(SerialNumber);
+
+            // Set the HAS_ATE_FAILURE_REPORT flag to true.
+            MI.UpdateFlag(MasterIndexID, MasterIndex.FlagName.HAS_ATE_FAILURE_REPORT, true);
+
+            // Set the FAILED flag to true.
+            MI.UpdateFlag(MasterIndexID, MasterIndex.FlagName.FAILED, true);
+
+            // Create issue report.
+            IssueReportID = IR.Add(MasterIndexID, "ATE", Note, false).ToString();
+
+            // Set first test date.
+            SetFirstTestDate(IssueReportID);
+
+        }
+#endif
+        public void SetFirstTestDate(string IssueReportId)
+        {
+            string sql;
+            DataTable dt;
+            string master_index_id;
+            string time_stamp;
+
+            sql = "SELECT MASTER_INDEX_ID, CREATION_TIMESTAMP FROM ISSUE_REPORTS " +
+                  "WHERE ISSUE_REPORTS_ID = " + IssueReportId;
+
+            dt = _db.GetData(sql);
+
+            master_index_id = dt.Rows[0]["MASTER_INDEX_ID"].ToString();
+            time_stamp = dt.Rows[0]["CREATION_TIMESTAMP"].ToString();
+
+            MasterIndex MI = new MasterIndex();
+            MI.SetFirstTestDate(master_index_id, time_stamp, "ATE");
+
+            MI.UpdateFlag(master_index_id, MasterIndex.FlagName.HAS_ISSUE_REPORT, true);
+
+            _error_message = _db.ErrorMessage;
+
+        }
+
+    }
+
+}

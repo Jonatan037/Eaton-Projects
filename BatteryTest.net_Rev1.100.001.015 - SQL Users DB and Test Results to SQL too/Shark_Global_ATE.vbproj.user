@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PublishUrlHistory>C:\Users\e2013799\Desktop\SharkATE_install\|C:\Users\e2013799\Desktop\</PublishUrlHistory>
+    <InstallUrlHistory>
+    </InstallUrlHistory>
+    <SupportUrlHistory>
+    </SupportUrlHistory>
+    <UpdateUrlHistory>
+    </UpdateUrlHistory>
+    <BootstrapperUrlHistory>
+    </BootstrapperUrlHistory>
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <ErrorReportUrlHistory />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <EnableSQLServerDebugging>true</EnableSQLServerDebugging>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnableSecurityDebugging>false</EnableSecurityDebugging>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ReferencePath>C:\_WIP\Shark_ATE_rev1.16.001.003_006_WIP\bin\SupportingDLL\</ReferencePath>
+  </PropertyGroup>
+</Project>

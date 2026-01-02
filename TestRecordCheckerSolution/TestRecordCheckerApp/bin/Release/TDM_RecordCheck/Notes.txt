@@ -1,0 +1,16 @@
+
+
+ER182UXX13
+93PM_Standard_OverallResult
+Passed
+Passed
+
+Server: USRALSTDMAPIP01
+
+Examples:
+
+IES_TDM "93PM_Standard_OverallResult" "ER182UXX13"
+
+IES_TDM "93PM UPM SN_OverallResult" "ER164UXX01"
+
+IES_TDM "x93PM UPM SN_OverallResult" "ER164UXX01"	 

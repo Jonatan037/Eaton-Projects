@@ -1,0 +1,74 @@
+{
+  "format": 1,
+  "restore": {
+    "/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/HipotTestApp.csproj": {}
+  },
+  "projects": {
+    "/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/HipotTestApp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/HipotTestApp.csproj",
+        "projectName": "HipotTestApp",
+        "projectPath": "/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/HipotTestApp.csproj",
+        "packagesPath": "/home/codespace/.nuget/packages/",
+        "outputPath": "/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/codespace/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "targetAlias": "net48",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "targetAlias": "net48",
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.3, )",
+              "autoReferenced": true
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "System.Configuration.ConfigurationManager": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.6, )"
+            },
+            "System.IO.Ports": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

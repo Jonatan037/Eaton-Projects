@@ -1,0 +1,24 @@
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/App.config
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/HipotTestApp.exe.config
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/HipotTestApp.exe
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/HipotTestApp.pdb
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Newtonsoft.Json.dll
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/System.Configuration.ConfigurationManager.dll
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/System.Data.SqlClient.dll
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/System.IO.Ports.dll
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.csproj.AssemblyReference.cache
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.AssemblyInfoInputs.cache
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.AssemblyInfo.cs
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.csproj.CoreCompileInputs.cache
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.sourcelink.json
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTes.84F5F063.Up2Date
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.exe
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/obj/Debug/net48/HipotTestApp.pdb
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Omnia FailCheck Instructions/FailCheck AC Hipot Configuration.jpg
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Omnia FailCheck Instructions/FailCheck AC Hipot Result.jpg
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Omnia FailCheck Instructions/FailCheck Ground Bond Configuration.jpg
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Omnia FailCheck Instructions/FailCheck Ground Bond Result.jpg
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Omnia FailCheck Instructions/Omnia FailCheck Fixture.jpg
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Interlock Check Instructions/Interlock Green Light.jpg
+/workspaces/Eaton-Projects/Hipot - GroundBound Application/HipotTestApp/bin/Debug/net48/Interlock Check Instructions/Interlock On Position.jpg

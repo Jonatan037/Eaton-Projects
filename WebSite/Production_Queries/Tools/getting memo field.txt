@@ -1,0 +1,21 @@
+<!-- #include File=..\..\Tools\adovbs.inc -->
+
+
+	Set RS = Server.CreateObject("ADODB.RecordSet")
+	RS.CursorLocation = adUseClient
+	RS.Open strQuery, dbConn, adOpenKeyset
+
+
+
+And the technique is simple:
+Rule 1: Be sure to use ADODB.RecordSet.Open to create the recordset object. (That is, do not use ADODB.Connection.Execute or ADODB.Command.Execute!)
+Rule 2: Set the cursor location to the client.
+Rule 3: Use adOpenKeyset as the open mode for the recordset.
+
+So, in code:
+
+
+Set RS = Server.CreateObject("ADODB.RecordSet")
+RS.CursorLocation = adUseClient
+RS.Open table_name_or_sql_query, your_connection_object, adOpenKeyset 
+

@@ -1,0 +1,42 @@
+
+<script LANGUAGE="VBScript" RUNAT="Server">
+
+Sub Application_OnStart
+
+
+    Application("QDMS")="Provider=SQLOLEDB;Data Source=.\SQLEXPRESS;Database=QDMS;UID=WebApp;PWD=FloorUPSTst1"
+
+
+    Application("Shark")="Provider=SQLOLEDB;Data Source=.\SQLEXPRESS;Database=ePDU;UID=WebApp;PWD=FloorUPSTst1"
+	
+	Application("Eagle")="Provider=SQLOLEDB;Data Source=.\SQLEXPRESS;Database=EagleTestData;UID=WebApp;PWD=FloorUPSTst1"
+
+
+    Application("ProductionDatabase")= _
+        "DRIVER=Microsoft Access Driver (*.mdb);" & _
+	"UID=;" & _
+	"PWD=;" & _
+	"FIL=MS Access;" & _
+	"DBQ=C:\_TestEngineering\Database\Production.mdb"
+
+    Application("InventoryDatabase")= _
+        "DRIVER=Microsoft Access Driver (*.mdb);" & _
+	"UID=;" & _
+	"PWD=;" & _
+	"FIL=MS Access;" & _
+	"DBQ=C:\_TestEngineering\Database\Inventory\Inventory.mdb"
+
+
+End Sub
+
+</script>
+
+<html>
+
+<head>
+<title></title>
+</head>
+
+<body>
+</body>
+</html>

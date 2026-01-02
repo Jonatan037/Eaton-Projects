@@ -1,0 +1,184 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+BatteryTest
+</name>
+</assembly>
+<members>
+<member name="T:BatteryTest.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:BatteryTest.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:BatteryTest.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="F:BatteryTest.EquipmentControl.WT230GPIBADDRESS">
+ <summary>
+ store WT210_1 GPIB address
+ </summary>
+</member>
+<member name="F:BatteryTest.EquipmentControl.GPIBADDRESS_8846A">
+ <summary>
+ store Agilent34970A GPIB address
+ </summary>
+</member>
+<member name="F:BatteryTest.EquipmentControl.ViWT230">
+ <summary>
+ Store Session for WT230
+ </summary>
+</member>
+<member name="F:BatteryTest.EquipmentControl.Vi8846A">
+ <summary>
+ Store Session for 34970A
+ </summary>
+</member>
+<member name="F:BatteryTest.EquipmentControl.MSG">
+ <summary>
+ Stroe  message for showing on the screen
+ </summary>
+</member>
+<member name="F:BatteryTest.EquipmentControl.checkSuccess">
+ <summary>
+ Store Instruments checking result
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.ByteToBin(System.Byte)">
+ <summary>
+ Byte convert to binary
+ </summary>
+ -------------------------------------------------------------------------------------------------redefine
+</member>
+<member name="M:BatteryTest.EquipmentControl.BinToByte(System.String)">
+ <summary>
+ Binary convert to Byte
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.CheckInstrument(System.String)">
+ <summary>
+ Check Fluke8846A can communication with ATE software
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.InitWT230(System.String,System.Int64@,System.String@)">
+ <summary>
+ initializtion for WT230
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.Init8846A(System.String,System.Int64@,System.String@)">
+ <summary>
+ initializtion for Fluke 8846A
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.CloseVi(System.Int64)">
+ <summary>
+ Close a session talk to a instrument
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.WriteCommand(System.Int64,System.String)">
+ <summary>
+ Send individual  command to instrument
+ </summary>
+ ------------------------------------------
+ Transmission Data to wt230 according to Vi
+ Note:Transmission one command
+ ------------------------------------------
+</member>
+<member name="M:BatteryTest.EquipmentControl.WriteCommands(System.Int64,System.String)">
+ <summary>
+ Send mutiple commands to instrument
+ </summary>
+ -----------------------------------------------------------------------------------
+ Transmission a command string that separated by a char ">" to wt230 according to Vi
+ Note:Transmission one command or multi commands
+ -----------------------------------------------------------------------------------
+</member>
+<member name="M:BatteryTest.EquipmentControl.ReadResult(System.Int64)">
+ <summary>
+ Read back reaponse from instrument via call GPIB driver
+ </summary>
+ -------------------------------------
+ Read Data From wt230 according to Vi
+ -------------------------------------
+</member>
+<member name="M:BatteryTest.EquipmentControl.SendReceive(System.Int64,System.String)">
+ <summary>
+ Send command to instrument and receive Response from instrument
+ </summary>
+ ------------------------------------------------
+ Send and Receive Data from wt230 according to Vi
+ ------------------------------------------------
+</member>
+<member name="M:BatteryTest.EquipmentControl.SettingsForWT230(System.Int64,System.String@)">
+ <summary>
+ Do some configurations to WT230
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.ReadWT230(System.String)">
+ <summary>
+ Read measurement value from WT230 according with measurement type
+ </summary>
+ ----------------------------------------------------
+</member>
+<member name="M:BatteryTest.EquipmentControl.Read8846A(System.Double)">
+ <summary>
+ Read Fluke 8846A measurement value
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.Read8846A_VDC_Range(System.Double)">
+ <summary>
+ Read Fluke 8846A measurement value
+ </summary>
+</member>
+<member name="M:BatteryTest.EquipmentControl.Read8846A_Generic(System.String,System.String@)">
+ <summary>
+ Read Fluke 8846A measurement value
+ </summary>
+</member>
+<member name="F:BatteryTest.ExecuteTest.TestItem">
+ <summary>
+ store the Pass or Fail result
+ </summary>
+</member>
+<member name="F:BatteryTest.ExecuteTest.MeasurementValue">
+ <summary>
+ store the Pass or Fail result
+ </summary>
+</member>
+<member name="F:BatteryTest.ExecuteTest.Judgement">
+ <summary>
+ store the Pass or Fail result
+ </summary>
+</member>
+<member name="F:BatteryTest.ExecuteTest.TestItemIndex">
+ <summary>
+ store the current row index in the list box of maintestinterface
+ </summary>
+</member>
+<member name="F:BatteryTest.ExecuteTest.MainTestSequence">
+ <summary>
+ Indicate the current test item
+ </summary>
+</member>
+<member name="M:BatteryTest.clsGPIB.SendReceive(System.Int64,System.String,System.String@)">
+------------------------------------------------
+Send and Receive Data from wt230 according to Vi
+------------------------------------------------
+</member>
+<member name="M:BatteryTest.clsGPIB.ReadWT230(System.String)">
+----------------------------------------------------
+Read Value From WT230
+For example:T=ReadWT230("IPV")
+Note:If Cmmd is a error command then return -10000.0
+----------------------------------------------------
+</member>
+</members>
+</doc>

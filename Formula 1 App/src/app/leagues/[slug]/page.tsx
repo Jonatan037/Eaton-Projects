@@ -82,6 +82,73 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
     notFound();
   }
 
+  // Calculate Driver Standings
+  const driverStandings = await prisma.result.groupBy({
+    by: ["driverId"],
+    where: {
+      round: {
+        leagueId: league.id,
+        status: "COMPLETED",
+      },
+    },
+    _sum: {
+      points: true,
+    },
+    orderBy: {
+      _sum: {
+        points: "desc",
+      },
+    },
+  });
+
+  // Get driver details for standings
+  const driverIds = driverStandings.map((d) => d.driverId);
+  const drivers = await prisma.driver.findMany({
+    where: { id: { in: driverIds } },
+    include: { team: true },
+  });
+  const driverMap = new Map(drivers.map((d) => [d.id, d]));
+
+  const driverStandingsWithDetails = driverStandings.map((standing, index) => ({
+    position: index + 1,
+    driver: driverMap.get(standing.driverId),
+    points: standing._sum.points || 0,
+  }));
+
+  // Calculate Constructor Standings
+  const constructorStandings = await prisma.result.groupBy({
+    by: ["teamId"],
+    where: {
+      round: {
+        leagueId: league.id,
+        status: "COMPLETED",
+      },
+    },
+    _sum: {
+      points: true,
+    },
+    orderBy: {
+      _sum: {
+        points: "desc",
+      },
+    },
+  });
+
+  // Get team details for standings
+  const teamIds = constructorStandings.map((t) => t.teamId);
+  const teams = await prisma.team.findMany({
+    where: { id: { in: teamIds } },
+  });
+  const teamMap = new Map(teams.map((t) => [t.id, t]));
+
+  const constructorStandingsWithDetails = constructorStandings.map(
+    (standing, index) => ({
+      position: index + 1,
+      team: teamMap.get(standing.teamId),
+      points: standing._sum.points || 0,
+    })
+  );
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -457,29 +524,136 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
 
           <TabsContent value="standings">
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 p-6">
+              {/* Driver Standings */}
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#F59E0B] to-[#D97706]" />
-                <div className="flex items-center gap-2 mb-4">
-                  <Trophy className="h-5 w-5 text-[#F59E0B]" />
-                  <h3 className="text-lg font-semibold text-white">
-                    {tStandings("driverStandings")}
-                  </h3>
+                <div className="p-6 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-[#F59E0B]" />
+                    <h3 className="text-lg font-semibold text-white">
+                      {tStandings("driverStandings")}
+                    </h3>
+                  </div>
                 </div>
-                <p className="text-gray-500">
-                  Standings will appear here once results are entered.
-                </p>
+                {driverStandingsWithDetails.length === 0 ? (
+                  <div className="p-6">
+                    <p className="text-gray-500">
+                      Standings will appear here once results are entered.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-white/5 max-h-[500px] overflow-y-auto">
+                    {driverStandingsWithDetails.slice(0, 20).map((standing) => (
+                      <div
+                        key={standing.driver?.id}
+                        className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-lg font-bold text-sm ${
+                              standing.position === 1
+                                ? "bg-yellow-500/20 text-yellow-400"
+                                : standing.position === 2
+                                  ? "bg-gray-400/20 text-gray-300"
+                                  : standing.position === 3
+                                    ? "bg-amber-600/20 text-amber-500"
+                                    : "bg-white/10 text-gray-400"
+                            }`}
+                          >
+                            {standing.position}
+                          </div>
+                          <div
+                            className="h-8 w-1 rounded-full"
+                            style={{
+                              backgroundColor:
+                                standing.driver?.team?.primaryColor || "#2ECC71",
+                            }}
+                          />
+                          <div>
+                            <p className="font-medium text-white">
+                              {standing.driver?.fullName}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {standing.driver?.team?.name}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-[#2ECC71]">
+                            {standing.points}
+                          </p>
+                          <p className="text-xs text-gray-500">pts</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 p-6">
+
+              {/* Constructor Standings */}
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] to-[#2563EB]" />
-                <div className="flex items-center gap-2 mb-4">
-                  <Flag className="h-5 w-5 text-[#3B82F6]" />
-                  <h3 className="text-lg font-semibold text-white">
-                    {tStandings("constructorStandings")}
-                  </h3>
+                <div className="p-6 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <Flag className="h-5 w-5 text-[#3B82F6]" />
+                    <h3 className="text-lg font-semibold text-white">
+                      {tStandings("constructorStandings")}
+                    </h3>
+                  </div>
                 </div>
-                <p className="text-gray-500">
-                  Standings will appear here once results are entered.
-                </p>
+                {constructorStandingsWithDetails.length === 0 ? (
+                  <div className="p-6">
+                    <p className="text-gray-500">
+                      Standings will appear here once results are entered.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-white/5">
+                    {constructorStandingsWithDetails.map((standing) => (
+                      <div
+                        key={standing.team?.id}
+                        className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-lg font-bold text-sm ${
+                              standing.position === 1
+                                ? "bg-yellow-500/20 text-yellow-400"
+                                : standing.position === 2
+                                  ? "bg-gray-400/20 text-gray-300"
+                                  : standing.position === 3
+                                    ? "bg-amber-600/20 text-amber-500"
+                                    : "bg-white/10 text-gray-400"
+                            }`}
+                          >
+                            {standing.position}
+                          </div>
+                          <div
+                            className="h-8 w-1 rounded-full"
+                            style={{
+                              backgroundColor:
+                                standing.team?.primaryColor || "#2ECC71",
+                            }}
+                          />
+                          <div>
+                            <p className="font-medium text-white">
+                              {standing.team?.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {standing.team?.country}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-[#3B82F6]">
+                            {standing.points}
+                          </p>
+                          <p className="text-xs text-gray-500">pts</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>

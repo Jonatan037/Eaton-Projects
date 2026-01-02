@@ -1,0 +1,591 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Shark_ATE_4.14.02
+</name>
+</assembly>
+<members>
+<member name="F:BaseON_MarlinATEHW.ExecuteTest.LogFile">
+	<summary>
+ Log file for Gateway or CLI command Saving
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.ErroLogFile">
+	<summary>
+ Log File for test error informations saving
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.LogFileName">
+	<summary>
+ New clase object of pduclase used to store the pdu information
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.serial">
+	<summary>
+ New serial class object,for the serial comport communication
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.bTelnetOpen">
+	<summary>
+ Store the comport open or close status
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.IpAddress">
+	<summary>
+ Store IP address showing in SCOB disaplay
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.Phase1_MaxOutletIndex">
+	<summary>
+ Store the very last outlet id in Phase1
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.Phase2_MaxOutletIndex">
+	<summary>
+ Store the very last outlet id in Phase2
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.Phase3_MaxOutletIndex">
+	<summary>
+ Store the very last outlet id in Phase3
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.OutletMap">
+	<summary>
+ store the outlet index which be used for input/gang/poliarity test,value -255 no testing
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.OutletMapATE">
+	<summary>
+ store the outlet index which  need to connected with ATE plug accordingly
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FirstOutletId_PhaseR">
+	<summary>
+ The very first outletID in phase R
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FirstOutletId_PhaseS">
+	<summary>
+ The very first outletID in phase S
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FirstOutletId_PhaseT">
+	<summary>
+ The very first outletID in phase T
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.NeedUploadUCF">
+	<summary>
+ Indicate if need upload ucf to SCOB
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FirstTest">
+	<summary>
+ Indicate if it is the first run test
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.PerformResult">
+	<summary>
+ Indicate each test pass or  fail result
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.UserRight">
+	<summary>
+ indicate the user right infomation
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.UCF_Path">
+	<summary>
+ indicate the path of ucf
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.UCF_Name">
+	<summary>
+ Store the path of UCF for debug test call
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.UCF_latest_VER">
+	<summary>
+ Store the latest ucf version
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.TestReportPath">
+	<summary>
+ store the test report path
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.UCF_Version">
+	<summary>
+ get the ucf version from the ucf name
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FW_6618_version_34008876">
+	<summary>
+ Store 6618  latest FW version
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FW_6613_version_34008876">
+	<summary>
+ Store 6613 latest FW version
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.FW_6618_version_34009054">
+	<summary>
+ Store 6618  latest FW version
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.ATELocation">
+	<summary>
+ Store 6613 latest FW version
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.ATS_version">
+	<summary>
+ Store ATE software Version
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.TestItem">
+	<summary>
+ store the Pass or Fail result
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.TestItemIndex">
+	<summary>
+ store the current row index in the list box of maintestinterface
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.ExecuteTest.MainTestSequence">
+	<summary>
+ Indicate the current test item
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.calib_voltage(System.Int32,System.Int32,System.Double)">
+	<summary>
+ Performe Voltage calibration for pdu input and gang  voltage  use gateway command
+ </summary>
+ note that individual set and get commands are used in this function rather than the generic get and set functions above for the purpose of increasing the efficiency
+
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.calib_Temp(System.Int32,System.Int32,System.Double)">
+	<summary>
+ Performe  Temperature calibration for the measurement board  use gateway command
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.calib_current(System.Int32,System.Int32,System.Double)">
+	<summary>
+ Performe current calibration for  input/Gang/outlet use gateway command
+ </summary>
+ note that individual set and get commands are used in this function rather than the generic get and set functions above for the purpose of increasing the efficiency
+
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.calib_save(System.Int32)">
+	<summary>
+ Save register value in the measurement board
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.ConfigureMeasBoards">
+	<summary>
+ Config the register of measurement board for IMax,IVMap,Unit serialnumber
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.ConfigureMeasBoards_Mini">
+	<summary>
+ Config the register of measurement board for IMax,IVMap,Unit serialnumber
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.CheckLEDs">
+	<summary>
+ Performe Led Test on SW and MA model
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Check_Input_Frequency">
+	<summary>
+ Performe all phase voltage accuracy check
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Check_Input_Voltage">
+	<summary>
+ Performe all phase voltage accuracy check
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Check_Gang_Voltage">
+	<summary>
+ Performe all gang voltage accuracy  check
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Check_Gang_Voltage_SM">
+	<summary>
+ Performe all gang voltage accuracy  check
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Calibration_Input_WYE_Voltage(System.Int32,System.Double,System.Double@)">
+	<summary>
+ Performe a specific phase voltage(WYE  measurement ) calibration via calling "calib_voltage" function
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Calibration_Gang_Delta_Voltage(System.Int32,System.Double@)">
+	<summary>
+ Performe a specific phase voltage(Delta measurement ) calibration via calling "calib_voltage" function
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Calibration_Input_Delta_Voltage(System.Int32,System.Double@,System.Double@)">
+	<summary>
+ Performe a specific phase voltage(Delta measurement ) calibration via calling "calib_voltage" function
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Calibration_Input_Voltage(System.Int32,System.Double@,System.Double@)">
+	<summary>
+ Perform a specific phase voltage calibration (either wye or delta measurement) via calling "calib_voltage" function
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Calibration_Gang_Voltage(System.Int32,System.Double@,System.Double@)">
+	<summary>
+ Perform a specific gang voltage calibration (either wye or delta measurement) via calling "calib_voltage" function
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Check_OutletAccuracy(System.Int32,System.Double,System.Double)">
+	<summary>
+ Performe all outlets current accuracy check for AM and MA model
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.ExecuteTest.Calibration_Outlets_current">
+	<summary>
+ Performe all outlet current calibration via calling "calib_current" function
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeasResults.fCurrent">
+	<summary>
+ store the measurement current report from PDU
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeasResults.fActualCurrent">
+	<summary>
+ store the Actual current read from WT230 Or  WT210 meeter
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeasResults.fWatts">
+	<summary>
+ store the measurement Power  report from PDU
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeasResults.fActualWatts">
+	<summary>
+ store the Actual Power read from WT230 Or  WT210 meeter
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeas.nBusAddr">
+	<summary>
+ Store the address of measurement board which use to measure related item
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeas.nChannel">
+	<summary>
+ Store  the channel of measurement board which use to measure related item
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeas.bNeedsCalib">
+	<summary>
+ indicate if need to calibrate related item,voltage and current
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeas.bPhaseCalibDone">
+	<summary>
+ indicate if CT phase shift calibration is complete
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeas.bMeasTested">
+	<summary>
+ indicate if the test have be done on Voltage ,and current testing
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.IMeas.stIMeasResults">
+	<summary>
+ array to store the current testing result
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.Outlet.fConfigCurrent">
+	<summary>
+ Indicate the rated current of outlet
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.Outlet.bSwitched">
+	<summary>
+ Indicate whether the outlet is switchable
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.Outlet.bMetered">
+	<summary>
+ Indicate whether the outlet is monitorable
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.Outlet.clIM">
+	<summary>
+ use for get the reported current from PDU
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.InputPhase.nPhaseID">
+	<summary>
+ indicate each phase ID (numeric)
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.InputPhase.sDesignator">
+	<summary>
+ indicate each phase ID as the user sees it in the GUI
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.InputPhase.clVM">
+	<summary>
+ Used for get  reported input Voltage from PDU
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.InputPhase.clIM">
+	<summary>
+ Used for get  reported input current from PDU
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.nConfigActivePower">
+	<summary>
+ Store the rated Power  base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.fConfigCurrent">
+	<summary>
+ Store the pdu rated current base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.nConfigVoltage">
+	<summary>
+ Store the rated input vlotage base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.sManufacturer">
+	<summary>
+ Store the Product manufacturing information
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.sPartNumber">
+	<summary>
+ Store the customer product Part number, based on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.sConfiguration">
+	<summary>
+ Store the configuration number, based on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.sProductDesc">
+	<summary>
+ Store the product description information base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.nPDUType">
+	<summary>
+ Store PDU model information 1=SW, 2=MO, 3=MA, 4=MI, 5=BA, 6=IL
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.nFirmwareType">
+	<summary>
+ PDU.firmware 0=no firmware, 34008876=standard Shark firmware, 34009054=HP_Glandore firmware.34009055=HP_Dragonwood  For measurement firmware 1 means 6613 and 2 means 6618 firmware
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.nLcdRotation">
+	<summary>
+ PDU.nLcdRotation 0=0 Deg (0U, power cable up), 1=90 Deg (1U), 2=180 Deg (0U, power cable down), 3=-90 Deg (unusual)
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.nSerialNumberAddr">
+	<summary>
+ Store the bus address of the board that contains the PDU serial number
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.sUCFRevision">
+	<summary>
+ Store the current revision of the UCF
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.sUCFFormat">
+	<summary>
+ Store the current format revision of the UCF
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.clInput">
+	<summary>
+ Array to store Input informations base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.clGang">
+	<summary>
+ Array to store  Gang infromations base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.clOutlet">
+	<summary>
+ Array to store outlet information base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.clMeasBoards">
+	<summary>
+ Array to store the Measurement board informations Base on the UCF object
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.rgnMeasBoardAddrToIdx">
+	<summary>
+ Store the Measurement Address according to the Measurement board ID
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.PDU.UCFRevisionHistory">
+	<summary>
+ Store the revision history
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.SetInputCount(System.Int32)">
+	<summary>
+ Used to setup Input Phase  array and check if the count of input  is in range base on the UCF object Up limit is 3
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.SetInput1PhaseCount(System.Int32)">
+	<summary>
+ Used to setup Input1Phase  array and check if the count of phase is in range base on the UCF object Up limit is 3
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.SetInput2PhaseCount(System.Int32)">
+	<summary>
+ Used to setup Input2Phase  array and check if the count of phase is in range base on the UCF object Up limit is 3
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.SetGangCount(System.Int32)">
+	<summary>
+ Used to setup Gang array and check if the count of gang is in range base on the UCF Object Up limit is 13
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.SetOutletCount(System.Int32)">
+	<summary>
+ Used to setup outlet count  array and check if the count of outlet  is in range Up limit is 64
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.SetMeasBoardCount(System.Int32)">
+	<summary>
+ Used to setup SetMeasBoardcount  array and check if the count of Measment Board is in range Up limit is 12
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.WriteToXML(System.String@)">
+	<summary>
+ Use to generate UCF file
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.WriteToXMLBuffer">
+	<summary>
+ Use to generate UCF file
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.PopulateOtherObjects">
+	<summary>
+ Set calibration Flag for Outlet,InputPhase and Gang current,Set the flag indicate if outlet is controlable or measureable
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.PDU.ReadFromXML(System.String@)">
+	<summary>
+ Used to Parse UCF and fill in PDU class.  If sBuffer is a file pathname, it must be less than 500 characters long.  If sBuffer
+ is more than 500 characters, this function assumes that it is the XML content as a buffer.
+ </summary>
+</member><member name="P:BaseON_MarlinATEHW.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:BaseON_MarlinATEHW.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:BaseON_MarlinATEHW.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="M:BaseON_MarlinATEHW.clsGPIB.SendReceive(System.Int64,System.String,System.String@)">
+------------------------------------------------
+Send and Receive Data from wt230 according to Vi
+------------------------------------------------
+
+</member><member name="M:BaseON_MarlinATEHW.clsGPIB.ReadWT230(System.String)">
+----------------------------------------------------
+Read Value From WT230
+For example:T=ReadWT230("IPV")
+Note:If Cmmd is a error command then return -10000.0
+----------------------------------------------------
+
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.ACSOURCEGPIBADDRESS">
+	<summary>
+ store ACSOURCE GPIB address
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.WT230GPIBADDRESS">
+	<summary>
+ store WT210_1 GPIB address
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.Agilent34970AGPIBADDRESS">
+	<summary>
+ store Agilent34970A GPIB address
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.WT210_1GPIBADDRESS">
+	<summary>
+ store WT210_1 GPIB address
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.WT210_2GPIBADDRESS">
+	<summary>
+ store WT210_1 GPIB address
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.WT210_3GPIBADDRESS">
+	<summary>
+ store WT210_1 GPIB address
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.ViWT230">
+	<summary>
+ Store Session for WT230
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.ViWT210_1">
+	<summary>
+ Store Session for WT210_1
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.ViWT210_2">
+	<summary>
+ Store Session for WT210_2
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.ViWT210_3">
+	<summary>
+ Store Session for WT210_3
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.ViAcSource">
+	<summary>
+ Store Session for ACSOURCE
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.Vi34970A">
+	<summary>
+ Store Session for 34970A
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.str34970AData">
+	<summary>
+ Stroe measurement data by channel list of 34970A
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.MSG">
+	<summary>
+ Stroe  message for showing on the screen
+ </summary>
+</member><member name="F:BaseON_MarlinATEHW.EquipmentControl.checkSuccess">
+	<summary>
+ Store Instruments checking result
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ConfigACSOURCE(System.String)">
+	<summary>
+ Config ACSOURE,OVP,OCP,Range...
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ByteToBin(System.Byte)">
+	<summary>
+ Byte convert to binary
+ </summary>
+ -------------------------------------------------------------------------------------------------redefine
+
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.BinToByte(System.String)">
+	<summary>
+ Binary convert to Byte
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ApplyPower(System.String)">
+	<summary>
+ Set ACSource output on and the voltage accorde with the input parameter
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.SetACsource_Frequency(System.String)">
+	<summary>
+ Change ACSOUR output frequency according with the input parameter
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.CheckInstrument(System.String,System.String,System.String,System.String,System.String,System.String)">
+	<summary>
+ Check if WT210,WT230 and 34970 can communication with ATE software
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.InitWT230(System.String,System.Int64@,System.String@)">
+	<summary>
+ initializtion for WT230
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.InitWT210(System.String,System.Int64@,System.String@)">
+	<summary>
+ initializtion for WT210
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.Init34970A(System.String,System.Int64@,System.String@)">
+	<summary>
+ initializtion for 34970
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.InitACSOURCE(System.String,System.Int64@,System.String@)">
+	<summary>
+ initializtion for ACSOURCE
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.CloseVi(System.Int64)">
+	<summary>
+ Close a session talk to a instrument
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.WriteCommand(System.Int64,System.String)">
+	<summary>
+ Send individual  command to instrument
+ </summary>
+ ------------------------------------------
+ Transmission Data to wt230 according to Vi
+ Note:Transmission one command
+ ------------------------------------------
+
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.WriteCommands(System.Int64,System.String)">
+	<summary>
+ Send mutiple commands to instrument
+ </summary>
+ -----------------------------------------------------------------------------------
+ Transmission a command string that separated by a char "&gt;" to wt230 according to Vi
+ Note:Transmission one command or multi commands
+ -----------------------------------------------------------------------------------
+
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ReadResult(System.Int64)">
+	<summary>
+ Read back reaponse from instrument via call GPIB driver
+ </summary>
+ -------------------------------------
+ Read Data From wt230 according to Vi
+ -------------------------------------
+
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.SendReceive(System.Int64,System.String)">
+	<summary>
+ Send command to instrument and receive Response from instrument
+ </summary>
+ ------------------------------------------------
+ Send and Receive Data from wt230 according to Vi
+ ------------------------------------------------
+
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.SettingsForWT230(System.Int64,System.String@)">
+	<summary>
+ Do some configurations to WT230
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.SettingsForWT210(System.Int64,System.String@)">
+	<summary>
+ Do some configurations to WT210
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ConfigWT210_current_ratio(System.Int64,System.String,System.String@)">
+	<summary>
+ Config the current measurement ratio for WT210
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ReadWT230(System.String)">
+	<summary>
+ Read measurement value from WT230 according with measurement type
+ </summary>
+ ----------------------------------------------------
+
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.Read34970A(System.String,System.Int32)">
+	<summary>
+ Read 34970 measurement value
+ </summary>
+</member><member name="M:BaseON_MarlinATEHW.EquipmentControl.ReadWT210(System.String)">
+	<summary>
+ Read measurement value from WT210 according with measurement type
+ </summary>
+</member>
+</members>
+</doc>

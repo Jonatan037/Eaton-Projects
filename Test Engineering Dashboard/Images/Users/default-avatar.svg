@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Default user avatar">
+  <defs>
+    <style>
+      :root { --bg:#f2f5f9; --stroke:#b8c7d9; --fill:#4c6ea6; }
+      @media (prefers-color-scheme: dark) {
+        :root { --bg:#12161c; --stroke:#2a3544; --fill:#9fb7dd; }
+      }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="128" height="128" fill="var(--bg)"/>
+  <g stroke="var(--stroke)" stroke-width="2" fill="none">
+    <circle cx="64" cy="50" r="22" fill="var(--fill)" stroke="none"/>
+    <path d="M16 116c6-22 27-36 48-36s42 14 48 36" fill="var(--fill)" opacity="0.35" stroke="none"/>
+    <circle cx="64" cy="64" r="62"/>
+  </g>
+</svg>

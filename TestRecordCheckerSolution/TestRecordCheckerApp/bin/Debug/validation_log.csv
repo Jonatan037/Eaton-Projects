@@ -1,0 +1,9 @@
+Plant,Production Line,SubLine,Station Name,Verifier Employee ID,Verifier Employee Name,Serial Number,CheckStatus,Verification DateTime,Verification Machine Name
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,BU214Y0174,Pass,5/23/2025 13:33,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,BU214Y0175,Pass,2025-05-23 13:35:13,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,SADASD,Fail,2025-05-27 11:02:00,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,ASD,Fail,2025-05-27 11:11:30,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,BU215Y0278,Pass,2025-05-27 11:11:40,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,BU215Y0312,Pass,2025-05-28 11:16:47,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,BU215Y0313,Pass,2025-05-28 11:25:04,USYOUWHP6226560
+YPO,Battery Line,Battery Line 2,Packaging,E9952624,Jonatan Arias,BU215Y0315,Pass,2025-05-28 11:34:01,USYOUWHP6226560

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<configuration>
+	<configSections>
+		<sectionGroup name="applicationSettings" type="System.Configuration.ApplicationSettingsGroup, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+			<section name="G2.UploadXmlTestResults.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false"/>
+		</sectionGroup>
+		<section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
+	</configSections>
+  <log4net>
+    <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
+      <file value="UploadXmlTestResults.log"/>
+      <appendToFile value="true"/>
+      <rollingStyle value="Size"/>
+      <maxSizeRollBackups value="5"/>
+      <maximumFileSize value="1MB"/>
+      <staticLogFileName value="true"/>
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%date [%thread] %level %logger - %message%newline"/>
+      </layout>
+    </appender>
+    <root>
+      <level value="ALL"/>
+      <appender-ref ref="RollingLogFileAppender"/>
+    </root>
+  </log4net>
+	<startup>
+	<supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1"/></startup>
+	<applicationSettings>
+		<G2.UploadXmlTestResults.Properties.Settings>
+   <setting name="TDMServiceUrl" serializeAs="String">
+    <value>http://eatontest.g2tek.com/arecibo167service/service.asmx</value>
+   </setting>
+   <setting name="UploadXmlTestResults_ServiceHost_TDMService" serializeAs="String">
+    <value>http://localhost:4763/Service.asmx</value>
+   </setting>
+   <setting name="UploadXmlTestResults_ServiceHost1_G2WebService" serializeAs="String">
+    <value>http://localhost:4763/Service.asmx</value>
+   </setting>
+  </G2.UploadXmlTestResults.Properties.Settings>
+	</applicationSettings>
+  <appSettings>
+
+    <add key ="ApiEndPoint" value="http://USSTCSTDMAPPQ01/TDMClient/api/"/>
+    <!--<add key="ApiEndPoint" value="http://localhost:58836/api/"/>-->
+
+  </appSettings>
+
+  <connectionStrings>
+
+    <add name="TDMConnectionEnterprise" connectionString="Data Source=USSTCSTDMSQLCD1\MSSQLD601; Initial Catalog=TDMEnterpriseTest; Integrated Security=True; MultipleActiveResultSets=True;Connection Timeout=120" providerName="System.Data.SqlClient"/>
+  </connectionStrings>
+</configuration>

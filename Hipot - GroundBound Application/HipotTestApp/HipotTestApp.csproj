@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>HipotTestApp</RootNamespace>
+    <AssemblyName>HipotTestApp</AssemblyName>
+    <Company>Eaton Corporation</Company>
+    <Product>Hipot Ground Bond Test Application</Product>
+    <Copyright>Copyright © Eaton Corporation 2024</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Description>Automated Hipot and Ground Bond test data capture application for Associated Research OMNIA II 8204</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Copy FailCHEK instruction images to output -->
+  <ItemGroup>
+    <Content Include="Omnia FailCheck Instructions\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Copy Interlock Check Instruction images to output -->
+  <ItemGroup>
+    <Content Include="Interlock Check Instructions\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

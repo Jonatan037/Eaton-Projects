@@ -1,0 +1,30 @@
+C:\Users\e9988721>cd C:\Eaton_TDM\PCaT RWO
+
+C:\Eaton_TDM\PCaT RWO>UploadXmlTestResults.exe "jktest_022221.xml"
+
+C:\_WIP\TDM\PCaT_Results_Writing_Only\UploadXmlTestResults.exe "C:\_WIP\TDM\PCaT_Results_Writing_Only\TDM_XML_FILE_DT.xml"
+
+C:\_WIP\TDM\PCaT_Results_Writing_Only\UploadXmlTestResults.exe "C:\_WIP\TDM\PCaT_Results_Writing_Only\Pending\TDM_TransmitTest_Good.xml"    Must run as administrator
+
+C:\_WIP\TDM\PCaT_Results_Writing_Only\UploadXmlTestResults.exe "C:\_WIP\TDM\PCaT_Results_Writing_Only\Pending\BQ224J0999_06012021131549PM_Switch.xml"    Must run as administrator
+
+
+
+Development System:  http://usstcstdmappq01/login  -> User Name:  E0089491 Password:  basic+!,  Use Chrome
+
+
+To create new line:  
+	* Enter LineName and primary Facility  -> Click New Line
+	* Click "New Parent Station",  Enter Parent Staion Name, Enter Type = RWO, Set active
+	* Select parent station and add child station
+
+In Development system - Currently have:
+
+Line			Parent			Child
+BatteryLine		BatteryLine		BatteryLine_Line_1
+BatteryLine		BatteryLine		BatteryLine_Line_2
+BatteryLine		BatteryLine		BatteryLine_Line_3
+ContinuityTester	MBP_Switch		MBM_Switch_Line01
+
+
+PCat instructions:  https://eaton.sharepoint.com/sites/ERG_PCaT/PCaT%20Documents/Forms/AllItems.aspx?RootFolder=%2Fsites%2FERG%5FPCaT%2FPCaT%20Documents%2FPCaT%20and%20TDM%20Deep%20Dive%2FPCaT%20System%20%28Next%20Gen%20TDM%29%2FPCaT%20Manuals%20and%20User%20Guides&FolderCTID=0x012000FCDE881F82AEE34993FC26189FE74B3D

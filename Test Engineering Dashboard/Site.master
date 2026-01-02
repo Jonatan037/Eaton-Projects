@@ -1,0 +1,81 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="TED_SiteMaster" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Content/theme.css") %>" />
+        <script type="text/javascript">
+            (function(){
+                try{
+                    var pref = localStorage.getItem('tedTheme') === 'light' ? 'light' : 'dark';
+                    var docEl = document.documentElement;
+                    var cls = (docEl.getAttribute('class')||'').replace(/\btheme-(light|dark)\b/g,'').trim();
+                    if(cls) docEl.setAttribute('class', cls);
+                    docEl.classList.add('theme-' + pref);
+                    docEl.setAttribute('data-theme', pref);
+                }catch(e){}
+            })();
+        </script>
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+        <style>
+            body { min-height:100vh; }
+            .global-footer { position:fixed; left:0; right:0; bottom:8px; display:flex; justify-content:center; pointer-events:none; }
+            .global-footer .footer-meta { opacity:.85; }
+            @media (max-width:640px){ .global-footer { bottom:4px; } }
+        </style>
+        <script type="text/javascript">
+            (function(){
+                function setVhOffset(){
+                    try{
+                        var header = document.querySelector('body > form > header.topbar');
+                        var spacer = document.querySelector('body > form > .topbar + .content-spacer');
+                        var h = (header ? header.offsetHeight : 0) + (spacer ? spacer.offsetHeight : 0) + 8; // small safety margin
+                        document.documentElement.style.setProperty('--vh-offset', (h||0) + 'px');
+                    }catch(e){}
+                }
+                if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setVhOffset);
+                else setVhOffset();
+                window.addEventListener('resize', function(){
+                    clearTimeout(window.__vhOffTimer);
+                    window.__vhOffTimer = setTimeout(setVhOffset, 100);
+                });
+            })();
+        </script>
+</head>
+<body>
+    <form id="MainForm" runat="server" enctype="multipart/form-data">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
+        <header class="topbar<% if (Request.Url.AbsolutePath.EndsWith("/Account/Login.aspx", StringComparison.OrdinalIgnoreCase) || Request.Url.AbsolutePath.EndsWith("/Account/RequestAccount.aspx", StringComparison.OrdinalIgnoreCase)) { %> topbar-hidden<% } %>" role="banner">
+            <div class="topbar-inner">
+                <div class="topbar-brand">
+                    <div class="logo-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+                    </div>
+                    <div class="brand-stack">
+                        <div class="brand-row">
+                            <span class="eaton-badge">Eaton YPO</span>
+                            <span class="internal-text">INTERNAL</span>
+                            <span class="brand-sub-inline">Test Engineering</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <button type="button" class="theme-toggle theme-toggle--sm" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+                        <span class="toggle-icon" aria-hidden="true">
+                            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="none"><path fill="currentColor" d="M12.9 2.1c.6 0 .9.7.6 1.2A8.8 8.8 0 0 0 12 7.5a8.5 8.5 0 0 0 8.5 8.5c1.6 0 3.2-.4 4.2-.8.6-.2 1.1.4.8 1A11 11 0 1 1 12.9 2.1Z"/></svg>
+                            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="none"><circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1.6" x2="12" y2="4.2" /><line x1="12" y1="19.8" x2="12" y2="22.4" /><line x1="4.2" y1="12" x2="1.6" y2="12" /><line x1="22.4" y1="12" x2="19.8" y2="12" /><line x1="5.8" y1="5.8" x2="4" y2="4" /><line x1="20" y1="20" x2="18.2" y2="18.2" /><line x1="18.2" y1="5.8" x2="20" y2="4" /><line x1="4" y1="20" x2="5.8" y2="18.2" /></g></svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+    </header>
+    <div class="content-spacer"></div>
+    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+    </form>
+        <script src="<%= ResolveUrl("~/Scripts/theme.js") %>?v=20250924-02"></script>
+    <asp:ContentPlaceHolder ID="ScriptContent" runat="server" />
+</body>
+</html>

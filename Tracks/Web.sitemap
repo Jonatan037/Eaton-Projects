@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+    
+  <siteMapNode url="~/Default" title="Home"  description="">
+
+    <!-- Main Menu -->
+    <siteMapNode  url="ShowSiteMap.aspx" title="Menu"  description="Main Menu" roles="*">
+
+        <siteMapNode url="~/Tracks/Reports/Standard_Reports/Search.aspx" title="Search"  description="Search history" />        
+        <siteMapNode siteMapFile="~/Tracks/Reports/Reports.sitemap" />      
+      
+        
+        <!-- Tracks Admin -->
+        <siteMapNode  url="~/Tracks/DataEntry/Admin/Default.aspx" title="Tracks Admin"  description="Perform adiminstrative functions." >
+          <siteMapNode url="~/Tracks/DataEntry/Admin/Edit_PartNumbers.aspx" title="Manage Part Numbers"  description="Manage Part Numbers" />
+          <siteMapNode url="~/Tracks/DataEntry/Admin/Edit_Nonconformance_Codes.aspx" title="Manage NC Codes"  description="Manage NonConformance Codes" />
+          <siteMapNode url="~/Tracks/DataEntry/Admin/Edit_MasterIndex.aspx" title="Edit Master Index Entry"  description="Edit a parameter in the MasterIndex table." />
+          <siteMapNode url="~/Tracks/DataEntry/Admin/Edit_FPY_Goals.aspx" title="Edit FPY Goals"  description="Edit the FPY goals." />
+        </siteMapNode>
+
+
+      <!-- Site Admin -->              
+        <siteMapNode siteMapFile="~/Admin/Admin.sitemap" />     
+      
+    </siteMapNode>
+
+
+    <!-- Issue Reports -->
+    <siteMapNode url="~/Tracks/DataEntry/IssueReports/Create_IssueReports.aspx" title="Issue Report"  description="Create or edit an issue report." />
+
+    <!-- Test Complete Reports -->
+    <siteMapNode url="~/Tracks/DataEntry/TestCompleteReports/Create_TestCompleteReport.aspx" title="Test Complete Report"  description="Create or edit a test complete report." />
+
+  </siteMapNode>
+
+</siteMap>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDM_StationUpload xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <line>BatteryLine</line>
+  <parent>BatteryLine</parent>
+  <workstation>BatteryLine_Line_4</workstation>
+  <machineName>USYOUWHP6137769.eaton.ad.etn.com</machineName>
+  <machineModel>HP ZBook Power G7 Mobile Workstation</machineModel>
+  <machineMfg>HP</machineMfg>
+  <userName>NASA\E0089491</userName>
+  <os>Microsoft Windows 10 Enterprise</os>
+  <osversion>10.0.19045 N/A Build 19045</osversion>
+  <niLicenseStatus>N/A</niLicenseStatus>
+  <serviceUrl>http://usralstdmapip01</serviceUrl>
+  <osreleaseid>2009</osreleaseid>
+  <cpu>2.65</cpu>
+  <memory>16</memory>
+  <webservice>PCaT</webservice>
+  <stationType>RWO 2.0</stationType>
+  <timestamp>2023-11-29T07:37:49.0072593-05:00</timestamp>
+</TDM_StationUpload>

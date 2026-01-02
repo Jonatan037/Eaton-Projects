@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Theme Test - Chart Titles</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1e293b;
+            color: #f1f5f9;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        body.theme-light {
+            background: #ffffff;
+            color: #0f172a;
+        }
+        
+        .chart-title { 
+            font-size:14px; 
+            font-weight:700; 
+            letter-spacing:.2px; 
+            margin:0 0 16px;
+            color: #f1f5f9;  /* Light for dark mode */
+        }
+        html.theme-light .chart-title, 
+        html[data-theme='light'] .chart-title,
+        body.theme-light .chart-title {
+            color: #0f172a !important;  /* Black for light mode */
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        body.theme-light .card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <h1>Theme Test - Chart Titles</h1>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+    
+    <div class="card">
+        <h3 class="chart-title">Equipment Flow: Total Equipment → Equipment Status → Equipment Type → Line</h3>
+        <p>This chart title should change color when switching themes:</p>
+        <ul>
+            <li><strong>Dark mode:</strong> Light text (#f1f5f9)</li>
+            <li><strong>Light mode:</strong> Dark text (#0f172a)</li>
+        </ul>
+    </div>
+    
+    <div class="card">
+        <h3 class="chart-title">Equipment by Line</h3>
+        <p>Breadcrumb navigation should also be readable in both themes.</p>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (body.classList.contains('theme-light')) {
+                // Switch to dark
+                body.classList.remove('theme-light');
+                html.classList.remove('theme-light');
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                // Switch to light
+                body.classList.add('theme-light');
+                html.classList.add('theme-light');
+                html.setAttribute('data-theme', 'light');
+            }
+        }
+        
+        // Start in dark mode (default)
+        document.documentElement.setAttribute('data-theme', 'dark');
+    </script>
+</body>
+</html>

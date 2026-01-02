@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  
+
+  <siteMapNode url="~/Admin/Default" title="Site Admin"  description="">
+    <siteMapNode url="~/Admin/CreateUser" title="Create User"  description="Create a new user" />
+    <siteMapNode url="~/Admin/ManageRoles" title="Create Role"  description="Create a new role" />
+    <siteMapNode url="~/Admin/UsersAndRoles" title="Assign Role To User"  description="Assign a role to a user" />
+  </siteMapNode>
+
+
+
+</siteMap>

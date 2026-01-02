@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Test</title>
+    <script>
+        // JavaScript functions for grid view functionality
+        function initializeRowHighlighting() {
+            try {
+                var table = document.getElementById('testTable');
+                if (!table) {
+                    setTimeout(initializeRowHighlighting, 100);
+                    return;
+                }
+
+                var rows = table.querySelectorAll('tbody tr');
+                rows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        // Remove previous selection
+                        var selectedRows = table.querySelectorAll('tbody tr.row-selected');
+                        selectedRows.forEach(function(selectedRow) {
+                            selectedRow.classList.remove('row-selected');
+                        });
+
+                        // Add selection to clicked row
+                        this.classList.add('row-selected');
+                        console.log('Row selected');
+                    });
+                });
+                console.log('Row highlighting initialized successfully');
+            } catch (e) {
+                console.error('Error initializing row highlighting:', e);
+            }
+        }
+
+        function updateFilterCount() {
+            try {
+                var activeCount = 0;
+                var filterInputs = document.querySelectorAll('.filter-input, .filter-select');
+
+                filterInputs.forEach(function(input) {
+                    if (input.value && input.value !== 'ALL' && input.value !== '') {
+                        activeCount++;
+                        input.classList.add('filter-active');
+                    } else {
+                        input.classList.remove('filter-active');
+                    }
+                });
+
+                var countElement = document.getElementById('activeFilterCount');
+                if (countElement) {
+                    if (activeCount > 0) {
+                        countElement.textContent = activeCount;
+                        countElement.style.display = 'inline-flex';
+                    } else {
+                        countElement.style.display = 'none';
+                    }
+                }
+                console.log('Filter count updated:', activeCount);
+            } catch (e) {
+                console.error('Error updating filter count:', e);
+            }
+        }
+
+        function toggleFilters() {
+            try {
+                var content = document.getElementById('filterContent');
+                var icon = document.getElementById('filterToggleIcon');
+                var text = document.getElementById('filterToggleText');
+
+                if (content && icon && text) {
+                    var isCollapsed = content.classList.contains('collapsed');
+
+                    if (isCollapsed) {
+                        content.classList.remove('collapsed');
+                        icon.classList.remove('collapsed');
+                        text.textContent = 'COLLAPSE';
+                    } else {
+                        content.classList.add('collapsed');
+                        icon.classList.add('collapsed');
+                        text.textContent = 'EXPAND';
+                    }
+                }
+                console.log('Filters toggled');
+            } catch (e) {
+                console.error('Error toggling filters:', e);
+            }
+        }
+
+        function resetAllFilters() {
+            try {
+                var filterInputs = document.querySelectorAll('.filter-input, .filter-select');
+                filterInputs.forEach(function(input) {
+                    if (input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
+                    } else {
+                        input.value = '';
+                    }
+                });
+                updateFilterCount();
+                console.log('Filters reset');
+            } catch (e) {
+                console.error('Error resetting filters:', e);
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log('DOM loaded, initializing...');
+
+                // Add event listener to filter header for toggling
+                var filterHeader = document.querySelector('.filter-header');
+                if (filterHeader) {
+                    filterHeader.addEventListener('click', toggleFilters);
+                    console.log('Filter header event listener added');
+                }
+
+                // Initialize row highlighting
+                initializeRowHighlighting();
+
+                // Update filter count on page load
+                updateFilterCount();
+
+                // Add input event listeners for filter count updates
+                var filterInputs = document.querySelectorAll('.filter-input, .filter-select');
+                filterInputs.forEach(function(input) {
+                    input.addEventListener('input', updateFilterCount);
+                    input.addEventListener('change', updateFilterCount);
+                });
+
+                console.log('Initialization complete');
+            } catch (e) {
+                console.error('Error during DOM initialization:', e);
+            }
+        });
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .filter-active { border: 2px solid yellow; }
+        .row-selected { background: lightblue; }
+        .collapsed { display: none; }
+        .filter-header { cursor: pointer; padding: 10px; background: #f0f0f0; margin-bottom: 10px; }
+        #filterContent { padding: 10px; border: 1px solid #ccc; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Function Test</h1>
+
+    <div class="filter-header">
+        <span>Filters</span>
+        <span id="filterToggleText">COLLAPSE</span>
+    </div>
+    <div id="filterContent">
+        <input type="text" class="filter-input" placeholder="Search..." />
+        <select class="filter-select">
+            <option value="ALL">All</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+        </select>
+        <button onclick="resetAllFilters()">Reset</button>
+    </div>
+
+    <table id="testTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Item 1</td>
+                <td>Active</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Item 2</td>
+                <td>Inactive</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Item 3</td>
+                <td>Active</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Open browser console to see function execution logs.</p>
+</body>
+</html>

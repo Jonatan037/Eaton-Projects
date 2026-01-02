@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TDM_TestResults xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<TestResults>
+  <TestResult>
+    <LineName>BatteryLine</LineName>
+    <ParentWorkStation>BatteryLine</ParentWorkStation>
+    <WorkstationName>BatteryLine_Line_4</WorkstationName>
+    <ShiftName>1</ShiftName>
+    <OperatorName>E0089491</OperatorName>
+    <TestSequenceName>GenericBatteryTest</TestSequenceName>
+    <CatalogNumber>BATTERYTEST</CatalogNumber>
+    <StartTime>2023-11-29T12:14:50.11</StartTime>
+    <EndTime>2023-11-29T12:14:50.37</EndTime>
+    <SerialNumber>BN501Y9999</SerialNumber>
+    <SequenceNumber>1</SequenceNumber>
+    <InstructionName>ATE Details</InstructionName>
+    <Results>PC Name: USYOUWHP6137769
+Script Version: 1.100.1.12
+Meter Details: FLUKE,8846A,5179024,08/02/10-11:53</Results>
+    <UpperTestLimit>0</UpperTestLimit>
+    <LowerTestLimit>0</LowerTestLimit>
+    <UpperControlLimit>0</UpperControlLimit>
+    <LowerControlLimit>0</LowerControlLimit>
+    <TestUnits></TestUnits>
+    <TestComments></TestComments>
+    <Status>Passed</Status>
+  </TestResult>
+  <TestResult>
+    <LineName>BatteryLine</LineName>
+    <ParentWorkStation>BatteryLine</ParentWorkStation>
+    <WorkstationName>BatteryLine_Line_4</WorkstationName>
+    <ShiftName>1</ShiftName>
+    <OperatorName>E0089491</OperatorName>
+    <TestSequenceName>GenericBatteryTest</TestSequenceName>
+    <CatalogNumber>BATTERYTEST</CatalogNumber>
+    <StartTime>2023-11-29T12:14:50.11</StartTime>
+    <EndTime>2023-11-29T12:14:53.79</EndTime>
+    <SerialNumber>BN501Y9999</SerialNumber>
+    <SequenceNumber>2</SequenceNumber>
+    <InstructionName>Verify no duplicate Serial Number</InstructionName>
+    <Results>Reason for retest/re-use of SN: I am debugging the test application.</Results>
+    <UpperTestLimit>0</UpperTestLimit>
+    <LowerTestLimit>0</LowerTestLimit>
+    <UpperControlLimit>0</UpperControlLimit>
+    <LowerControlLimit>0</LowerControlLimit>
+    <TestUnits></TestUnits>
+    <TestComments></TestComments>
+    <Status>Passed</Status>
+  </TestResult>
+  <TestResult>
+    <LineName>BatteryLine</LineName>
+    <ParentWorkStation>BatteryLine</ParentWorkStation>
+    <WorkstationName>BatteryLine_Line_4</WorkstationName>
+    <ShiftName>1</ShiftName>
+    <OperatorName>E0089491</OperatorName>
+    <TestSequenceName>GenericBatteryTest</TestSequenceName>
+    <CatalogNumber>BATTERYTEST</CatalogNumber>
+    <StartTime>2023-11-29T12:14:50.11</StartTime>
+    <EndTime>2023-11-29T12:14:54.96</EndTime>
+    <SerialNumber>BN501Y9999</SerialNumber>
+    <SequenceNumber>3</SequenceNumber>
+    <InstructionName>Verify test harness</InstructionName>
+    <Results>Test Prompt</Results>
+    <UpperTestLimit>0</UpperTestLimit>
+    <LowerTestLimit>0</LowerTestLimit>
+    <UpperControlLimit>0</UpperControlLimit>
+    <LowerControlLimit>0</LowerControlLimit>
+    <TestUnits></TestUnits>
+    <TestComments></TestComments>
+    <Status>Passed</Status>
+  </TestResult>
+  <TestResult>
+    <LineName>BatteryLine</LineName>
+    <ParentWorkStation>BatteryLine</ParentWorkStation>
+    <WorkstationName>BatteryLine_Line_4</WorkstationName>
+    <ShiftName>1</ShiftName>
+    <OperatorName>E0089491</OperatorName>
+    <TestSequenceName>GenericBatteryTest</TestSequenceName>
+    <CatalogNumber>BATTERYTEST</CatalogNumber>
+    <StartTime>2023-11-29T12:14:50.11</StartTime>
+    <EndTime>2023-11-29T12:14:55.33</EndTime>
+    <SerialNumber>BN501Y9999</SerialNumber>
+    <SequenceNumber>4</SequenceNumber>
+    <InstructionName>Battery voltage limit test</InstructionName>
+    <Results>9.55574</Results>
+    <UpperTestLimit>15</UpperTestLimit>
+    <LowerTestLimit>0</LowerTestLimit>
+    <UpperControlLimit>0</UpperControlLimit>
+    <LowerControlLimit>0</LowerControlLimit>
+    <TestUnits>V(DC)</TestUnits>
+    <Parameters>
+      <TestResultParameter>
+        <Parameter_Key />
+        <Parameter_Value>9.556</Parameter_Value>
+        <Parameter_Unit>V(DC)</Parameter_Unit>
+      </TestResultParameter>
+    </Parameters>
+    <TestComments></TestComments>
+    <Status>Passed</Status>
+  </TestResult>
+  <TestResult>
+    <LineName>BatteryLine</LineName>
+    <ParentWorkStation>BatteryLine</ParentWorkStation>
+    <WorkstationName>BatteryLine_Line_4</WorkstationName>
+    <ShiftName>1</ShiftName>
+    <OperatorName>E0089491</OperatorName>
+    <TestSequenceName>GenericBatteryTest</TestSequenceName>
+    <CatalogNumber>BATTERYTEST</CatalogNumber>
+    <StartTime>2023-11-29T12:14:50.11</StartTime>
+    <EndTime>2023-11-29T12:14:55.41</EndTime>
+    <SerialNumber>BN501Y9999</SerialNumber>
+    <SequenceNumber>5</SequenceNumber>
+    <InstructionName>BatteryTest_OverallResult</InstructionName>
+    <Results></Results>
+    <UpperTestLimit>0</UpperTestLimit>
+    <LowerTestLimit>0</LowerTestLimit>
+    <UpperControlLimit>0</UpperControlLimit>
+    <LowerControlLimit>0</LowerControlLimit>
+    <TestUnits></TestUnits>
+    <TestComments></TestComments>
+    <Status>Passed</Status>
+  </TestResult>
+</TestResults>
+</TDM_TestResults>

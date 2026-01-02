@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  
+  <siteMapNode url="~/Tracks/Reports/Default" title="Reports"  description="Reports">
+
+    <!-- Standard Reports -->
+    <siteMapNode url="~/Tracks/Reports/Standard_Reports/ShowIssueSummary.aspx" title="Show Issue Report Summary"  description="" />
+    
+    <siteMapNode url="~/Tracks/Reports/Standard_Reports/FindPartNumber.aspx" title="Find Part Number"  description="" />
+ 
+    <siteMapNode url="~/Tracks/Reports/Standard_Reports/Yields.aspx" title="Yields"  description="" />
+
+     <!-- Device History Reports -->
+    <siteMapNode  url="" title="Device History Reports"  description="" roles="*" >
+      <siteMapNode url="~/Tracks/Reports/DeviceHistory/Device_History" title="Device History"  description="" />
+      <siteMapNode url="~/Tracks/Reports/DeviceHistory/PCaT_Where_Used" title="PCaT_Where_Used"  description="PCaT_Where_Used" />
+      <siteMapNode url="~/Tracks/Reports/DeviceHistory/PCaT_Assembly_History" title="PCaT_Assembly_History"  description="PCaT_Assembly_History" />
+      <siteMapNode url="~/Tracks/Reports/DeviceHistory/PCaT_Instruction_Name" title="PCaT_Instruction_Name_Search"  description="PCaT Search By Instruction Name" />
+    </siteMapNode>   
+   
+    <siteMapNode url="~/Tracks/Reports/Standard_Reports/ShowFailedComponentsByDateRange" title="Show Failed Components By Date Range"  description="Show Failed Components By Date Range" />
+    <siteMapNode url="~/Tracks/Reports/Standard_Reports/ShowMasterIndexEntriesByDateRange" title="Show Master Index Entries By Date Range"  description="Show Master Index Entries By Date Range" />
+    <siteMapNode url="~/Tracks/Reports/Standard_Reports/CONC/CONC.aspx" title="CONC"  description="Show CONC By Date Range" />
+
+
+    <!-- Charts -->
+    <siteMapNode  url="" title="Charts"  description="" roles="*" >
+      <siteMapNode url="~/Tracks/Reports/Charts/IssueCategorySummary.aspx" title="Issue Category Summary"  description="" />
+    </siteMapNode>
+
+    <!-- Troubleshooting -->
+    <siteMapNode  url="" title="Troubleshooting"  description="" roles="*" >
+      <siteMapNode url="~/Tracks/Reports/Troubleshooting/Default.aspx" title="Search Issue Reports"  description="" />
+    </siteMapNode>
+    
+    <!-- Manufacturing Engineering -->
+    <siteMapNode  url="" title="Manufacturing Engineers"  description="" roles="Administrators, ManufacturingEngineers">
+      
+    </siteMapNode>
+
+	  <!-- Quality Engineering -->
+	  <siteMapNode  url="" title="Quality Engineers"  description="" roles="*" >
+		  <siteMapNode url="~/Tracks/Reports/Quality_Engineers/Workmanship_Corrective_Actions.aspx" title="Corrective Action Count"  description="" />
+
+		  <!-- <siteMapNode url="~/Tracks/Reports/Quality_Engineers/Get_Process_Capability_Data.aspx" title="Process Capability Data"  description="" />  -->
+
+		  <siteMapNode  url="~/Tracks/Reports/Quality_Engineers/Admin" title="Admin"  description="">
+			  <siteMapNode url="~/Tracks/Reports/Quality_Engineers/Admin/Edit_Assembly_Station_Names.aspx" title="Manage Assembly Station Names"  description="" />
+			  <siteMapNode url="~/Tracks/Reports/Quality_Engineers/Admin/Edit_Corrective_Action_types.aspx" title="Manage Corrective Action Types"  description="" />
+		  </siteMapNode>
+
+	  </siteMapNode>
+    
+    <!-- Miscellaneous Reports -->
+    <siteMapNode  url="" title="Miscellaneous Reports"  description="" roles="*" >
+      
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_NonConformance_Codes" title="Nonconformance Codes"  description="Show Nonconformance Codes" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_Station_Types" title="Station Types"  description="Show Station Types" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_RootCauseTypes.aspx" title="Root Cause Types"  description="Show Root Cause Types" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_CorrectiveActionTypes" title="Corrective Action Types"  description="Show Corrective Action Types" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_Components_DispositionType.aspx" title="Components - Disposition Types"  description="Show Components Disposition Types" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_Components_ReplacementReasonType.aspx" title="Components - Replacement Types"  description="Show Components Replacement Reason Types" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_LaborHoursTypes.aspx" title="Labor Types"  description="Show Labor Types Reason Types" />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_ComponentsWithoutCost.aspx" title="Components Without Cost"  description="Show components that do not have the cost setup." />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_TopLevelWithoutCost.aspx" title="Top Levels Without Cost"  description="Show top-level part numbers that do not have the cost setup." />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/FPY_Correlation.aspx" title="FPY Correlation"  description="Show issue reports for units that impacted FPY." />
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Show_Test_Complete_Reports.aspx" title="Test Complete Reports"  description="Show test complete reports." />
+      
+      <siteMapNode url="~/Tracks/Reports/Miscellaneous_Reports/Component_Search.aspx" title="Component Search"  description="Show issue reports for specified component part number." />
+
+    </siteMapNode>
+
+ 
+    <!-- Audits -->
+    <siteMapNode  url="" title="Audits"  description="" roles="*" >
+      <siteMapNode url="~/Tracks/Reports/Audits/LabelDatabaseTest.aspx" title="LabelDatabaseTest"  description="" />
+    </siteMapNode>    
+
+
+    <!-- Documentation -->
+    <siteMapNode  url="" title="Documentation"  description="" roles="*" >
+		<siteMapNode url="~/Documentation/Tracks_Training_Slides.pdf" title="Training Slides" description="Show Training Slides" />
+
+    </siteMapNode>
+
+  </siteMapNode>
+  
+  
+</siteMap>

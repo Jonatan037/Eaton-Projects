@@ -1,0 +1,4 @@
+BN501Y9999
+BatteryTest_OverallResult
+Passed
+Passed
