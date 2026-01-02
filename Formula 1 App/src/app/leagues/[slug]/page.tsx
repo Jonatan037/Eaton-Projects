@@ -332,21 +332,39 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   </h3>
                 </div>
                 {nextRace ? (
-                  <div className="space-y-3">
-                    <h4 className="text-2xl font-bold text-white">
-                      {nextRace.name || `Round ${nextRace.roundNumber}`}
-                    </h4>
-                    <div className="flex items-center gap-2 text-gray-400">
-                      <MapPin className="h-4 w-4" />
-                      <span>{nextRace.track.name}</span>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      {formatRaceDateTime(
-                        nextRace.scheduledAt,
-                        league.timezone,
+                  <div className="flex gap-6">
+                    {/* Circuit Layout Image */}
+                    <div className="hidden md:block relative w-32 h-24 bg-white/5 rounded-xl overflow-hidden flex-shrink-0">
+                      {nextRace.track.layoutImageUrl ? (
+                        <Image
+                          src={nextRace.track.layoutImageUrl}
+                          alt={nextRace.track.name}
+                          fill
+                          className="object-contain p-2"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <Route className="w-10 h-10 text-gray-600" />
+                        </div>
                       )}
-                    </p>
-                    <div className="flex gap-2 mt-4">
+                    </div>
+                    <div className="space-y-3 flex-1">
+                      <h4 className="text-2xl font-bold text-white">
+                        {nextRace.name || `Round ${nextRace.roundNumber}`}
+                      </h4>
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <MapPin className="h-4 w-4" />
+                        <span className="text-lg">{getCountryFlag(nextRace.track.countryCode)}</span>
+                        <span>{nextRace.track.city || nextRace.track.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {formatRaceDateTime(
+                          nextRace.scheduledAt,
+                          league.timezone,
+                        )}
+                      </p>
+                      <div className="flex gap-2 mt-4">
                       {nextRace.hasQuali && (
                         <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
                           {tRound("qualifying")}
@@ -360,6 +378,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                       <Badge className="bg-[#2ECC71]/20 text-[#2ECC71] border-[#2ECC71]/30">
                         {tRound("race")}
                       </Badge>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -488,29 +507,20 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                     className="flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors group"
                   >
                     <div className="flex items-center gap-4">
-                      {/* Round Number with Country Flag */}
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex flex-col items-center justify-center rounded-xl font-bold px-3 py-2 min-w-[60px] ${round.status === "COMPLETED" ? "bg-[#2ECC71]/20" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "bg-[#F59E0B]/20" : "bg-white/10"}`}
-                        >
-                          <span className={`text-xs uppercase tracking-wide ${round.status === "COMPLETED" ? "text-[#2ECC71]" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "text-[#F59E0B]" : "text-gray-500"}`}>
-                            Round
-                          </span>
-                          <span className={`text-2xl font-bold ${round.status === "COMPLETED" ? "text-[#2ECC71]" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "text-[#F59E0B]" : "text-gray-300"}`}>
-                            {round.roundNumber}
-                          </span>
-                        </div>
-                        {/* Country Flag */}
-                        <span className="text-3xl">
-                          {getCountryFlag(round.track.countryCode)}
+                      {/* Round Number - Compact R1 format */}
+                      <div
+                        className={`flex items-center justify-center rounded-xl font-bold px-3 py-2 min-w-[50px] ${round.status === "COMPLETED" ? "bg-[#2ECC71]/20" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "bg-[#F59E0B]/20" : "bg-white/10"}`}
+                      >
+                        <span className={`text-xl font-bold ${round.status === "COMPLETED" ? "text-[#2ECC71]" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "text-[#F59E0B]" : "text-gray-300"}`}>
+                          R{round.roundNumber}
                         </span>
                       </div>
 
-                      {/* Track Mini Image */}
+                      {/* Track Layout Image */}
                       <div className="hidden md:block relative w-20 h-14 bg-white/5 rounded-lg overflow-hidden">
-                        {round.track.miniImageUrl ? (
+                        {round.track.layoutImageUrl ? (
                           <Image
-                            src={round.track.miniImageUrl}
+                            src={round.track.layoutImageUrl}
                             alt={round.track.name}
                             fill
                             className="object-contain p-1 group-hover:scale-105 transition-transform"
@@ -523,9 +533,10 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                         )}
                       </div>
 
-                      {/* Track Info */}
+                      {/* Track Info with Flag */}
                       <div>
-                        <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors">
+                        <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors flex items-center gap-2">
+                          <span className="text-lg">{getCountryFlag(round.track.countryCode)}</span>
                           {round.name || round.track.name}
                         </h4>
                         <div className="flex items-center gap-1 text-sm text-gray-500">

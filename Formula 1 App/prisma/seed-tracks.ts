@@ -43,6 +43,7 @@ const F1_TRACKS = [
     lapRecordYear: 2005,
     timezone: "Asia/Bahrain",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Bahrain.jpg`,
+    miniImageUrl: getCircuitImageUrl("Bahrain"),
     layoutImageUrl: getCircuitImageUrl("Bahrain"),
   },
   {
@@ -61,6 +62,7 @@ const F1_TRACKS = [
     lapRecordYear: 2021,
     timezone: "Asia/Riyadh",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Saudi_Arabia.jpg`,
+    miniImageUrl: getCircuitImageUrl("Saudi_Arabia"),
     layoutImageUrl: getCircuitImageUrl("Saudi_Arabia"),
   },
   {
@@ -79,6 +81,7 @@ const F1_TRACKS = [
     lapRecordYear: 2024,
     timezone: "Australia/Melbourne",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Australia.jpg`,
+    miniImageUrl: getCircuitImageUrl("Australia"),
     layoutImageUrl: getCircuitImageUrl("Australia"),
   },
   {
@@ -97,6 +100,7 @@ const F1_TRACKS = [
     lapRecordYear: 2019,
     timezone: "Asia/Tokyo",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Japan.jpg`,
+    miniImageUrl: getCircuitImageUrl("Japan"),
     layoutImageUrl: getCircuitImageUrl("Japan"),
   },
   {
@@ -115,6 +119,7 @@ const F1_TRACKS = [
     lapRecordYear: 2004,
     timezone: "Asia/Shanghai",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/China.jpg`,
+    miniImageUrl: getCircuitImageUrl("China"),
     layoutImageUrl: getCircuitImageUrl("China"),
   },
   {
@@ -133,6 +138,7 @@ const F1_TRACKS = [
     lapRecordYear: 2023,
     timezone: "America/New_York",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Miami.jpg`,
+    miniImageUrl: getCircuitImageUrl("Miami"),
     layoutImageUrl: getCircuitImageUrl("Miami"),
   },
   {
@@ -151,6 +157,7 @@ const F1_TRACKS = [
     lapRecordYear: 2020,
     timezone: "Europe/Rome",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Emilia_Romagna.jpg`,
+    miniImageUrl: getCircuitImageUrl("Emilia_Romagna"),
     layoutImageUrl: getCircuitImageUrl("Emilia_Romagna"),
   },
   {
@@ -169,6 +176,7 @@ const F1_TRACKS = [
     lapRecordYear: 2021,
     timezone: "Europe/Monaco",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Monaco.jpg`,
+    miniImageUrl: getCircuitImageUrl("Monaco"),
     layoutImageUrl: getCircuitImageUrl("Monaco"),
   },
   {
@@ -187,6 +195,7 @@ const F1_TRACKS = [
     lapRecordYear: 2019,
     timezone: "America/Toronto",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Canada.jpg`,
+    miniImageUrl: getCircuitImageUrl("Canada"),
     layoutImageUrl: getCircuitImageUrl("Canada"),
   },
   {
@@ -205,6 +214,7 @@ const F1_TRACKS = [
     lapRecordYear: 2023,
     timezone: "Europe/Madrid",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Spain.jpg`,
+    miniImageUrl: getCircuitImageUrl("Spain"),
     layoutImageUrl: getCircuitImageUrl("Spain"),
   },
   {
@@ -223,6 +233,7 @@ const F1_TRACKS = [
     lapRecordYear: 2020,
     timezone: "Europe/Vienna",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Austria.jpg`,
+    miniImageUrl: getCircuitImageUrl("Austria"),
     layoutImageUrl: getCircuitImageUrl("Austria"),
   },
   {
@@ -241,6 +252,7 @@ const F1_TRACKS = [
     lapRecordYear: 2020,
     timezone: "Europe/London",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Great_Britain.jpg`,
+    miniImageUrl: getCircuitImageUrl("Great_Britain"),
     layoutImageUrl: getCircuitImageUrl("Great_Britain"),
   },
   {
@@ -259,6 +271,7 @@ const F1_TRACKS = [
     lapRecordYear: 2020,
     timezone: "Europe/Budapest",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Hungary.jpg`,
+    miniImageUrl: getCircuitImageUrl("Hungary"),
     layoutImageUrl: getCircuitImageUrl("Hungary"),
   },
   {
@@ -277,6 +290,7 @@ const F1_TRACKS = [
     lapRecordYear: 2018,
     timezone: "Europe/Brussels",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Belgium.jpg`,
+    miniImageUrl: getCircuitImageUrl("Belgium"),
     layoutImageUrl: getCircuitImageUrl("Belgium"),
   },
   {
@@ -295,6 +309,7 @@ const F1_TRACKS = [
     lapRecordYear: 2021,
     timezone: "Europe/Amsterdam",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Netherlands.jpg`,
+    miniImageUrl: getCircuitImageUrl("Netherlands"),
     layoutImageUrl: getCircuitImageUrl("Netherlands"),
   },
   {
@@ -313,6 +328,7 @@ const F1_TRACKS = [
     lapRecordYear: 2004,
     timezone: "Europe/Rome",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Italy.jpg`,
+    miniImageUrl: getCircuitImageUrl("Italy"),
     layoutImageUrl: getCircuitImageUrl("Italy"),
   },
   {
@@ -331,6 +347,7 @@ const F1_TRACKS = [
     lapRecordYear: 2019,
     timezone: "Asia/Baku",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Azerbaijan.jpg`,
+    miniImageUrl: getCircuitImageUrl("Azerbaijan"),
     layoutImageUrl: getCircuitImageUrl("Azerbaijan"),
   },
   {
@@ -349,6 +366,7 @@ const F1_TRACKS = [
     lapRecordYear: 2023,
     timezone: "Asia/Singapore",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Singapore.jpg`,
+    miniImageUrl: getCircuitImageUrl("Singapore"),
     layoutImageUrl: getCircuitImageUrl("Singapore"),
   },
   {
@@ -367,6 +385,7 @@ const F1_TRACKS = [
     lapRecordYear: 2019,
     timezone: "America/Chicago",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/USA.jpg`,
+    miniImageUrl: getCircuitImageUrl("USA"),
     layoutImageUrl: getCircuitImageUrl("USA"),
   },
   {
@@ -385,6 +404,7 @@ const F1_TRACKS = [
     lapRecordYear: 2021,
     timezone: "America/Mexico_City",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Mexico.jpg`,
+    miniImageUrl: getCircuitImageUrl("Mexico"),
     layoutImageUrl: getCircuitImageUrl("Mexico"),
   },
   {
@@ -403,6 +423,7 @@ const F1_TRACKS = [
     lapRecordYear: 2018,
     timezone: "America/Sao_Paulo",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Brazil.jpg`,
+    miniImageUrl: getCircuitImageUrl("Brazil"),
     layoutImageUrl: getCircuitImageUrl("Brazil"),
   },
   {
@@ -421,6 +442,7 @@ const F1_TRACKS = [
     lapRecordYear: 2024,
     timezone: "America/Los_Angeles",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Las_Vegas.jpg`,
+    miniImageUrl: getCircuitImageUrl("Las_Vegas"),
     layoutImageUrl: getCircuitImageUrl("Las_Vegas"),
   },
   {
@@ -439,6 +461,7 @@ const F1_TRACKS = [
     lapRecordYear: 2023,
     timezone: "Asia/Qatar",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Qatar.jpg`,
+    miniImageUrl: getCircuitImageUrl("Qatar"),
     layoutImageUrl: getCircuitImageUrl("Qatar"),
   },
   {
@@ -457,6 +480,7 @@ const F1_TRACKS = [
     lapRecordYear: 2021,
     timezone: "Asia/Dubai",
     imageUrl: `${F1_MEDIA_CDN}/f_auto/q_auto/v1677245035/content/dam/fom-website/2018-redesign-assets/Racehub%20header%20images%2016x9/Abu_Dhabi.jpg`,
+    miniImageUrl: getCircuitImageUrl("Abu_Dhabi"),
     layoutImageUrl: getCircuitImageUrl("Abu_Dhabi"),
   },
 ];
