@@ -1,0 +1,199 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/db';
+import { createClient } from '@/lib/supabase/server';
+import { parseResultsCSV, type CSVResultRow } from '@/lib/csv-parser';
+
+export async function POST(req: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const formData = await req.formData();
+    const file = formData.get('file') as File;
+    const roundId = formData.get('roundId') as string;
+    const session = formData.get('session') as string;
+
+    if (!file || !roundId || !session) {
+      return NextResponse.json(
+        { error: 'Missing required fields: file, roundId, session' },
+        { status: 400 }
+      );
+    }
+
+    // Verify round exists and user has permission
+    const round = await prisma.round.findUnique({
+      where: { id: roundId },
+      include: {
+        league: {
+          include: {
+            memberships: true,
+            scoring: true,
+            teams: {
+              include: {
+                drivers: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!round) {
+      return NextResponse.json({ error: 'Round not found' }, { status: 404 });
+    }
+
+    const membership = round.league.memberships.find(m => m.userId === user.id);
+    const isAdmin = round.league.ownerId === user.id || 
+                    membership?.role === 'ADMIN' || 
+                    membership?.role === 'OWNER';
+
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Parse CSV file
+    const csvText = await file.text();
+    const parseResult = parseResultsCSV(csvText);
+
+    if (!parseResult.success || parseResult.data.length === 0) {
+      return NextResponse.json(
+        { error: 'No valid results found in CSV', details: parseResult.errors },
+        { status: 400 }
+      );
+    }
+    
+    const parsedResults = parseResult.data;
+
+    // Map gamertags/driver names to driver IDs
+    const allDrivers = round.league.teams.flatMap(t => t.drivers);
+    const scoring = round.league.scoring;
+
+    const resultsToCreate: Array<{
+      roundId: string;
+      driverId: string;
+      session: string;
+      position: number;
+      fastestLap: boolean;
+      dnf: boolean;
+      dsq: boolean;
+      gap: string | null;
+      points: number;
+      status: 'CONFIRMED';
+    }> = [];
+
+    const errors: string[] = [];
+
+    for (const parsed of parsedResults) {
+      // Try to find driver by gamertag first, then by name
+      const driver = allDrivers.find(
+        d => d.gamertag.toLowerCase() === parsed.gamertag.toLowerCase() ||
+             d.fullName.toLowerCase() === parsed.driverFullName.toLowerCase() ||
+             d.shortName?.toLowerCase() === parsed.gamertag.toLowerCase()
+      );
+
+      if (!driver) {
+        errors.push(`Driver not found: ${parsed.gamertag}`);
+        continue;
+      }
+
+      const position = parsed.position ?? 0;
+      const isDnf = parsed.status === 'DNF';
+      const isDsq = parsed.status === 'DSQ';
+
+      // Calculate points
+      let points = 0;
+      if (scoring && position > 0 && !isDsq) {
+        if (session === 'RACE') {
+          const racePoints = scoring.racePoints as number[];
+          if (position <= racePoints.length) {
+            points = racePoints[position - 1];
+          }
+          if (parsed.fastestLap && position <= 10) {
+            points += scoring.fastestLap;
+          }
+        } else if (session === 'SPRINT') {
+          const sprintPoints = scoring.sprintPoints as number[];
+          if (position <= sprintPoints.length) {
+            points = sprintPoints[position - 1];
+          }
+        } else if (session === 'QUALIFYING') {
+          if (position === 1 && scoring.poleBonus) {
+            points = scoring.poleBonus;
+          }
+        }
+      }
+
+      resultsToCreate.push({
+        roundId,
+        driverId: driver.id,
+        session,
+        position,
+        fastestLap: parsed.fastestLap,
+        dnf: isDnf,
+        dsq: isDsq,
+        gap: null,
+        points,
+        status: 'CONFIRMED',
+      });
+    }
+
+    if (resultsToCreate.length === 0) {
+      return NextResponse.json(
+        { error: 'No results could be matched to drivers', errors },
+        { status: 400 }
+      );
+    }
+
+    // Delete existing results for this round/session
+    await prisma.result.deleteMany({
+      where: {
+        roundId,
+        session,
+      },
+    });
+
+    // Create new results
+    await prisma.result.createMany({
+      data: resultsToCreate,
+    });
+
+    // Update round status if race results were entered
+    if (session === 'RACE') {
+      await prisma.round.update({
+        where: { id: roundId },
+        data: { status: 'COMPLETED' },
+      });
+    }
+
+    // Log the import
+    await prisma.auditLog.create({
+      data: {
+        leagueId: round.leagueId,
+        userId: user.id,
+        action: 'IMPORTED_RESULTS',
+        details: {
+          roundNumber: round.roundNumber,
+          session,
+          resultCount: resultsToCreate.length,
+          errors,
+        },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      imported: resultsToCreate.length,
+      errors: errors.length > 0 ? errors : undefined,
+    });
+  } catch (error) {
+    console.error('CSV Import error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

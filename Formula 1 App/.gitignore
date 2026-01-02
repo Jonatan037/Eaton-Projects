@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Environment files (never commit secrets!)
+.env
+.env.local
+.env.*.local
+.env.production
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Prisma
+prisma/migrations/*.sql.pending
+
+# Netlify
+.netlify/
+
+# Vercel (in case you switch)
+.vercel/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Cache
+.cache/
+.turbo/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/

@@ -1,0 +1,472 @@
+// Prisma Schema for ApexGrid AI - Formula 1 League Management Platform
+// Database: Supabase PostgreSQL with pgvector extension
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  admin        // Platform administrator
+  league_admin // League owner/manager
+  member       // Regular league participant
+  viewer       // Read-only access
+}
+
+enum LeagueVisibility {
+  PUBLIC  // Discoverable, anyone can view/join
+  PRIVATE // Invite-only, hidden from search
+}
+
+enum LeagueRole {
+  OWNER  // Created the league, full control
+  ADMIN  // Can manage league settings
+  MEMBER // Can participate and view
+  VIEWER // Read-only access
+}
+
+enum RoundStatus {
+  SCHEDULED // Upcoming, not yet run
+  COMPLETED // Finished, results entered
+  ANNULLED  // Cancelled/skipped
+}
+
+enum ResultStatus {
+  FINISHED // Completed the session
+  DNF      // Did Not Finish
+  DNS      // Did Not Start
+  DSQ      // Disqualified
+}
+
+enum SessionType {
+  QUALIFYING
+  SPRINT
+  RACE
+}
+
+enum SubscriptionTier {
+  FREE // 1 league, 20 members
+  PRO  // 10 leagues, 200 members, AI features
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  name            String?
+  avatar          String?
+  gamertag        String?
+  country         String?
+  bio             String?
+  role            Role     @default(member)
+  locale          String   @default("en")
+  emailVerified   Boolean  @default(false)
+  supabaseAuthId  String?  @unique // Link to Supabase Auth
+  
+  // Subscription
+  subscriptionTier   SubscriptionTier @default(FREE)
+  subscriptionEndsAt DateTime?
+  stripeCustomerId   String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLoginAt DateTime?
+  
+  // Relations
+  memberships Membership[]
+  auditLogs   AuditLog[]
+  drivers     Driver[]     // Drivers owned/created by user
+  
+  @@index([email])
+  @@index([supabaseAuthId])
+  @@map("users")
+}
+
+// ============================================
+// LEAGUE MANAGEMENT
+// ============================================
+
+model League {
+  id          String           @id @default(uuid())
+  slug        String           @unique // URL-friendly identifier
+  name        String
+  description String?
+  logo        String?          // URL to logo image
+  visibility  LeagueVisibility @default(PUBLIC)
+  timezone    String           @default("America/Chicago")
+  isActive    Boolean          @default(true)
+  
+  // Scoring configuration (JSON for flexibility)
+  scoringConfig Json @default("{}")
+  
+  // Rules and settings
+  rules       String?          // Markdown content
+  settings    Json   @default("{}")
+  
+  // Discord integration
+  discordWebhookUrl     String?
+  discordNotifyRaces    Boolean @default(false)
+  discordNotifyResults  Boolean @default(false)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  memberships   Membership[]
+  teams         Team[]
+  rounds        Round[]
+  leagueTracks  LeagueTrack[]
+  auditLogs     AuditLog[]
+  embeddings    LeagueEmbedding[]
+  
+  @@index([slug])
+  @@index([visibility])
+  @@map("leagues")
+}
+
+model Membership {
+  id       String     @id @default(uuid())
+  userId   String
+  leagueId String
+  role     LeagueRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+  
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, leagueId])
+  @@index([userId])
+  @@index([leagueId])
+  @@map("memberships")
+}
+
+// ============================================
+// TEAMS & DRIVERS
+// ============================================
+
+model Team {
+  id              String  @id @default(uuid())
+  leagueId        String
+  name            String  // Constructor name
+  shortName       String? // e.g., "RBR", "MCL"
+  logo            String? // URL to logo
+  primaryColor    String? // Hex color
+  secondaryColor  String? // Hex color
+  country         String?
+  isActive        Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  league  League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  drivers Driver[]
+  results Result[]
+  
+  @@unique([leagueId, name])
+  @@index([leagueId])
+  @@map("teams")
+}
+
+model Driver {
+  id        String  @id @default(uuid())
+  teamId    String
+  userId    String? // Link to platform user (optional)
+  
+  // Driver info
+  fullName  String
+  shortName String? // e.g., "VER", "HAM"
+  gamertag  String
+  avatar    String? // URL to avatar
+  country   String?
+  bio       String?
+  number    Int?    // Racing number
+  
+  // Role in team
+  isReserve Boolean @default(false)
+  isActive  Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  team    Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  results Result[]
+  
+  @@index([teamId])
+  @@index([userId])
+  @@index([gamertag])
+  @@map("drivers")
+}
+
+// ============================================
+// TRACKS
+// ============================================
+
+model Track {
+  id           String  @id @default(uuid())
+  name         String  @unique
+  shortName    String? // e.g., "MON", "SPA"
+  country      String
+  city         String?
+  length       Float   // Track length in km
+  defaultLaps  Int     // Default number of laps
+  imageUrl     String? // External URL or upload
+  layoutUrl    String? // Track layout diagram
+  description  String?
+  isActive     Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  leagueTracks LeagueTrack[]
+  rounds       Round[]
+  
+  @@index([name])
+  @@map("tracks")
+}
+
+model LeagueTrack {
+  id        String @id @default(uuid())
+  leagueId  String
+  trackId   String
+  
+  // Custom settings per league
+  customLaps Int?
+  customName String?
+  
+  // Relations
+  league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  track  Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  
+  @@unique([leagueId, trackId])
+  @@index([leagueId])
+  @@map("league_tracks")
+}
+
+// ============================================
+// CALENDAR & ROUNDS
+// ============================================
+
+model Round {
+  id          String      @id @default(uuid())
+  leagueId    String
+  trackId     String
+  
+  // Round info
+  roundNumber Int         // Sequential number in season
+  name        String?     // Custom name (e.g., "Bahrain Grand Prix")
+  scheduledAt DateTime    // Date and time of the round
+  status      RoundStatus @default(SCHEDULED)
+  
+  // Session configuration
+  hasQuali    Boolean @default(true)
+  hasSprint   Boolean @default(false)
+  // Race is always present
+  
+  // Custom laps for this round
+  laps        Int?
+  
+  // Notes
+  notes       String?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+  
+  // Relations
+  league  League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  track   Track    @relation(fields: [trackId], references: [id], onDelete: Restrict)
+  results Result[]
+  
+  @@unique([leagueId, roundNumber])
+  @@index([leagueId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@map("rounds")
+}
+
+// ============================================
+// SCORING
+// ============================================
+
+model Scoring {
+  id       String @id @default(uuid())
+  leagueId String @unique
+  
+  // Points per position (JSON: { "1": 25, "2": 18, ... })
+  racePoints   Json @default("{\"1\":25,\"2\":18,\"3\":15,\"4\":12,\"5\":10,\"6\":8,\"7\":6,\"8\":4,\"9\":2,\"10\":1}")
+  sprintPoints Json @default("{\"1\":8,\"2\":7,\"3\":6,\"4\":5,\"5\":4,\"6\":3,\"7\":2,\"8\":1}")
+  
+  // Bonus points
+  polePositionPoints   Int @default(0)
+  fastestLapPoints     Int @default(1)
+  
+  // Fastest lap eligibility (top N positions)
+  fastestLapEligibleTop Int @default(10)
+  
+  // Penalties
+  dnfPenalty        Int @default(0) // Negative points for DNF
+  attendancePenalty Int @default(0) // Penalty for missing race
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("scoring")
+}
+
+// ============================================
+// RESULTS
+// ============================================
+
+model Result {
+  id          String       @id @default(uuid())
+  roundId     String
+  driverId    String
+  teamId      String       // Snapshot of team at time of result
+  sessionType SessionType
+  
+  // Result data
+  position    Int?         // Finishing position (null for DNF/DNS)
+  status      ResultStatus @default(FINISHED)
+  points      Float        @default(0)
+  
+  // Bonuses
+  fastestLap  Boolean @default(false)
+  pole        Boolean @default(false)
+  
+  // Additional data
+  gridPosition Int?        // Starting position (for race)
+  gapToLeader  String?     // Time gap or laps behind
+  notes        String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  round  Round  @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  @@unique([roundId, driverId, sessionType])
+  @@index([roundId])
+  @@index([driverId])
+  @@index([teamId])
+  @@index([sessionType])
+  @@map("results")
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  leagueId  String?
+  
+  // Action details
+  action    String   // e.g., "CREATE_LEAGUE", "UPDATE_RESULT", "IMPORT_CSV"
+  entityType String? // e.g., "League", "Result", "Round"
+  entityId  String?  // ID of affected entity
+  
+  // Change data
+  oldData   Json?    // Previous state
+  newData   Json?    // New state
+  metadata  Json?    // Additional context
+  
+  // Request info
+  ipAddress String?
+  userAgent String?
+  
+  // Timestamp
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  league League? @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([leagueId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================
+// AI EMBEDDINGS (pgvector)
+// ============================================
+
+model LeagueEmbedding {
+  id        String   @id @default(uuid())
+  leagueId  String
+  
+  // Document metadata
+  documentType String   // e.g., "standings", "schedule", "results", "rules"
+  documentId   String?  // Reference to source document
+  content      String   // Text content
+  
+  // Vector embedding (1536 dimensions for OpenAI ada-002)
+  embedding    Unsupported("vector(1536)")?
+  
+  // Metadata
+  metadata  Json?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  
+  @@index([leagueId])
+  @@index([documentType])
+  @@map("league_embeddings")
+}
+
+// ============================================
+// STANDINGS CACHE (for performance)
+// ============================================
+
+model StandingsSnapshot {
+  id        String   @id @default(uuid())
+  leagueId  String
+  roundId   String?  // After which round (null = current)
+  
+  // Cached standings data
+  driverStandings     Json // Array of driver standings
+  constructorStandings Json // Array of constructor standings
+  
+  // Metadata
+  calculatedAt DateTime @default(now())
+  isLatest     Boolean  @default(true)
+  
+  @@index([leagueId])
+  @@index([roundId])
+  @@index([isLatest])
+  @@map("standings_snapshots")
+}

@@ -1,0 +1,92 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/db';
+import { calculateDriverStandings, calculateConstructorStandings } from '@/lib/standings';
+
+interface RouteParams {
+  params: Promise<{ slug: string }>;
+}
+
+export async function GET(req: NextRequest, { params }: RouteParams) {
+  try {
+    const { slug } = await params;
+
+    const league = await prisma.league.findUnique({
+      where: { slug },
+      include: {
+        teams: {
+          where: { isActive: true },
+          include: {
+            drivers: {
+              where: { isActive: true },
+            },
+          },
+        },
+        rounds: {
+          where: { status: 'COMPLETED' },
+          include: {
+            results: true,
+          },
+        },
+        scoring: true,
+      },
+    });
+
+    if (!league) {
+      return NextResponse.json({ error: 'League not found' }, { status: 404 });
+    }
+
+    // Build results map
+    const resultsMap: Record<string, Array<{ position: number; points: number; session: string }>> = {};
+    
+    for (const round of league.rounds) {
+      for (const result of round.results) {
+        if (!resultsMap[result.driverId]) {
+          resultsMap[result.driverId] = [];
+        }
+        resultsMap[result.driverId].push({
+          position: result.position,
+          points: result.points,
+          session: result.session,
+        });
+      }
+    }
+
+    // Build drivers map
+    const driversMap: Record<string, { fullName: string; teamId: string; teamName: string }> = {};
+    const teamsMap: Record<string, { name: string; driverIds: string[] }> = {};
+    
+    for (const team of league.teams) {
+      teamsMap[team.id] = {
+        name: team.name,
+        driverIds: team.drivers.map(d => d.id),
+      };
+      
+      for (const driver of team.drivers) {
+        driversMap[driver.id] = {
+          fullName: driver.fullName,
+          teamId: team.id,
+          teamName: team.name,
+        };
+      }
+    }
+
+    // Calculate standings
+    const driverStandings = calculateDriverStandings(resultsMap, driversMap);
+    const constructorStandings = calculateConstructorStandings(
+      driverStandings,
+      teamsMap
+    );
+
+    return NextResponse.json({
+      drivers: driverStandings,
+      constructors: constructorStandings,
+      roundsCompleted: league.rounds.length,
+    });
+  } catch (error) {
+    console.error('Standings API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

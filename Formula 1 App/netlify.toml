@@ -1,0 +1,83 @@
+[build]
+  command = "pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js SSR with Netlify (handles App Router, Server Actions, API Routes)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Environment Variables Configuration
+# Set these in Netlify Dashboard > Site Settings > Build & Deploy > Environment
+#
+# === REQUIRED ===
+#   DATABASE_URL              - Supabase PostgreSQL connection (pooler)
+#   DIRECT_URL                - Direct database URL (for migrations)
+#   NEXT_PUBLIC_SUPABASE_URL  - Supabase project URL
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY - Supabase anonymous key
+#   SUPABASE_SERVICE_ROLE_KEY - Supabase service role key (server-side)
+#   NEXT_PUBLIC_APP_URL       - Your app URL (https://your-site.netlify.app)
+#
+# === OPTIONAL (AI Features) ===
+#   OPENAI_API_KEY            - For AI chat and embeddings (gpt-4o-mini, ada-002)
+#
+# === OPTIONAL (Future) ===
+#   STRIPE_SECRET_KEY         - For subscription management
+#   STRIPE_WEBHOOK_SECRET     - For Stripe webhooks
+#   STRIPE_PRICE_ID_PRO       - Pro plan price ID
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirect www to non-www
+[[redirects]]
+  from = "https://www.apexgridai.com/*"
+  to = "https://apexgridai.com/:splat"
+  status = 301
+  force = true
+
+# Legacy redirects
+[[redirects]]
+  from = "/app"
+  to = "/leagues"
+  status = 301
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/leagues"
+  status = 301
+
+# API functions (handled by @netlify/plugin-nextjs)
+[functions]
+  external_node_modules = ["@prisma/client", "prisma"]
+  node_bundler = "esbuild"
+  # Increase timeout for AI operations (max 26s on free, 60s on Pro)
+  # Set in Netlify Dashboard if needed
+
+# Dev settings
+[dev]
+  command = "pnpm dev"
+  port = 3000
+  targetPort = 3000
+  autoLaunch = false

@@ -1,0 +1,796 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   APEXGRID AI - MODERN F1 THEME
+   Inspired by modern AI platforms
+   ======================================== */
+
+@layer base {
+  :root {
+    /* Core Colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 84% 44%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 84% 44%;
+    --radius: 0.75rem;
+
+    /* ApexGrid Brand Colors - Neon Green Theme */
+    --neon-green: #2ECC71;
+    --neon-green-light: #58D68D;
+    --neon-green-dark: #27AE60;
+    --brand-black: #0A0A0A;
+    --brand-dark: #111111;
+    --brand-white: #FFFFFF;
+    --brand-gray: #38383F;
+    --accent-cyan: #00D4FF;
+    --accent-purple: #9333EA;
+    --accent-blue: #3B82F6;
+
+    /* Chart colors */
+    --chart-1: 0 84% 44%;
+    --chart-2: 32 100% 50%;
+    --chart-3: 168 76% 42%;
+    --chart-4: 262 83% 58%;
+    --chart-5: 217 91% 60%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 84% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 0 84% 50%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* ========================================
+     GLASSMORPHISM EFFECTS
+     ======================================== */
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ========================================
+     GRADIENT EFFECTS
+     ======================================== */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #FFFFFF 0%, #2ECC71 50%, #58D68D 100%);
+  }
+
+  .gradient-text-animated {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #2ECC71 0%, #58D68D 50%, #2ECC71 100%);
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(var(--background), var(--background)) padding-box,
+                linear-gradient(135deg, #2ECC71, #58D68D, #2ECC71) border-box;
+    border: 2px solid transparent;
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
+  }
+
+  /* ========================================
+     ANIMATED BACKGROUNDS
+     ======================================== */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  .bg-radial-glow {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(46, 204, 113, 0.25), transparent);
+  }
+
+  .bg-radial-glow-bottom {
+    background: radial-gradient(ellipse 80% 50% at 50% 120%, rgba(46, 204, 113, 0.15), transparent);
+  }
+
+  /* ========================================
+     MODERN CARD STYLES
+     ======================================== */
+  .card-modern {
+    @apply relative overflow-hidden rounded-3xl p-8;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-modern:hover {
+    border-color: rgba(46, 204, 113, 0.4);
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(46, 204, 113, 0.15);
+  }
+
+  .card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  }
+
+  .card-stat {
+    @apply relative overflow-hidden rounded-2xl p-8 text-center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .card-feature {
+    @apply relative overflow-hidden rounded-3xl p-8;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-feature:hover {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-color: rgba(46, 204, 113, 0.5);
+    transform: translateY(-4px);
+  }
+
+  .card-team {
+    @apply relative overflow-hidden rounded-2xl;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .card-team:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+  }
+
+  /* ========================================
+     BUTTON STYLES
+     ======================================== */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center px-8 py-4 font-semibold text-black rounded-xl overflow-hidden transition-all duration-300;
+    background: linear-gradient(135deg, #2ECC71 0%, #58D68D 100%);
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(46, 204, 113, 0.6);
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-primary:hover::before {
+    left: 100%;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-8 py-4 font-semibold rounded-xl transition-all duration-300;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* ========================================
+     ANIMATIONS
+     ======================================== */
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(2deg); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(46, 204, 113, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(46, 204, 113, 0.6); }
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes car-streak {
+    0% { transform: translateX(-100%) scaleX(0.5); opacity: 0; }
+    10% { transform: translateX(-50%) scaleX(1); opacity: 1; }
+    90% { transform: translateX(80vw) scaleX(1); opacity: 1; }
+    100% { transform: translateX(100vw) scaleX(1); opacity: 0; }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+
+  /* Stagger delays */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+
+  /* ========================================
+     HERO ELEMENTS
+     ======================================== */
+  .hero-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium;
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.4);
+    color: #2ECC71;
+  }
+
+  .hero-title {
+    @apply text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight;
+    line-height: 1.05;
+  }
+
+  .hero-subtitle {
+    @apply text-lg md:text-xl lg:text-2xl max-w-3xl leading-relaxed;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* ========================================
+     STATS
+     ======================================== */
+  .stat-number {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold;
+    background: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.7) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    @apply text-sm md:text-base mt-2;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* ========================================
+     NAVIGATION
+     ======================================== */
+  .nav-modern {
+    @apply fixed top-0 left-0 right-0 z-50;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-link {
+    @apply relative px-4 py-2 text-sm font-medium transition-colors duration-300;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .nav-link:hover {
+    color: white;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #2ECC71, #58D68D);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .nav-link:hover::after {
+    width: 80%;
+  }
+
+  /* ========================================
+     SECTIONS
+     ======================================== */
+  .section-dark {
+    @apply relative py-24 md:py-32 overflow-hidden;
+    background: #0A0A0A;
+  }
+
+  .section-heading {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-4;
+  }
+
+  .section-subheading {
+    @apply text-lg md:text-xl text-center max-w-2xl mx-auto mb-16;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* ========================================
+     TEAM/RACING ELEMENTS
+     ======================================== */
+  .team-color-bar {
+    @apply absolute left-0 top-0 bottom-0 w-1;
+  }
+
+  .position-badge {
+    @apply inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm;
+  }
+
+  .position-1 { @apply bg-yellow-500 text-black; }
+  .position-2 { @apply bg-gray-300 text-black; }
+  .position-3 { @apply bg-amber-600 text-white; }
+
+  /* ========================================
+     SCROLLBAR
+     ======================================== */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* ========================================
+     IMAGE EFFECTS
+     ======================================== */
+  .image-glow {
+    filter: drop-shadow(0 0 30px rgba(225, 6, 0, 0.3));
+  }
+
+  .image-hover-zoom {
+    transition: transform 0.5s ease;
+  }
+
+  .image-hover-zoom:hover {
+    transform: scale(1.05);
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 40px rgba(225, 6, 0, 0.5);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ========================================
+   CARBON FIBER & F1 DESIGN ACCENTS
+   Premium racing aesthetic
+   ======================================== */
+
+@layer components {
+  /* Carbon Fiber Pattern - Light */
+  .carbon-fiber {
+    background-color: #1a1a1a;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 2px,
+        rgba(255, 255, 255, 0.03) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 2px,
+        rgba(255, 255, 255, 0.03) 4px
+      );
+    background-size: 4px 4px;
+  }
+
+  /* Carbon Fiber Pattern - Diagonal Weave */
+  .carbon-fiber-weave {
+    background-color: #0f0f0f;
+    background-image: 
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 4px,
+        rgba(255, 255, 255, 0.02) 4px,
+        rgba(255, 255, 255, 0.02) 8px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 4px,
+        rgba(255, 255, 255, 0.02) 4px,
+        rgba(255, 255, 255, 0.02) 8px
+      );
+  }
+
+  /* Carbon Fiber Header/Accent Band */
+  .carbon-accent {
+    position: relative;
+    background: linear-gradient(180deg, rgba(30, 30, 30, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
+  }
+
+  .carbon-accent::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 1px,
+        rgba(255, 255, 255, 0.02) 1px,
+        rgba(255, 255, 255, 0.02) 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 1px,
+        rgba(255, 255, 255, 0.02) 1px,
+        rgba(255, 255, 255, 0.02) 2px
+      );
+    background-size: 2px 2px;
+    pointer-events: none;
+  }
+
+  /* Racing Stripe Accent */
+  .racing-stripe {
+    position: relative;
+  }
+
+  .racing-stripe::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%,
+      var(--neon-green) 10%,
+      var(--neon-green) 90%,
+      transparent 100%
+    );
+  }
+
+  /* Checkered Flag Pattern */
+  .checkered-flag {
+    background-image: 
+      linear-gradient(45deg, #fff 25%, transparent 25%),
+      linear-gradient(-45deg, #fff 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #fff 75%),
+      linear-gradient(-45deg, transparent 75%, #fff 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    background-color: #000;
+  }
+
+  /* Checkered Border */
+  .checkered-border {
+    border-image: repeating-linear-gradient(
+      90deg,
+      #000 0,
+      #000 10px,
+      #fff 10px,
+      #fff 20px
+    ) 10;
+  }
+
+  /* F1 Speed Lines */
+  .speed-lines {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .speed-lines::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    right: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+    animation: speed-line 3s ease-in-out infinite;
+  }
+
+  @keyframes speed-line {
+    0% { transform: translateX(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(200%); opacity: 0; }
+  }
+
+  /* Pit Lane Card Style */
+  .pit-lane-card {
+    @apply relative overflow-hidden rounded-2xl;
+    background: linear-gradient(135deg, 
+      rgba(20, 20, 20, 0.95) 0%, 
+      rgba(10, 10, 10, 0.98) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .pit-lane-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+      var(--neon-green) 0%,
+      var(--accent-cyan) 50%,
+      var(--neon-green) 100%
+    );
+  }
+
+  /* DRS Zone Indicator */
+  .drs-zone {
+    @apply relative px-3 py-1 rounded-full text-xs font-bold uppercase;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    color: var(--accent-cyan);
+  }
+
+  .drs-zone::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--accent-cyan), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* Tire Compound Badges */
+  .tire-soft {
+    @apply px-2 py-1 rounded text-xs font-bold;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+
+  .tire-medium {
+    @apply px-2 py-1 rounded text-xs font-bold;
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    color: black;
+  }
+
+  .tire-hard {
+    @apply px-2 py-1 rounded text-xs font-bold;
+    background: linear-gradient(135deg, #f5f5f5, #d4d4d4);
+    color: black;
+  }
+
+  .tire-inter {
+    @apply px-2 py-1 rounded text-xs font-bold;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+  }
+
+  .tire-wet {
+    @apply px-2 py-1 rounded text-xs font-bold;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+  }
+
+  /* Podium Position Badges */
+  .podium-1 {
+    @apply relative inline-flex items-center justify-center;
+    background: linear-gradient(135deg, #ffd700 0%, #ffb800 50%, #ffd700 100%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  }
+
+  .podium-2 {
+    @apply relative inline-flex items-center justify-center;
+    background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 50%, #c0c0c0 100%);
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
+  }
+
+  .podium-3 {
+    @apply relative inline-flex items-center justify-center;
+    background: linear-gradient(135deg, #cd7f32 0%, #b87333 50%, #cd7f32 100%);
+    box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+  }
+
+  /* Fastest Lap Indicator */
+  .fastest-lap {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold;
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(147, 51, 234, 0.05));
+    border: 1px solid rgba(147, 51, 234, 0.4);
+    color: #a855f7;
+  }
+
+  /* Sector Time Colors */
+  .sector-purple {
+    @apply text-purple-400 font-bold;
+    text-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
+  }
+
+  .sector-green {
+    @apply text-green-400 font-bold;
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  }
+
+  .sector-yellow {
+    @apply text-yellow-400;
+  }
+
+  /* Telemetry Graph Background */
+  .telemetry-bg {
+    background: 
+      linear-gradient(90deg, rgba(46, 204, 113, 0.03) 1px, transparent 1px),
+      linear-gradient(rgba(46, 204, 113, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, #0a0a0a, #111);
+    background-size: 40px 40px, 40px 40px, 100% 100%;
+  }
+
+  /* Race Control Banner */
+  .race-control {
+    @apply py-2 px-4 text-center text-sm font-medium;
+    background: linear-gradient(90deg, 
+      rgba(255, 193, 7, 0.1) 0%, 
+      rgba(255, 193, 7, 0.2) 50%, 
+      rgba(255, 193, 7, 0.1) 100%
+    );
+    border-top: 2px solid #ffc107;
+    border-bottom: 2px solid #ffc107;
+    color: #ffc107;
+  }
+
+  .race-control.red-flag {
+    background: linear-gradient(90deg, 
+      rgba(239, 68, 68, 0.1) 0%, 
+      rgba(239, 68, 68, 0.2) 50%, 
+      rgba(239, 68, 68, 0.1) 100%
+    );
+    border-color: #ef4444;
+    color: #ef4444;
+  }
+
+  .race-control.safety-car {
+    background: linear-gradient(90deg, 
+      rgba(249, 115, 22, 0.1) 0%, 
+      rgba(249, 115, 22, 0.2) 50%, 
+      rgba(249, 115, 22, 0.1) 100%
+    );
+    border-color: #f97316;
+    color: #f97316;
+  }
+
+  /* Countdown Timer Style */
+  .countdown-digit {
+    @apply inline-flex items-center justify-center;
+    min-width: 3rem;
+    background: linear-gradient(180deg, rgba(30, 30, 30, 1) 0%, rgba(20, 20, 20, 1) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Starting Grid Lines */
+  .grid-slot {
+    @apply relative;
+    background: 
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.05) 10px,
+        rgba(255, 255, 255, 0.05) 11px
+      );
+  }
+
+  .grid-slot::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: white;
+  }
+}

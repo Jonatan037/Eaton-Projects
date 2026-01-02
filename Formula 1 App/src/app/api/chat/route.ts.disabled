@@ -1,0 +1,164 @@
+import { createOpenAI } from '@ai-sdk/openai';
+import { streamText, convertToModelMessages } from 'ai';
+import { NextRequest } from 'next/server';
+import prisma from '@/lib/db';
+import { createClient } from '@/lib/supabase/server';
+import { AIChatRequestSchema } from '@/schemas';
+
+export const runtime = 'edge';
+
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export async function POST(req: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    const body = await req.json();
+    const { messages, leagueId } = AIChatRequestSchema.parse(body);
+
+    // Fetch league context
+    const league = await prisma.league.findUnique({
+      where: { id: leagueId },
+      include: {
+        teams: {
+          where: { isActive: true },
+          include: {
+            drivers: {
+              where: { isActive: true },
+            },
+          },
+        },
+        rounds: {
+          orderBy: { roundNumber: 'asc' },
+          include: {
+            track: true,
+            results: {
+              include: {
+                driver: true,
+              },
+            },
+          },
+        },
+        memberships: {
+          include: {
+            user: {
+              select: { name: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!league) {
+      return new Response('League not found', { status: 404 });
+    }
+
+    // Fetch scoring configuration separately
+    const scoring = await prisma.scoring.findUnique({
+      where: { leagueId },
+    });
+
+    // Check if user is a member
+    const isMember = league.memberships.some(m => m.userId === user.id);
+    if (!isMember) {
+      return new Response('Not a member of this league', { status: 403 });
+    }
+
+    // Build context about the league
+    const completedRounds = league.rounds.filter(r => r.status === 'COMPLETED');
+    const upcomingRounds = league.rounds.filter(r => r.status === 'SCHEDULED');
+    
+    // Calculate driver standings
+    const driverPoints: Record<string, { name: string; team: string; points: number; wins: number }> = {};
+    
+    for (const round of completedRounds) {
+      for (const result of round.results) {
+        if (!driverPoints[result.driverId]) {
+          const driver = league.teams.flatMap(t => t.drivers).find(d => d.id === result.driverId);
+          const team = league.teams.find(t => t.drivers.some(d => d.id === result.driverId));
+          driverPoints[result.driverId] = {
+            name: driver?.fullName || 'Unknown',
+            team: team?.name || 'Unknown',
+            points: 0,
+            wins: 0,
+          };
+        }
+        driverPoints[result.driverId].points += result.points;
+        if (result.sessionType === 'RACE' && result.position === 1) {
+          driverPoints[result.driverId].wins++;
+        }
+      }
+    }
+
+    const standings = Object.values(driverPoints).sort((a, b) => b.points - a.points);
+
+    // Calculate team standings
+    const teamPoints: Record<string, { name: string; points: number }> = {};
+    for (const team of league.teams) {
+      teamPoints[team.id] = { name: team.name, points: 0 };
+      for (const driver of team.drivers) {
+        teamPoints[team.id].points += driverPoints[driver.id]?.points || 0;
+      }
+    }
+    const teamStandings = Object.values(teamPoints).sort((a, b) => b.points - a.points);
+
+    const systemPrompt = `You are an AI assistant for the F1 league "${league.name}". You have access to the following information:
+
+## League Overview
+- Name: ${league.name}
+- Description: ${league.description || 'No description'}
+- Timezone: ${league.timezone}
+- Total Teams: ${league.teams.length}
+- Total Drivers: ${league.teams.reduce((acc, t) => acc + t.drivers.length, 0)}
+- Completed Rounds: ${completedRounds.length}/${league.rounds.length}
+
+## Current Driver Standings
+${standings.slice(0, 10).map((d, i) => `${i + 1}. ${d.name} (${d.team}) - ${d.points} pts, ${d.wins} wins`).join('\n')}
+
+## Current Constructor Standings
+${teamStandings.slice(0, 5).map((t, i) => `${i + 1}. ${t.name} - ${t.points} pts`).join('\n')}
+
+## Teams and Drivers
+${league.teams.map(t => `${t.name}: ${t.drivers.map(d => d.fullName).join(', ')}`).join('\n')}
+
+## Calendar
+${league.rounds.map(r => `Round ${r.roundNumber}: ${r.name || r.track.name} (${r.track.country}) - ${r.status}`).join('\n')}
+
+## Scoring System
+${scoring ? `
+- Race Points: ${JSON.stringify(scoring.racePoints)}
+- Sprint Points: ${JSON.stringify(scoring.sprintPoints)}
+- Fastest Lap Bonus: ${scoring.fastestLapPoints} pt (if top ${scoring.fastestLapEligibleTop})
+- Pole Position Bonus: ${scoring.polePositionPoints} pt
+` : 'Default F1 scoring'}
+
+## Recent Results
+${completedRounds.slice(-3).map(r => {
+  const raceResults = r.results.filter(res => res.sessionType === 'RACE').sort((a, b) => (a.position || 0) - (b.position || 0));
+  const podium = raceResults.slice(0, 3);
+  return `Round ${r.roundNumber} (${r.track.name}):
+  ${podium.map(res => `P${res.position}: ${res.driver.fullName}`).join(', ')}`;
+}).join('\n')}
+
+Answer questions about the league, standings, statistics, predictions, and rules. Be helpful, concise, and use the data provided. If asked about predictions, use the current standings and recent form to make informed suggestions.`;
+
+    const result = await streamText({
+      model: openai('gpt-4o-mini'),
+      system: systemPrompt,
+      messages: await convertToModelMessages(messages),
+      maxTokens: 1024,
+    });
+
+    return result.toDataStreamResponse();
+  } catch (error) {
+    console.error('AI Chat error:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
+}
