@@ -52,7 +52,8 @@ export function LoginForm() {
         return;
       }
 
-      router.push('/');
+      // Redirect to leagues after successful login
+      router.push('/leagues');
       router.refresh();
     } catch {
       setError(t('signInError'));
