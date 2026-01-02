@@ -97,30 +97,29 @@ export default function HomePage() {
     <div className="min-h-screen bg-brand-black text-white overflow-hidden">
       {/* Navigation */}
       <nav className="nav-modern">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <Image 
               src="/images/logo.png" 
               alt="ApexGrid AI" 
-              width={280} 
-              height={70}
-              className="h-14 md:h-16 w-auto"
+              width={320} 
+              height={80}
+              className="h-16 md:h-20 w-auto"
               priority
             />
           </Link>
           
           <div className="hidden md:flex items-center gap-8">
-            <Link href="/features" className="nav-link">Features</Link>
-            <Link href="/leagues" className="nav-link">Leagues</Link>
-            <Link href="/pricing" className="nav-link">Pricing</Link>
-            <Link href="/about" className="nav-link">About</Link>
+            <Link href="#features" className="nav-link">Features</Link>
+            <Link href="#pricing" className="nav-link">Pricing</Link>
+            <Link href="#about" className="nav-link">About</Link>
           </div>
           
           <div className="flex items-center gap-4">
-            <Link href="/login" className="btn-secondary !px-6 !py-2.5 text-sm">
+            <Link href="/auth/signin" className="btn-secondary !px-6 !py-2.5 text-sm">
               Sign In
             </Link>
-            <Link href="/register" className="btn-primary !px-6 !py-2.5 text-sm hidden sm:inline-flex">
+            <Link href="/auth/signup" className="btn-primary !px-6 !py-2.5 text-sm hidden sm:inline-flex">
               Get Started
             </Link>
           </div>

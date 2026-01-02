@@ -52,8 +52,8 @@ export function LoginForm() {
         return;
       }
 
-      // Redirect to leagues after successful login
-      router.push('/leagues');
+      // Redirect to dashboard after successful login
+      router.push('/dashboard');
       router.refresh();
     } catch {
       setError(t('signInError'));

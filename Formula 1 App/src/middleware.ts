@@ -2,8 +2,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 // Routes that require authentication
-const protectedRoutes = ['/leagues', '/profile', '/settings'];
-// Routes that should redirect to /leagues if already authenticated
+const protectedRoutes = ['/dashboard', '/leagues', '/profile', '/settings', '/calendar', '/analytics', '/ai-chat', '/drivers', '/teams', '/results', '/billing', '/help'];
+// Routes that should redirect to /dashboard if already authenticated
 const authRoutes = ['/auth/signin', '/auth/signup'];
 
 export async function middleware(request: NextRequest) {
@@ -77,7 +77,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL('/leagues', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return response;

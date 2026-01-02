@@ -1,28 +1,60 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Plus, Search, Users, Trophy, Globe, Lock, Calendar, Sparkles, ArrowRight, Flag } from 'lucide-react';
+import { Plus, Search, Users, Trophy, Globe, Lock, Calendar, Sparkles, ArrowRight, Flag, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { createClient } from '@/lib/supabase/server';
 import prisma from '@/lib/db';
 
 export const metadata: Metadata = {
-  title: 'Leagues',
-  description: 'Browse and join F1 racing leagues',
+  title: 'My Leagues | ApexGrid AI',
+  description: 'Manage your F1 racing leagues',
 };
 
 export default async function LeaguesPage() {
   const t = await getTranslations('league');
-  const tHome = await getTranslations('home');
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // Fetch public leagues
-  const leagues = await prisma.league.findMany({
+  if (!user) {
+    redirect('/auth/signin');
+  }
+
+  // Fetch user's leagues
+  const memberships = await prisma.membership.findMany({
+    where: { userId: user.id },
+    include: {
+      league: {
+        include: {
+          _count: {
+            select: { memberships: true, rounds: true, teams: true },
+          },
+          rounds: {
+            where: { status: 'COMPLETED' },
+            select: { id: true },
+          },
+        },
+      },
+    },
+  });
+
+  const myLeagues = memberships.map((m: typeof memberships[0]) => ({
+    ...m.league,
+    role: m.role,
+  }));
+
+  // Fetch public leagues for discovery
+  const publicLeagues = await prisma.league.findMany({
     where: {
       visibility: 'PUBLIC',
       isActive: true,
+      NOT: {
+        id: { in: myLeagues.map((l: { id: string }) => l.id) },
+      },
     },
     include: {
       _count: {
@@ -30,223 +62,187 @@ export default async function LeaguesPage() {
       },
     },
     orderBy: { createdAt: 'desc' },
-    take: 20,
+    take: 6,
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-black">
-      <Header />
-      
-      <main className="flex-1">
-        {/* Hero Section with Carbon Fiber Background */}
-        <section className="relative py-16 overflow-hidden">
-          {/* Background Effects */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#2ECC71]/10 via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-grid-pattern opacity-30" />
-          
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {/* AI Badge */}
-            <div className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#2ECC71]/10 border border-[#2ECC71]/30">
-                <Sparkles className="h-4 w-4 text-[#2ECC71]" />
-                <span className="text-sm font-medium text-[#2ECC71]">AI-Powered Racing Leagues</span>
-              </div>
-            </div>
-            
-            {/* Title */}
-            <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4">
-                Your Racing
-                <span className="block text-[#2ECC71]">Community</span>
-              </h1>
-              <p className="text-lg text-gray-400 mb-8">
-                Join competitive F1 leagues, track standings in real-time, and leverage AI insights to dominate the championship.
-              </p>
-            </div>
-
-            {/* Search Bar - Modern Style */}
-            <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
-                <Input
-                  placeholder="Search for leagues..."
-                  className="w-full h-14 pl-12 pr-4 bg-white/5 border-white/10 text-white placeholder:text-gray-500 rounded-2xl text-lg focus:border-[#2ECC71]/50 focus:ring-[#2ECC71]/20"
-                />
-              </div>
-            </div>
-
-            {/* Stats Bar */}
-            <div className="flex justify-center gap-8 mt-12">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white">{leagues.length}</div>
-                <div className="text-sm text-gray-500">Active Leagues</div>
-              </div>
-              <div className="w-px bg-white/10" />
-              <div className="text-center">
-                <div className="text-3xl font-bold text-[#2ECC71]">
-                  {leagues.reduce((acc, l) => acc + l._count.memberships, 0)}
-                </div>
-                <div className="text-sm text-gray-500">Total Racers</div>
-              </div>
-              <div className="w-px bg-white/10" />
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white">
-                  {leagues.reduce((acc, l) => acc + l._count.rounds, 0)}
-                </div>
-                <div className="text-sm text-gray-500">Scheduled Rounds</div>
-              </div>
-            </div>
+    <DashboardLayout user={{ email: user.email || '' }}>
+      <div className="space-y-8">
+        {/* Page Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">My Leagues</h1>
+            <p className="text-gray-400 mt-1">
+              Manage your championships and track your progress
+            </p>
           </div>
-        </section>
+          <Button 
+            asChild
+            className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20"
+          >
+            <Link href="/leagues/create">
+              <Plus className="mr-2 h-4 w-4" />
+              {t('create')}
+            </Link>
+          </Button>
+        </div>
 
-        {/* Leagues Grid Section */}
-        <section className="py-12">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-2xl font-bold text-white">{tHome('publicLeagues')}</h2>
-                <p className="text-gray-500 mt-1">Discover and join competitive racing leagues</p>
+        {/* Search & Filter Bar */}
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Input
+              placeholder="Search leagues..."
+              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#2ECC71]/50"
+            />
+          </div>
+          <Button variant="outline" className="border-white/10 text-gray-400 hover:text-white hover:bg-white/5">
+            <Filter className="mr-2 h-4 w-4" />
+            Filter
+          </Button>
+        </div>
+
+        {/* My Leagues Grid */}
+        {myLeagues.length === 0 ? (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 p-12 text-center">
+            <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+            <div className="relative z-10">
+              <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#2ECC71]/20 to-[#2ECC71]/5 flex items-center justify-center">
+                <Trophy className="h-10 w-10 text-[#2ECC71]" />
               </div>
+              <h3 className="text-xl font-semibold text-white mb-2">No leagues yet</h3>
+              <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                Create your first league or join an existing one to start competing!
+              </p>
               <Button 
                 asChild 
-                className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20"
+                className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold"
               >
                 <Link href="/leagues/create">
                   <Plus className="mr-2 h-4 w-4" />
-                  {t('create')}
+                  Create Your First League
                 </Link>
               </Button>
             </div>
-
-            {/* Leagues Grid */}
-            {leagues.length === 0 ? (
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 p-12 text-center">
-                <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-                <div className="relative z-10">
-                  <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#2ECC71]/20 to-[#2ECC71]/5 flex items-center justify-center">
-                    <Trophy className="h-10 w-10 text-[#2ECC71]" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">No leagues yet</h3>
-                  <p className="text-gray-400 mb-6 max-w-md mx-auto">
-                    Be the pioneer! Create the first league and start building your racing community.
-                  </p>
-                  <Button 
-                    asChild 
-                    className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold"
-                  >
-                    <Link href="/leagues/create">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Create First League
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {leagues.map((league) => (
-                  <Link 
-                    key={league.id}
-                    href={`/leagues/${league.slug}`}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 transition-all duration-300 hover:border-[#2ECC71]/50 hover:shadow-lg hover:shadow-[#2ECC71]/10 hover:-translate-y-1"
-                  >
-                    {/* Top Accent Bar */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2ECC71] via-[#58D68D] to-[#2ECC71] opacity-0 group-hover:opacity-100 transition-opacity" />
-                    
-                    {/* Card Content */}
-                    <div className="p-6">
-                      {/* Header */}
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#2ECC71]/20 to-[#2ECC71]/5 flex items-center justify-center border border-[#2ECC71]/20">
-                            <Flag className="h-6 w-6 text-[#2ECC71]" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors line-clamp-1">
-                              {league.name}
-                            </h3>
-                            <Badge 
-                              variant="outline" 
-                              className={`mt-1 text-xs ${
-                                league.visibility === 'PUBLIC' 
-                                  ? 'border-[#2ECC71]/30 text-[#2ECC71] bg-[#2ECC71]/10' 
-                                  : 'border-gray-600 text-gray-400'
-                              }`}
-                            >
-                              {league.visibility === 'PUBLIC' ? (
-                                <><Globe className="mr-1 h-3 w-3" /> Public</>
-                              ) : (
-                                <><Lock className="mr-1 h-3 w-3" /> Private</>
-                              )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {myLeagues.map((league) => {
+              const completedRounds = league.rounds.length;
+              const totalRounds = league._count.rounds;
+              const progress = totalRounds > 0 ? (completedRounds / totalRounds) * 100 : 0;
+              
+              return (
+                <Link 
+                  key={league.id}
+                  href={`/leagues/${league.slug}`}
+                  className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 transition-all duration-300 hover:border-[#2ECC71]/50 hover:shadow-lg hover:shadow-[#2ECC71]/10"
+                >
+                  {/* Top Accent Bar */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2ECC71] to-[#27AE60]" />
+                  
+                  <div className="p-5">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-[#2ECC71]/20 to-[#2ECC71]/5 flex items-center justify-center border border-[#2ECC71]/20">
+                          <Flag className="h-5 w-5 text-[#2ECC71]" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors line-clamp-1">
+                            {league.name}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Badge className="text-xs bg-[#2ECC71]/10 text-[#2ECC71] border-[#2ECC71]/30">
+                              {league.role}
                             </Badge>
                           </div>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Description */}
-                      <p className="text-sm text-gray-400 line-clamp-2 mb-4 min-h-[40px]">
-                        {league.description || 'Join this league and compete for championship glory!'}
-                      </p>
-
-                      {/* Stats */}
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <Users className="h-4 w-4 text-gray-500" />
-                          <span className="text-gray-400">{league._count.memberships}</span>
-                          <span className="text-gray-600">members</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <Calendar className="h-4 w-4 text-gray-500" />
-                          <span className="text-gray-400">{league._count.rounds}</span>
-                          <span className="text-gray-600">rounds</span>
-                        </div>
+                    {/* Stats */}
+                    <div className="flex items-center gap-4 mb-4 text-sm">
+                      <div className="flex items-center gap-1.5">
+                        <Users className="h-4 w-4 text-gray-500" />
+                        <span className="text-gray-400">{league._count.memberships}</span>
                       </div>
-
-                      {/* Footer */}
-                      <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                        <span className="text-xs text-gray-500">
-                          Created {new Date(league.createdAt).toLocaleDateString()}
-                        </span>
-                        <div className="flex items-center gap-1 text-sm text-[#2ECC71] opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span>View League</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </div>
+                      <div className="flex items-center gap-1.5">
+                        <Trophy className="h-4 w-4 text-gray-500" />
+                        <span className="text-gray-400">{league._count.teams} teams</span>
                       </div>
                     </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
 
-        {/* CTA Section */}
-        <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#2ECC71]/10 to-[#27AE60]/10 border border-[#2ECC71]/20 p-8 md:p-12">
-              <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Ready to start your own league?</h3>
-                  <p className="text-gray-400">Create a league, invite friends, and compete for championship glory.</p>
-                </div>
-                <Button 
-                  asChild 
-                  size="lg"
-                  className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20 whitespace-nowrap"
-                >
-                  <Link href="/leagues/create">
-                    <Plus className="mr-2 h-5 w-5" />
-                    Create League
-                  </Link>
-                </Button>
+                    {/* Progress Bar */}
+                    <div>
+                      <div className="flex justify-between text-xs mb-1.5">
+                        <span className="text-gray-500">Season Progress</span>
+                        <span className="text-gray-400">{completedRounds}/{totalRounds}</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                        <div 
+                          className="h-full rounded-full bg-gradient-to-r from-[#2ECC71] to-[#27AE60]"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Discover Leagues Section */}
+        {publicLeagues.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-white">Discover Leagues</h2>
+                <p className="text-sm text-gray-500">Join public leagues and compete with others</p>
               </div>
+              <Button variant="ghost" className="text-gray-400 hover:text-white">
+                View All
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {publicLeagues.map((league) => (
+                <Link 
+                  key={league.id}
+                  href={`/leagues/${league.slug}`}
+                  className="group relative overflow-hidden rounded-xl bg-white/[0.03] border border-white/10 p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center">
+                      <Globe className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-white group-hover:text-[#2ECC71] transition-colors truncate">
+                        {league.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 truncate">
+                        {league.description || 'Public league'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      {league._count.memberships}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {league._count.rounds} rounds
+                    </span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+        )}
+      </div>
+    </DashboardLayout>
   );
 }
