@@ -25,18 +25,17 @@ import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/db";
 import { formatRaceDateTime } from "@/lib/date-utils";
 
-// Country code to flag emoji mapping
-const countryFlags: Record<string, string> = {
-  BH: "🇧🇭", SA: "🇸🇦", AU: "🇦🇺", JP: "🇯🇵", CN: "🇨🇳",
-  US: "🇺🇸", IT: "🇮🇹", MC: "🇲🇨", CA: "🇨🇦", ES: "🇪🇸",
-  AT: "🇦🇹", GB: "🇬🇧", HU: "🇭🇺", BE: "🇧🇪", NL: "🇳🇱",
-  AZ: "🇦🇿", SG: "🇸🇬", MX: "🇲🇽", BR: "🇧🇷", QA: "🇶🇦",
-  AE: "🇦🇪",
-};
+// Get flag image URL from FlagCDN
+function getFlagUrl(countryCode: string | null, size: number = 24): string {
+  if (!countryCode) return "";
+  return `https://flagcdn.com/w${size}/${countryCode.toLowerCase()}.png`;
+}
 
-function getCountryFlag(countryCode: string | null): string {
-  if (!countryCode) return "🏁";
-  return countryFlags[countryCode] || "🏁";
+// Get track mini image (white outline) - local or F1 CDN fallback
+function getTrackMiniUrl(countryCode: string | null, layoutImageUrl: string | null): string | null {
+  if (!countryCode) return layoutImageUrl;
+  // Try local first, F1 CDN as fallback
+  return `/images/tracks/mini/${countryCode.toLowerCase()}.png`;
 }
 
 interface LeaguePageProps {
@@ -333,15 +332,22 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                 </div>
                 {nextRace ? (
                   <div className="flex gap-6">
-                    {/* Circuit Layout Image */}
+                    {/* Circuit Layout Image - White outline */}
                     <div className="hidden md:block relative w-32 h-24 bg-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      {nextRace.track.layoutImageUrl ? (
+                      {nextRace.track.countryCode ? (
                         <Image
-                          src={nextRace.track.layoutImageUrl}
+                          src={getTrackMiniUrl(nextRace.track.countryCode, nextRace.track.layoutImageUrl) || ""}
                           alt={nextRace.track.name}
                           fill
-                          className="object-contain p-2"
+                          className="object-contain p-2 invert"
                           unoptimized
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (nextRace.track.layoutImageUrl && !target.src.includes('formula1.com')) {
+                              target.src = nextRace.track.layoutImageUrl;
+                              target.classList.remove('invert');
+                            }
+                          }}
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
@@ -355,7 +361,16 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                       </h4>
                       <div className="flex items-center gap-2 text-gray-400">
                         <MapPin className="h-4 w-4" />
-                        <span className="text-lg">{getCountryFlag(nextRace.track.countryCode)}</span>
+                        {nextRace.track.countryCode && (
+                          <Image
+                            src={getFlagUrl(nextRace.track.countryCode, 20)}
+                            alt={nextRace.track.country}
+                            width={20}
+                            height={14}
+                            className="rounded-sm"
+                            unoptimized
+                          />
+                        )}
                         <span>{nextRace.track.city || nextRace.track.name}</span>
                       </div>
                       <p className="text-sm text-gray-500">
@@ -516,15 +531,23 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                         </span>
                       </div>
 
-                      {/* Track Layout Image */}
+                      {/* Track Mini Image - White outline */}
                       <div className="hidden md:block relative w-20 h-14 bg-white/5 rounded-lg overflow-hidden">
-                        {round.track.layoutImageUrl ? (
+                        {round.track.countryCode ? (
                           <Image
-                            src={round.track.layoutImageUrl}
+                            src={getTrackMiniUrl(round.track.countryCode, round.track.layoutImageUrl) || ""}
                             alt={round.track.name}
                             fill
-                            className="object-contain p-1 group-hover:scale-105 transition-transform"
+                            className="object-contain p-1 group-hover:scale-105 transition-transform invert"
                             unoptimized
+                            onError={(e) => {
+                              // Fallback to F1 CDN if local not found
+                              const target = e.target as HTMLImageElement;
+                              if (round.track.layoutImageUrl && !target.src.includes('formula1.com')) {
+                                target.src = round.track.layoutImageUrl;
+                                target.classList.remove('invert');
+                              }
+                            }}
                           />
                         ) : (
                           <div className="flex items-center justify-center h-full">
@@ -536,7 +559,16 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                       {/* Track Info with Flag */}
                       <div>
                         <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors flex items-center gap-2">
-                          <span className="text-lg">{getCountryFlag(round.track.countryCode)}</span>
+                          {round.track.countryCode && (
+                            <Image
+                              src={getFlagUrl(round.track.countryCode, 24)}
+                              alt={round.track.country}
+                              width={24}
+                              height={16}
+                              className="rounded-sm"
+                              unoptimized
+                            />
+                          )}
                           {round.name || round.track.name}
                         </h4>
                         <div className="flex items-center gap-1 text-sm text-gray-500">
