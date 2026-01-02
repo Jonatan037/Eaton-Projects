@@ -340,15 +340,8 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                           src={getTrackMiniUrl(nextRace.track.shortName, nextRace.track.layoutImageUrl) || ""}
                           alt={nextRace.track.name}
                           fill
-                          className="object-contain p-2 invert"
+                          className="object-contain p-2"
                           unoptimized
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            if (nextRace.track.layoutImageUrl && !target.src.includes('formula1.com')) {
-                              target.src = nextRace.track.layoutImageUrl;
-                              target.classList.remove('invert');
-                            }
-                          }}
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
@@ -539,16 +532,8 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                             src={getTrackMiniUrl(round.track.shortName, round.track.layoutImageUrl) || ""}
                             alt={round.track.name}
                             fill
-                            className="object-contain p-1 group-hover:scale-105 transition-transform invert"
+                            className="object-contain p-1 group-hover:scale-105 transition-transform"
                             unoptimized
-                            onError={(e) => {
-                              // Fallback to F1 CDN if local not found
-                              const target = e.target as HTMLImageElement;
-                              if (round.track.layoutImageUrl && !target.src.includes('formula1.com')) {
-                                target.src = round.track.layoutImageUrl;
-                                target.classList.remove('invert');
-                              }
-                            }}
                           />
                         ) : (
                           <div className="flex items-center justify-center h-full">
