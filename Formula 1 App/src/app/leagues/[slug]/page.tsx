@@ -14,7 +14,9 @@ import {
   Sparkles,
   Bot,
   MapPin,
+  Route,
 } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +24,20 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/db";
 import { formatRaceDateTime } from "@/lib/date-utils";
+
+// Country code to flag emoji mapping
+const countryFlags: Record<string, string> = {
+  BH: "🇧🇭", SA: "🇸🇦", AU: "🇦🇺", JP: "🇯🇵", CN: "🇨🇳",
+  US: "🇺🇸", IT: "🇮🇹", MC: "🇲🇨", CA: "🇨🇦", ES: "🇪🇸",
+  AT: "🇦🇹", GB: "🇬🇧", HU: "🇭🇺", BE: "🇧🇪", NL: "🇳🇱",
+  AZ: "🇦🇿", SG: "🇸🇬", MX: "🇲🇽", BR: "🇧🇷", QA: "🇶🇦",
+  AE: "🇦🇪",
+};
+
+function getCountryFlag(countryCode: string | null): string {
+  if (!countryCode) return "🏁";
+  return countryFlags[countryCode] || "🏁";
+}
 
 interface LeaguePageProps {
   params: Promise<{ slug: string }>;
@@ -466,23 +482,55 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
               </div>
               <div className="divide-y divide-white/5">
                 {league.rounds.map((round, idx) => (
-                  <div
+                  <Link
                     key={round.id}
-                    className="flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors"
+                    href={`/leagues/${slug}/results/${round.roundNumber}`}
+                    className="flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors group"
                   >
                     <div className="flex items-center gap-4">
-                      <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl font-bold text-lg ${round.status === "COMPLETED" ? "bg-[#2ECC71]/20 text-[#2ECC71]" : idx === 0 ? "bg-[#F59E0B]/20 text-[#F59E0B]" : "bg-white/10 text-gray-400"}`}
-                      >
-                        {round.roundNumber}
+                      {/* Round Number with Country Flag */}
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex flex-col items-center justify-center rounded-xl font-bold px-3 py-2 min-w-[60px] ${round.status === "COMPLETED" ? "bg-[#2ECC71]/20" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "bg-[#F59E0B]/20" : "bg-white/10"}`}
+                        >
+                          <span className={`text-xs uppercase tracking-wide ${round.status === "COMPLETED" ? "text-[#2ECC71]" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "text-[#F59E0B]" : "text-gray-500"}`}>
+                            Round
+                          </span>
+                          <span className={`text-2xl font-bold ${round.status === "COMPLETED" ? "text-[#2ECC71]" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "text-[#F59E0B]" : "text-gray-300"}`}>
+                            {round.roundNumber}
+                          </span>
+                        </div>
+                        {/* Country Flag */}
+                        <span className="text-3xl">
+                          {getCountryFlag(round.track.countryCode)}
+                        </span>
                       </div>
+
+                      {/* Track Mini Image */}
+                      <div className="hidden md:block relative w-20 h-14 bg-white/5 rounded-lg overflow-hidden">
+                        {round.track.miniImageUrl ? (
+                          <Image
+                            src={round.track.miniImageUrl}
+                            alt={round.track.name}
+                            fill
+                            className="object-contain p-1 group-hover:scale-105 transition-transform"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full">
+                            <Route className="w-8 h-8 text-gray-600" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Track Info */}
                       <div>
-                        <h4 className="font-semibold text-white">
-                          {round.name || `Round ${round.roundNumber}`}
+                        <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors">
+                          {round.name || round.track.name}
                         </h4>
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <MapPin className="h-3 w-3" />
-                          {round.track.name}, {round.track.country}
+                          {round.track.city || round.track.country}
                         </div>
                       </div>
                     </div>
@@ -515,8 +563,9 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                             ? tRound("annulled")
                             : tRound("scheduled")}
                       </Badge>
+                      <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-[#2ECC71] transition-colors" />
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

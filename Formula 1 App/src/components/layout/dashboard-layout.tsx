@@ -22,6 +22,7 @@ import {
   MessageSquare,
   CreditCard,
   User,
+  Route,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,6 +54,7 @@ const navigation = [
 const secondaryNav = [
   { name: 'Drivers', href: '/drivers', icon: Users },
   { name: 'Teams', href: '/teams', icon: Flag },
+  { name: 'Circuits', href: '/tracks', icon: Route },
   { name: 'Results', href: '/results', icon: Trophy },
 ];
 
@@ -95,9 +97,13 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
             </Link>
           ) : (
             <Link href="/dashboard" className="mx-auto">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#2ECC71] to-[#27AE60] flex items-center justify-center shadow-lg shadow-[#2ECC71]/20">
-                <span className="text-xl font-bold text-white">A</span>
-              </div>
+              <Image 
+                src="/images/logo-icon.png" 
+                alt="ApexGrid AI" 
+                width={40} 
+                height={40}
+                className="h-10 w-10"
+              />
             </Link>
           )}
           <Button

@@ -227,12 +227,26 @@ model Track {
   name         String  @unique
   shortName    String? // e.g., "MON", "SPA"
   country      String
+  countryCode  String? // ISO 2-letter code for flags (e.g., "AU", "MC")
   city         String?
   length       Float   // Track length in km
   defaultLaps  Int     // Default number of laps
-  imageUrl     String? // External URL or upload
-  layoutUrl    String? // Track layout diagram
+  raceDistance Float?  // Total race distance in km
+  turns        Int?    // Number of corners/turns
+  
+  // Historical data
+  firstGrandPrix   Int?    // Year of first GP (e.g., 1996)
+  lapRecord        String? // Fastest lap time (e.g., "1:19.813")
+  lapRecordHolder  String? // Driver name
+  lapRecordYear    Int?    // Year of lap record
+  
+  // Images
+  imageUrl         String? // Header/banner image
+  miniImageUrl     String? // Small track outline (white on transparent)
+  layoutImageUrl   String? // Full colored layout with DRS zones
+  
   description  String?
+  timezone     String? // Track local timezone
   isActive     Boolean @default(true)
   
   // Timestamps
@@ -244,6 +258,7 @@ model Track {
   rounds       Round[]
   
   @@index([name])
+  @@index([countryCode])
   @@map("tracks")
 }
 
