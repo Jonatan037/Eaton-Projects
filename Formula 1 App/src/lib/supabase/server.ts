@@ -1,7 +1,21 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+// Check if Supabase is configured
+function isSupabaseConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+}
+
 export async function createClient() {
+  if (!isSupabaseConfigured()) {
+    throw new Error(
+      'Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.'
+    );
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -35,6 +49,12 @@ export async function createClient() {
 
 // Admin client with service role key (for server-only operations)
 export async function createAdminClient() {
+  if (!isSupabaseConfigured() || !process.env.SUPABASE_SERVICE_KEY) {
+    throw new Error(
+      'Supabase admin client is not configured. Please set SUPABASE_SERVICE_KEY environment variable.'
+    );
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient(
