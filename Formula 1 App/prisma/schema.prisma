@@ -1,5 +1,6 @@
 // Prisma Schema for ApexGrid AI - Formula 1 League Management Platform
 // Database: Supabase PostgreSQL with pgvector extension
+// Version 2.0 - Complete Architecture with Tiers, Leagues, Championships
 
 generator client {
   provider        = "prisma-client-js"
@@ -16,36 +17,83 @@ datasource db {
 // ENUMS
 // ============================================
 
-enum Role {
-  admin        // Platform administrator
-  league_admin // League owner/manager
-  member       // Regular league participant
-  viewer       // Read-only access
+enum UserRole {
+  APP_OWNER // Platform owner (you) - can do everything
+  USER // Regular registered user
 }
 
-enum LeagueVisibility {
-  PUBLIC  // Discoverable, anyone can view/join
-  PRIVATE // Invite-only, hidden from search
+enum TierType {
+  FREE // 1 league, 1 championship per league, 1 month trial
+  PRO // 5 leagues, 3 championships per league
+  UNLIMITED // Unlimited everything
 }
 
 enum LeagueRole {
-  OWNER  // Created the league, full control
-  ADMIN  // Can manage league settings
-  MEMBER // Can participate and view
-  VIEWER // Read-only access
+  OWNER // Created the league, full control
+  ADMIN // Can manage league and championships
 }
 
-enum RoundStatus {
-  SCHEDULED // Upcoming, not yet run
+enum ChampionshipRole {
+  ADMIN // Can manage the championship
+  DRIVER // Participant in the championship
+}
+
+enum DriverStatus {
+  RESERVE // Not assigned to a team
+  ACTIVE // Assigned to a team
+  INACTIVE // No longer participating
+}
+
+enum ChampionshipStatus {
+  DRAFT // Being configured
+  ACTIVE // Currently running
+  COMPLETED // Finished
+  CANCELLED // Cancelled
+}
+
+enum CarStyle {
+  F1 // Official F1 cars
+  CUSTOM // Custom cars (future)
+}
+
+enum CarPerformance {
+  REAL // Real performance differences
+  EQUAL // Equal performance for all cars
+}
+
+enum RaceLength {
+  SHORT_25 // 25% race
+  MEDIUM_50 // 50% race
+  FULL_100 // 100% race
+}
+
+enum SprintLength {
+  NONE // No sprint
+  SHORT_25 // 25% sprint
+  MEDIUM_50 // 50% sprint
+  FULL_100 // 100% sprint
+}
+
+enum QualyType {
+  NONE // No qualifying
+  REVERSE_GRID // Reverse grid order
+  ONE_SHOT // One shot qualifying
+  SHORT // Short qualifying
+  FULL // Full F1 qualifying (Q1, Q2, Q3)
+}
+
+enum RaceStatus {
+  SCHEDULED // Upcoming
+  LIVE // Currently happening
   COMPLETED // Finished, results entered
-  ANNULLED  // Cancelled/skipped
+  CANCELLED // Cancelled
 }
 
 enum ResultStatus {
   FINISHED // Completed the session
-  DNF      // Did Not Finish
-  DNS      // Did Not Start
-  DSQ      // Disqualified
+  DNF // Did Not Finish
+  DNS // Did Not Start
+  DSQ // Disqualified
 }
 
 enum SessionType {
@@ -54,9 +102,26 @@ enum SessionType {
   RACE
 }
 
-enum SubscriptionTier {
-  FREE // 1 league, 20 members
-  PRO  // 10 leagues, 200 members, AI features
+enum AssistLevel {
+  ON
+  OFF
+}
+
+enum TractionControlLevel {
+  FULL
+  MEDIUM
+  OFF
+}
+
+enum RacingLineLevel {
+  FULL
+  CORNERS
+  OFF
+}
+
+enum GearboxType {
+  AUTOMATIC
+  MANUAL
 }
 
 // ============================================
@@ -64,36 +129,83 @@ enum SubscriptionTier {
 // ============================================
 
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  name            String?
-  avatar          String?
-  gamertag        String?
-  country         String?
-  bio             String?
-  role            Role     @default(member)
-  locale          String   @default("en")
-  emailVerified   Boolean  @default(false)
-  supabaseAuthId  String?  @unique // Link to Supabase Auth
-  
-  // Subscription
-  subscriptionTier   SubscriptionTier @default(FREE)
-  subscriptionEndsAt DateTime?
-  stripeCustomerId   String?
-  
+  id String @id @default(uuid())
+
+  // Profile Information
+  fullName String
+  email    String  @unique
+  password String? // Hashed, null if using OAuth
+  avatar   String? // Profile picture URL
+  gamertag String? // In-game username (e.g., Xbox/PSN/Steam)
+  country  String? // ISO 2-letter code
+  bio      String?
+
+  // System Role
+  role UserRole @default(USER)
+
+  // Tier & Subscription
+  tier             TierType  @default(FREE)
+  tierExpiresAt    DateTime? // When tier expires (for FREE trial)
+  stripeCustomerId String?
+
+  // Auth
+  supabaseAuthId String?   @unique
+  emailVerified  Boolean   @default(false)
+  lastLoginAt    DateTime?
+
+  // Preferences
+  locale   String @default("en")
+  timezone String @default("America/Chicago")
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  lastLoginAt DateTime?
-  
+
   // Relations
-  memberships Membership[]
-  auditLogs   AuditLog[]
-  drivers     Driver[]     // Drivers owned/created by user
-  
+  ownedLeagues         League[]             @relation("LeagueOwner")
+  leagueMemberships    LeagueMember[]
+  championshipRoles    ChampionshipMember[]
+  createdChampionships Championship[]       @relation("ChampionshipCreator")
+  auditLogs            AuditLog[]
+
   @@index([email])
   @@index([supabaseAuthId])
+  @@index([tier])
   @@map("users")
+}
+
+// ============================================
+// TIER DEFINITIONS (Reference Table)
+// ============================================
+
+model TierDefinition {
+  id          String   @id @default(uuid())
+  tier        TierType @unique
+  name        String // Display name
+  description String?
+
+  // Limits
+  maxLeagues                Int // -1 for unlimited
+  maxChampionshipsPerLeague Int // -1 for unlimited
+  maxAdminsPerLeague        Int @default(2)
+
+  // Features
+  hasAIFeatures     Boolean @default(false)
+  hasAdvancedStats  Boolean @default(false)
+  hasCustomBranding Boolean @default(false)
+
+  // Trial
+  trialDays Int @default(0) // 30 for FREE
+
+  // Pricing (for reference)
+  monthlyPrice Float?
+  yearlyPrice  Float?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tier_definitions")
 }
 
 // ============================================
@@ -101,298 +213,629 @@ model User {
 // ============================================
 
 model League {
-  id          String           @id @default(uuid())
-  slug        String           @unique // URL-friendly identifier
+  id   String @id @default(uuid())
+  slug String @unique // URL-friendly identifier
+
+  // Basic Info
   name        String
   description String?
-  logo        String?          // URL to logo image
-  visibility  LeagueVisibility @default(PUBLIC)
-  timezone    String           @default("America/Chicago")
-  isActive    Boolean          @default(true)
-  
-  // Scoring configuration (JSON for flexibility)
-  scoringConfig Json @default("{}")
-  
-  // Rules and settings
-  rules       String?          // Markdown content
-  settings    Json   @default("{}")
-  
-  // Discord integration
-  discordWebhookUrl     String?
-  discordNotifyRaces    Boolean @default(false)
-  discordNotifyResults  Boolean @default(false)
-  
+  logo        String? // URL to league logo
+  banner      String? // Banner image URL
+  rules       String? // Markdown content for rules
+
+  // Owner (User who created and owns the league)
+  ownerId String
+
+  // Social Links
+  instagram String?
+  youtube   String?
+  twitch    String?
+  twitter   String?
+  discord   String?
+  website   String?
+
+  // Settings
+  timezone String  @default("America/Chicago")
+  isActive Boolean @default(true)
+  isPublic Boolean @default(true) // Discoverable
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  memberships   Membership[]
-  teams         Team[]
-  rounds        Round[]
-  leagueTracks  LeagueTrack[]
+  owner         User           @relation("LeagueOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members       LeagueMember[]
+  championships Championship[]
   auditLogs     AuditLog[]
-  embeddings    LeagueEmbedding[]
-  
+
   @@index([slug])
-  @@index([visibility])
+  @@index([ownerId])
+  @@index([isActive])
   @@map("leagues")
 }
 
-model Membership {
+model LeagueMember {
   id       String     @id @default(uuid())
-  userId   String
   leagueId String
-  role     LeagueRole @default(MEMBER)
-  joinedAt DateTime   @default(now())
-  
+  userId   String
+  role     LeagueRole
+
+  // Timestamps
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  
-  @@unique([userId, leagueId])
-  @@index([userId])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([leagueId, userId])
   @@index([leagueId])
-  @@map("memberships")
+  @@index([userId])
+  @@map("league_members")
 }
 
 // ============================================
-// TEAMS & DRIVERS
+// CHAMPIONSHIP MANAGEMENT
 // ============================================
 
-model Team {
-  id              String  @id @default(uuid())
-  leagueId        String
-  name            String  // Constructor name
-  shortName       String? // e.g., "RBR", "MCL"
-  logo            String? // URL to logo
-  primaryColor    String? // Hex color
-  secondaryColor  String? // Hex color
-  country         String?
-  isActive        Boolean @default(true)
-  
+model Championship {
+  id       String @id @default(uuid())
+  leagueId String
+
+  // Basic Info
+  name        String
+  description String?
+  logo        String?
+
+  // Created by
+  createdById String
+
+  // Configuration
+  carStyle       CarStyle       @default(F1)
+  carPerformance CarPerformance @default(REAL)
+  assistsEnabled Boolean        @default(true) // Whether assists are allowed
+
+  // Scoring
+  useF1Scoring Boolean @default(true) // If false, use custom scoring
+
+  // Schedule
+  defaultDay  String? // e.g., "Sunday"
+  defaultTime String? // e.g., "19:00"
+
+  // Status
+  status ChampionshipStatus @default(DRAFT)
+
+  // Timestamps
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  league        League               @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  createdBy     User                 @relation("ChampionshipCreator", fields: [createdById], references: [id])
+  members       ChampionshipMember[]
+  teams         ChampionshipTeam[]
+  tracks        ChampionshipTrack[]
+  races         Race[]
+  assists       ChampionshipAssists?
+  scoring       ScoringSystem?
+  results       RaceResult[]
+  sprintResults SprintResult[]
+  qualyResults  QualyResult[]
+  standings     StandingsSnapshot[]
+
+  @@unique([leagueId, name])
+  @@index([leagueId])
+  @@index([status])
+  @@map("championships")
+}
+
+model ChampionshipMember {
+  id             String           @id @default(uuid())
+  championshipId String
+  userId         String
+  role           ChampionshipRole
+
+  // Driver-specific (if role is DRIVER)
+  driverId String? // Link to ChampionshipDriver
+
+  // Timestamps
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  championship Championship        @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driver       ChampionshipDriver? @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@unique([championshipId, userId])
+  @@index([championshipId])
+  @@index([userId])
+  @@map("championship_members")
+}
+
+// ============================================
+// TEAMS (Per Championship)
+// ============================================
+
+model ChampionshipTeam {
+  id             String @id @default(uuid())
+  championshipId String
+
+  // Team Info (copied from F1 or custom)
+  name           String // e.g., "Red Bull Racing"
+  shortName      String? // e.g., "RBR"
+  logo           String?
+  primaryColor   String? // Hex color
+  secondaryColor String?
+  country        String?
+
+  // Order for display
+  displayOrder Int     @default(0)
+  isActive     Boolean @default(true)
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  league  League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  drivers Driver[]
-  results Result[]
-  
-  @@unique([leagueId, name])
-  @@index([leagueId])
-  @@map("teams")
+  championship  Championship         @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  drivers       ChampionshipDriver[]
+  raceResults   RaceResult[]
+  sprintResults SprintResult[]
+  qualyResults  QualyResult[]
+
+  @@unique([championshipId, name])
+  @@index([championshipId])
+  @@map("championship_teams")
 }
 
-model Driver {
-  id        String  @id @default(uuid())
-  teamId    String
-  userId    String? // Link to platform user (optional)
-  
-  // Driver info
+// ============================================
+// DRIVERS (Per Championship)
+// ============================================
+
+model ChampionshipDriver {
+  id             String  @id @default(uuid())
+  championshipId String
+  teamId         String? // null = Reserve driver
+
+  // Link to registered user
+  userId String?
+
+  // Driver Info
   fullName  String
   shortName String? // e.g., "VER", "HAM"
   gamertag  String
-  avatar    String? // URL to avatar
+  avatar    String?
   country   String?
-  bio       String?
-  number    Int?    // Racing number
-  
-  // Role in team
-  isReserve Boolean @default(false)
-  isActive  Boolean @default(true)
-  
+  number    Int? // Racing number (1-99)
+
+  // Status
+  status   DriverStatus @default(RESERVE)
+  isActive Boolean      @default(true)
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  team    Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  results Result[]
-  
+  team          ChampionshipTeam?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  memberLinks   ChampionshipMember[]
+  raceResults   RaceResult[]
+  sprintResults SprintResult[]
+  qualyResults  QualyResult[]
+
+  @@index([championshipId])
   @@index([teamId])
   @@index([userId])
-  @@index([gamertag])
-  @@map("drivers")
+  @@map("championship_drivers")
 }
 
 // ============================================
-// TRACKS
+// TRACKS (Master List)
 // ============================================
 
 model Track {
-  id           String  @id @default(uuid())
-  name         String  @unique
-  shortName    String? // e.g., "MON", "SPA"
-  country      String
-  countryCode  String? // ISO 2-letter code for flags (e.g., "AU", "MC")
-  city         String?
-  length       Float   // Track length in km
-  defaultLaps  Int     // Default number of laps
-  raceDistance Float?  // Total race distance in km
-  turns        Int?    // Number of corners/turns
-  
-  // Historical data
-  firstGrandPrix   Int?    // Year of first GP (e.g., 1996)
-  lapRecord        String? // Fastest lap time (e.g., "1:19.813")
-  lapRecordHolder  String? // Driver name
-  lapRecordYear    Int?    // Year of lap record
-  
+  id String @id @default(uuid())
+
+  // Basic Info
+  name        String  @unique // Full name
+  shortName   String? // e.g., "BAH", "MON", "SPA"
+  country     String
+  countryCode String? // ISO 2-letter code
+  city        String?
+
+  // Track Details
+  length       Float // Track length in km
+  defaultLaps  Int // Default number of laps
+  raceDistance Float? // Total race distance in km
+  turns        Int? // Number of corners
+
+  // Historical Data
+  firstGrandPrix  Int? // Year of first GP
+  lapRecord       String? // Fastest lap time
+  lapRecordHolder String? // Driver name
+  lapRecordYear   Int? // Year of lap record
+
   // Images
-  imageUrl         String? // Header/banner image
-  miniImageUrl     String? // Small track outline (white on transparent)
-  layoutImageUrl   String? // Full colored layout with DRS zones
-  
-  description  String?
-  timezone     String? // Track local timezone
-  isActive     Boolean @default(true)
-  
+  imageUrl       String? // Header/banner image
+  miniImageUrl   String? // Small white outline
+  layoutImageUrl String? // Colored layout with DRS zones
+
+  // Metadata
+  description String?
+  timezone    String?
+  isActive    Boolean @default(true)
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  leagueTracks LeagueTrack[]
-  rounds       Round[]
-  
+  championshipTracks ChampionshipTrack[]
+  races              Race[]
+
   @@index([name])
   @@index([countryCode])
   @@map("tracks")
 }
 
-model LeagueTrack {
-  id        String @id @default(uuid())
-  leagueId  String
-  trackId   String
-  
-  // Custom settings per league
-  customLaps Int?
-  customName String?
-  
-  // Relations
-  league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  track  Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  
-  @@unique([leagueId, trackId])
-  @@index([leagueId])
-  @@map("league_tracks")
-}
-
 // ============================================
-// CALENDAR & ROUNDS
+// CHAMPIONSHIP TRACKS (Selected tracks for championship)
 // ============================================
 
-model Round {
-  id          String      @id @default(uuid())
-  leagueId    String
-  trackId     String
-  
-  // Round info
-  roundNumber Int         // Sequential number in season
-  name        String?     // Custom name (e.g., "Bahrain Grand Prix")
-  scheduledAt DateTime    // Date and time of the round
-  status      RoundStatus @default(SCHEDULED)
-  
-  // Session configuration
-  hasQuali    Boolean @default(true)
-  hasSprint   Boolean @default(false)
-  // Race is always present
-  
-  // Custom laps for this round
-  laps        Int?
-  
-  // Notes
-  notes       String?
-  
-  // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  completedAt DateTime?
-  
-  // Relations
-  league  League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  track   Track    @relation(fields: [trackId], references: [id], onDelete: Restrict)
-  results Result[]
-  
-  @@unique([leagueId, roundNumber])
-  @@index([leagueId])
-  @@index([scheduledAt])
-  @@index([status])
-  @@map("rounds")
-}
+model ChampionshipTrack {
+  id             String @id @default(uuid())
+  championshipId String
+  trackId        String
 
-// ============================================
-// SCORING
-// ============================================
+  // Order in the championship calendar
+  roundNumber Int
 
-model Scoring {
-  id       String @id @default(uuid())
-  leagueId String @unique
-  
-  // Points per position (JSON: { "1": 25, "2": 18, ... })
-  racePoints   Json @default("{\"1\":25,\"2\":18,\"3\":15,\"4\":12,\"5\":10,\"6\":8,\"7\":6,\"8\":4,\"9\":2,\"10\":1}")
-  sprintPoints Json @default("{\"1\":8,\"2\":7,\"3\":6,\"4\":5,\"5\":4,\"6\":3,\"7\":2,\"8\":1}")
-  
-  // Bonus points
-  polePositionPoints   Int @default(0)
-  fastestLapPoints     Int @default(1)
-  
-  // Fastest lap eligibility (top N positions)
-  fastestLapEligibleTop Int @default(10)
-  
-  // Penalties
-  dnfPenalty        Int @default(0) // Negative points for DNF
-  attendancePenalty Int @default(0) // Penalty for missing race
-  
+  // Custom settings
+  customName String? // e.g., "Bahrain Grand Prix"
+  customLaps Int? // Override default laps
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  @@map("scoring")
+
+  // Relations
+  championship Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  track        Track        @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  race         Race?
+
+  @@unique([championshipId, trackId])
+  @@unique([championshipId, roundNumber])
+  @@index([championshipId])
+  @@map("championship_tracks")
+}
+
+// ============================================
+// RACES (Individual race configuration)
+// ============================================
+
+model Race {
+  id                  String @id @default(uuid())
+  championshipId      String
+  championshipTrackId String @unique
+  trackId             String
+
+  // Race Info
+  roundNumber Int
+  name        String? // e.g., "Bahrain Grand Prix"
+
+  // Schedule
+  scheduledDate DateTime?
+  scheduledTime String? // e.g., "19:00"
+
+  // Configuration
+  raceLength   RaceLength   @default(MEDIUM_50)
+  sprintLength SprintLength @default(NONE)
+  qualyType    QualyType    @default(FULL)
+  laps         Int? // Custom laps (overrides track default)
+
+  // Status
+  status RaceStatus @default(SCHEDULED)
+
+  // Notes
+  notes String?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  // Relations
+  championship      Championship      @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  championshipTrack ChampionshipTrack @relation(fields: [championshipTrackId], references: [id], onDelete: Cascade)
+  track             Track             @relation(fields: [trackId], references: [id], onDelete: Restrict)
+  raceResults       RaceResult[]
+  sprintResults     SprintResult[]
+  qualyResults      QualyResult[]
+
+  @@unique([championshipId, roundNumber])
+  @@index([championshipId])
+  @@index([status])
+  @@map("races")
+}
+
+// ============================================
+// ASSISTS CONFIGURATION (Per Championship)
+// ============================================
+
+model ChampionshipAssists {
+  id             String @id @default(uuid())
+  championshipId String @unique
+
+  // Assists
+  steeringAssist   AssistLevel          @default(OFF)
+  brakingAssist    AssistLevel          @default(OFF)
+  antiLockBrakes   AssistLevel          @default(OFF)
+  tractionControl  TractionControlLevel @default(OFF)
+  racingLine       RacingLineLevel      @default(OFF)
+  gearbox          GearboxType          @default(MANUAL)
+  pitAssist        AssistLevel          @default(OFF)
+  pitReleaseAssist AssistLevel          @default(OFF)
+  ersAssist        AssistLevel          @default(OFF)
+  drsAssist        AssistLevel          @default(OFF)
+
+  // Notes
+  notes String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  championship Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+
+  @@map("championship_assists")
+}
+
+// ============================================
+// SCORING SYSTEM (Per Championship)
+// ============================================
+
+model ScoringSystem {
+  id             String @id @default(uuid())
+  championshipId String @unique
+
+  // Use F1 default or custom
+  useF1Default Boolean @default(true)
+
+  // Race Points (positions 1-20)
+  raceP1  Int @default(25)
+  raceP2  Int @default(18)
+  raceP3  Int @default(15)
+  raceP4  Int @default(12)
+  raceP5  Int @default(10)
+  raceP6  Int @default(8)
+  raceP7  Int @default(6)
+  raceP8  Int @default(4)
+  raceP9  Int @default(2)
+  raceP10 Int @default(1)
+  raceP11 Int @default(0)
+  raceP12 Int @default(0)
+  raceP13 Int @default(0)
+  raceP14 Int @default(0)
+  raceP15 Int @default(0)
+  raceP16 Int @default(0)
+  raceP17 Int @default(0)
+  raceP18 Int @default(0)
+  raceP19 Int @default(0)
+  raceP20 Int @default(0)
+
+  // Sprint Points (positions 1-20)
+  sprintP1  Int @default(8)
+  sprintP2  Int @default(7)
+  sprintP3  Int @default(6)
+  sprintP4  Int @default(5)
+  sprintP5  Int @default(4)
+  sprintP6  Int @default(3)
+  sprintP7  Int @default(2)
+  sprintP8  Int @default(1)
+  sprintP9  Int @default(0)
+  sprintP10 Int @default(0)
+  sprintP11 Int @default(0)
+  sprintP12 Int @default(0)
+  sprintP13 Int @default(0)
+  sprintP14 Int @default(0)
+  sprintP15 Int @default(0)
+  sprintP16 Int @default(0)
+  sprintP17 Int @default(0)
+  sprintP18 Int @default(0)
+  sprintP19 Int @default(0)
+  sprintP20 Int @default(0)
+
+  // Qualifying Points (positions 1-20) - Optional
+  qualyP1  Int @default(0)
+  qualyP2  Int @default(0)
+  qualyP3  Int @default(0)
+  qualyP4  Int @default(0)
+  qualyP5  Int @default(0)
+  qualyP6  Int @default(0)
+  qualyP7  Int @default(0)
+  qualyP8  Int @default(0)
+  qualyP9  Int @default(0)
+  qualyP10 Int @default(0)
+  qualyP11 Int @default(0)
+  qualyP12 Int @default(0)
+  qualyP13 Int @default(0)
+  qualyP14 Int @default(0)
+  qualyP15 Int @default(0)
+  qualyP16 Int @default(0)
+  qualyP17 Int @default(0)
+  qualyP18 Int @default(0)
+  qualyP19 Int @default(0)
+  qualyP20 Int @default(0)
+
+  // Bonus Points
+  fastestLap     Int @default(1)
+  finishRace     Int @default(0) // Points for finishing
+  noPenalty      Int @default(0) // Points for clean race
+  driverOfTheDay Int @default(0)
+  polePosition   Int @default(0)
+
+  // Fastest lap eligibility (must be in top N to get point)
+  fastestLapTopN Int @default(10)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  championship Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+
+  @@map("scoring_systems")
 }
 
 // ============================================
 // RESULTS
 // ============================================
 
-model Result {
-  id          String       @id @default(uuid())
-  roundId     String
-  driverId    String
-  teamId      String       // Snapshot of team at time of result
-  sessionType SessionType
-  
-  // Result data
-  position    Int?         // Finishing position (null for DNF/DNS)
-  status      ResultStatus @default(FINISHED)
-  points      Float        @default(0)
-  
+model RaceResult {
+  id             String @id @default(uuid())
+  championshipId String
+  raceId         String
+  driverId       String
+  teamId         String
+
+  // Result
+  position Int? // Finishing position
+  status   ResultStatus @default(FINISHED)
+  points   Float        @default(0)
+
+  // Grid & Gap
+  gridPosition Int? // Starting position
+  gapToLeader  String? // Time gap or laps behind
+
   // Bonuses
-  fastestLap  Boolean @default(false)
-  pole        Boolean @default(false)
-  
-  // Additional data
-  gridPosition Int?        // Starting position (for race)
-  gapToLeader  String?     // Time gap or laps behind
-  notes        String?
-  
+  fastestLap     Boolean @default(false)
+  finishedRace   Boolean @default(true)
+  noPenalty      Boolean @default(true)
+  driverOfTheDay Boolean @default(false)
+
+  // Notes
+  notes String?
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  round  Round  @relation(fields: [roundId], references: [id], onDelete: Cascade)
-  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
-  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  
-  @@unique([roundId, driverId, sessionType])
-  @@index([roundId])
+  championship Championship       @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  race         Race               @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  driver       ChampionshipDriver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  team         ChampionshipTeam   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([raceId, driverId])
+  @@index([championshipId])
+  @@index([raceId])
   @@index([driverId])
-  @@index([teamId])
-  @@index([sessionType])
-  @@map("results")
+  @@map("race_results")
+}
+
+model SprintResult {
+  id             String @id @default(uuid())
+  championshipId String
+  raceId         String
+  driverId       String
+  teamId         String
+
+  // Result
+  position Int?
+  status   ResultStatus @default(FINISHED)
+  points   Float        @default(0)
+
+  // Grid & Gap
+  gridPosition Int?
+  gapToLeader  String?
+
+  // Notes
+  notes String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  championship Championship       @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  race         Race               @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  driver       ChampionshipDriver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  team         ChampionshipTeam   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([raceId, driverId])
+  @@index([championshipId])
+  @@index([raceId])
+  @@map("sprint_results")
+}
+
+model QualyResult {
+  id             String @id @default(uuid())
+  championshipId String
+  raceId         String
+  driverId       String
+  teamId         String
+
+  // Result
+  position Int?
+  points   Float @default(0)
+
+  // Qualifying times
+  q1Time   String?
+  q2Time   String?
+  q3Time   String?
+  bestTime String?
+
+  // Pole
+  isPole Boolean @default(false)
+
+  // Notes
+  notes String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  championship Championship       @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  race         Race               @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  driver       ChampionshipDriver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  team         ChampionshipTeam   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([raceId, driverId])
+  @@index([championshipId])
+  @@index([raceId])
+  @@map("qualy_results")
+}
+
+// ============================================
+// STANDINGS CACHE
+// ============================================
+
+model StandingsSnapshot {
+  id             String  @id @default(uuid())
+  championshipId String
+  raceId         String? // After which race (null = current)
+
+  // Cached standings
+  driverStandings      Json // Array of driver standings
+  constructorStandings Json // Array of team standings
+
+  // Metadata
+  calculatedAt DateTime @default(now())
+  isLatest     Boolean  @default(true)
+
+  // Relations
+  championship Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+
+  @@index([championshipId])
+  @@index([raceId])
+  @@index([isLatest])
+  @@map("standings_snapshots")
 }
 
 // ============================================
@@ -400,31 +843,31 @@ model Result {
 // ============================================
 
 model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String?
-  leagueId  String?
-  
+  id       String  @id @default(uuid())
+  userId   String?
+  leagueId String?
+
   // Action details
-  action    String   // e.g., "CREATE_LEAGUE", "UPDATE_RESULT", "IMPORT_CSV"
-  entityType String? // e.g., "League", "Result", "Round"
-  entityId  String?  // ID of affected entity
-  
+  action     String // e.g., "CREATE_LEAGUE", "UPDATE_CHAMPIONSHIP"
+  entityType String? // e.g., "League", "Championship", "Race"
+  entityId   String? // ID of affected entity
+
   // Change data
-  oldData   Json?    // Previous state
-  newData   Json?    // New state
-  metadata  Json?    // Additional context
-  
+  oldData  Json?
+  newData  Json?
+  metadata Json?
+
   // Request info
   ipAddress String?
   userAgent String?
-  
+
   // Timestamp
   createdAt DateTime @default(now())
-  
+
   // Relations
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   league League? @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([leagueId])
   @@index([action])
@@ -433,55 +876,56 @@ model AuditLog {
 }
 
 // ============================================
-// AI EMBEDDINGS (pgvector)
+// F1 TEAMS (Reference Table - for seeding championships)
 // ============================================
 
-model LeagueEmbedding {
-  id        String   @id @default(uuid())
-  leagueId  String
-  
-  // Document metadata
-  documentType String   // e.g., "standings", "schedule", "results", "rules"
-  documentId   String?  // Reference to source document
-  content      String   // Text content
-  
-  // Vector embedding (1536 dimensions for OpenAI ada-002)
-  embedding    Unsupported("vector(1536)")?
-  
-  // Metadata
-  metadata  Json?
-  
+model F1Team {
+  id String @id @default(uuid())
+
+  // Team Info
+  name           String  @unique
+  shortName      String // e.g., "RBR", "MCL"
+  fullName       String // e.g., "Oracle Red Bull Racing"
+  logo           String?
+  primaryColor   String
+  secondaryColor String?
+  country        String
+
+  // Order (for display)
+  displayOrder Int     @default(0)
+  isActive     Boolean @default(true)
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  // Relations
-  league League @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  
-  @@index([leagueId])
-  @@index([documentType])
-  @@map("league_embeddings")
+
+  @@map("f1_teams")
 }
 
 // ============================================
-// STANDINGS CACHE (for performance)
+// AI EMBEDDINGS (pgvector) - Future
 // ============================================
 
-model StandingsSnapshot {
-  id        String   @id @default(uuid())
-  leagueId  String
-  roundId   String?  // After which round (null = current)
-  
-  // Cached standings data
-  driverStandings     Json // Array of driver standings
-  constructorStandings Json // Array of constructor standings
-  
+model LeagueEmbedding {
+  id       String @id @default(uuid())
+  leagueId String
+
+  // Document metadata
+  documentType String // e.g., "standings", "schedule", "results", "rules"
+  documentId   String?
+  content      String
+
+  // Vector embedding
+  embedding Unsupported("vector(1536)")?
+
   // Metadata
-  calculatedAt DateTime @default(now())
-  isLatest     Boolean  @default(true)
-  
+  metadata Json?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([leagueId])
-  @@index([roundId])
-  @@index([isLatest])
-  @@map("standings_snapshots")
+  @@index([documentType])
+  @@map("league_embeddings")
 }

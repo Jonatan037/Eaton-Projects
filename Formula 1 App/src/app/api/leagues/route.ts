@@ -1,7 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
-import { LeagueCreateSchema } from "@/schemas";
+import { LeagueRole, ChampionshipStatus, RaceStatus } from "@prisma/client";
+
+// Helper to get or create DB user from Supabase auth
+async function getOrCreateDbUser(authUser: { id: string; email?: string }) {
+  let dbUser = await prisma.user.findUnique({
+    where: { supabaseAuthId: authUser.id },
+  });
+
+  if (!dbUser && authUser.email) {
+    dbUser = await prisma.user.findUnique({
+      where: { email: authUser.email.toLowerCase() },
+    });
+
+    if (dbUser) {
+      dbUser = await prisma.user.update({
+        where: { id: dbUser.id },
+        data: { supabaseAuthId: authUser.id },
+      });
+    }
+  }
+
+  if (!dbUser && authUser.email) {
+    dbUser = await prisma.user.create({
+      data: {
+        email: authUser.email.toLowerCase(),
+        fullName: authUser.email.split("@")[0],
+        supabaseAuthId: authUser.id,
+      },
+    });
+  }
+
+  return dbUser;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,72 +46,118 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    const dbUser = await getOrCreateDbUser(user);
+    if (!dbUser) {
+      return NextResponse.json(
+        { message: "Could not create user" },
+        { status: 500 }
+      );
+    }
+
     const formData = await request.formData();
 
-    const rawData = {
-      name: formData.get("name") as string,
-      slug: formData.get("slug") as string,
-      description: formData.get("description") as string,
-      timezone: formData.get("timezone") as string || "UTC",
-      visibility: formData.get("visibility") as string || "PUBLIC",
-    };
+    const name = formData.get("name") as string;
+    const slug = formData.get("slug") as string;
+    const description = formData.get("description") as string | null;
+    const timezone = (formData.get("timezone") as string) || "America/Chicago";
+    const isPublic = formData.get("visibility") !== "PRIVATE";
+
+    if (!name || !slug) {
+      return NextResponse.json(
+        { message: "Name and slug are required" },
+        { status: 400 }
+      );
+    }
+
+    // Check slug availability
+    const existingLeague = await prisma.league.findUnique({
+      where: { slug },
+    });
+
+    if (existingLeague) {
+      return NextResponse.json(
+        { message: "This slug is already taken" },
+        { status: 400 }
+      );
+    }
 
     // Parse selected tracks
     const tracksJson = formData.get("tracks") as string;
     const selectedTracks = tracksJson ? JSON.parse(tracksJson) : [];
 
-    const validatedData = LeagueCreateSchema.parse(rawData);
-
-    // Create the league with membership
+    // Create the league with owner
     const league = await prisma.league.create({
       data: {
-        ...validatedData,
-        memberships: {
+        name,
+        slug,
+        description,
+        timezone,
+        isPublic,
+        ownerId: dbUser.id,
+        members: {
           create: {
-            userId: user.id,
-            role: "OWNER",
+            userId: dbUser.id,
+            role: LeagueRole.OWNER,
           },
         },
       },
     });
 
-    // Create rounds from selected tracks
+    // If tracks selected, create a championship with those tracks
     if (selectedTracks.length > 0) {
-      // Calculate schedule starting from next week
+      // Create default championship
+      const championship = await prisma.championship.create({
+        data: {
+          leagueId: league.id,
+          name: "Season 1",
+          createdById: dbUser.id,
+          status: ChampionshipStatus.DRAFT,
+          assists: { create: {} },
+          scoring: { create: { useF1Default: true } },
+          members: {
+            create: {
+              userId: dbUser.id,
+              role: "ADMIN",
+            },
+          },
+        },
+      });
+
+      // Create championship tracks and races
       const startDate = new Date();
-      startDate.setDate(startDate.getDate() + 7); // Start next week
-      startDate.setHours(21, 0, 0, 0); // 9 PM
+      startDate.setDate(startDate.getDate() + 7);
+      startDate.setHours(21, 0, 0, 0);
 
       for (const track of selectedTracks) {
-        const scheduledDate = new Date(startDate);
-        scheduledDate.setDate(startDate.getDate() + (track.roundNumber - 1) * 7); // Weekly
-
-        await prisma.round.create({
+        // Create championship track
+        const championshipTrack = await prisma.championshipTrack.create({
           data: {
-            leagueId: league.id,
+            championshipId: championship.id,
             trackId: track.id,
             roundNumber: track.roundNumber,
-            name: track.name.includes("Grand Prix") ? track.name : `${track.name} Grand Prix`,
-            scheduledAt: scheduledDate,
-            hasQuali: true,
-            hasSprint: track.hasSprint || false,
-            status: "SCHEDULED",
+            customName: track.name.includes("Grand Prix")
+              ? track.name
+              : `${track.name} Grand Prix`,
           },
         });
 
-        // Also create the LeagueTrack association
-        await prisma.leagueTrack.upsert({
-          where: {
-            leagueId_trackId: {
-              leagueId: league.id,
-              trackId: track.id,
-            },
-          },
-          update: {},
-          create: {
-            leagueId: league.id,
+        // Calculate race date
+        const scheduledDate = new Date(startDate);
+        scheduledDate.setDate(
+          startDate.getDate() + (track.roundNumber - 1) * 7
+        );
+
+        // Create race
+        await prisma.race.create({
+          data: {
+            championshipId: championship.id,
+            championshipTrackId: championshipTrack.id,
             trackId: track.id,
-            customLaps: track.defaultLaps,
+            roundNumber: track.roundNumber,
+            name: championshipTrack.customName,
+            scheduledDate,
+            scheduledTime: "21:00",
+            status: RaceStatus.SCHEDULED,
           },
         });
       }
@@ -89,7 +167,7 @@ export async function POST(request: NextRequest) {
     await prisma.auditLog.create({
       data: {
         leagueId: league.id,
-        userId: user.id,
+        userId: dbUser.id,
         action: "CREATED_LEAGUE",
         metadata: {
           leagueName: league.name,
@@ -98,7 +176,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(league);
+    return NextResponse.json({
+      success: true,
+      league: {
+        id: league.id,
+        slug: league.slug,
+        name: league.name,
+      },
+    });
   } catch (error) {
     console.error("Error creating league:", error);
     return NextResponse.json(
@@ -108,41 +193,57 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const { searchParams } = new URL(request.url);
+    const includePublic = searchParams.get("public") === "true";
+
+    // Build query
+    const whereClause: {
+      OR?: Array<{ isPublic: boolean } | { ownerId: string } | { members: { some: { userId: string } } }>;
+      isPublic?: boolean;
+    } = {};
+
+    if (user) {
+      const dbUser = await getOrCreateDbUser(user);
+      if (dbUser) {
+        if (includePublic) {
+          whereClause.OR = [
+            { isPublic: true },
+            { ownerId: dbUser.id },
+            { members: { some: { userId: dbUser.id } } },
+          ];
+        } else {
+          whereClause.OR = [
+            { ownerId: dbUser.id },
+            { members: { some: { userId: dbUser.id } } },
+          ];
+        }
+      }
+    } else {
+      // Only public leagues for anonymous users
+      whereClause.isPublic = true;
     }
 
-    // Get leagues the user is a member of
     const leagues = await prisma.league.findMany({
-      where: {
-        memberships: {
-          some: {
-            userId: user.id,
-          },
-        },
-      },
+      where: whereClause,
       include: {
+        owner: {
+          select: { id: true, fullName: true, avatar: true },
+        },
         _count: {
-          select: {
-            memberships: true,
-            teams: true,
-            rounds: true,
-          },
+          select: { members: true, championships: true },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(leagues);
+    return NextResponse.json({ leagues });
   } catch (error) {
     console.error("Error fetching leagues:", error);
     return NextResponse.json(

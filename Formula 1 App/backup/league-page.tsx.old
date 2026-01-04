@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   Calendar,
   Trophy,
@@ -14,8 +15,6 @@ import {
   Bot,
   MapPin,
   Route,
-  Crown,
-  Shield,
 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -25,17 +24,19 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/db";
 import { formatRaceDateTime } from "@/lib/date-utils";
-import { LeagueRole } from "@prisma/client";
 
-// Get flag image URL from FlagCDN
+// Get flag image URL from FlagCDN (supports w20, w40, w80, w160, w320)
 function getFlagUrl(countryCode: string | null): string {
   if (!countryCode) return "";
+  // Use w40 for good quality at small sizes
   return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
 }
 
-// Get track mini image
+// Get track mini image (white outline) - uses shortName for unique circuit identification
+// This handles countries with multiple circuits (US: MIA, COTA, LVS | IT: IMO, MNZ)
 function getTrackMiniUrl(shortName: string | null, layoutImageUrl: string | null): string | null {
   if (!shortName) return layoutImageUrl;
+  // Use shortName (e.g., "MIA", "COTA", "IMO") as filename
   return `/images/tracks/mini/${shortName.toLowerCase()}.png`;
 }
 
@@ -61,23 +62,109 @@ export async function generateMetadata({
   };
 }
 
-// Helper to get DB user
-async function getDbUser(authUser: { id: string; email?: string }) {
-  let dbUser = await prisma.user.findUnique({
-    where: { supabaseAuthId: authUser.id },
-  });
-
-  if (!dbUser && authUser.email) {
-    dbUser = await prisma.user.findUnique({
-      where: { email: authUser.email.toLowerCase() },
-    });
-  }
-
-  return dbUser;
-}
-
 export default async function LeaguePage({ params }: LeaguePageProps) {
   const { slug } = await params;
+  const t = await getTranslations("league");
+  const tRound = await getTranslations("round");
+  const tStandings = await getTranslations("standings");
+
+  const league = await prisma.league.findUnique({
+    where: { slug },
+    include: {
+      teams: {
+        where: { isActive: true },
+        include: {
+          drivers: {
+            where: { isActive: true },
+          },
+        },
+      },
+      rounds: {
+        orderBy: { roundNumber: "asc" },
+        include: {
+          track: true,
+        },
+      },
+      memberships: {
+        include: {
+          user: {
+            select: { id: true, name: true, email: true, avatar: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!league) {
+    notFound();
+  }
+
+  // Calculate Driver Standings
+  const driverStandings = await prisma.result.groupBy({
+    by: ["driverId"],
+    where: {
+      round: {
+        leagueId: league.id,
+        status: "COMPLETED",
+      },
+    },
+    _sum: {
+      points: true,
+    },
+    orderBy: {
+      _sum: {
+        points: "desc",
+      },
+    },
+  });
+
+  // Get driver details for standings
+  const driverIds = driverStandings.map((d) => d.driverId);
+  const drivers = await prisma.driver.findMany({
+    where: { id: { in: driverIds } },
+    include: { team: true },
+  });
+  const driverMap = new Map(drivers.map((d) => [d.id, d]));
+
+  const driverStandingsWithDetails = driverStandings.map((standing, index) => ({
+    position: index + 1,
+    driver: driverMap.get(standing.driverId),
+    points: standing._sum.points || 0,
+  }));
+
+  // Calculate Constructor Standings
+  const constructorStandings = await prisma.result.groupBy({
+    by: ["teamId"],
+    where: {
+      round: {
+        leagueId: league.id,
+        status: "COMPLETED",
+      },
+    },
+    _sum: {
+      points: true,
+    },
+    orderBy: {
+      _sum: {
+        points: "desc",
+      },
+    },
+  });
+
+  // Get team details for standings
+  const teamIds = constructorStandings.map((t) => t.teamId);
+  const teams = await prisma.team.findMany({
+    where: { id: { in: teamIds } },
+  });
+  const teamMap = new Map(teams.map((t) => [t.id, t]));
+
+  const constructorStandingsWithDetails = constructorStandings.map(
+    (standing, index) => ({
+      position: index + 1,
+      team: teamMap.get(standing.teamId),
+      points: standing._sum.points || 0,
+    })
+  );
 
   const supabase = await createClient();
   const {
@@ -88,147 +175,15 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
     redirect("/auth/signin");
   }
 
-  const dbUser = await getDbUser(user);
-
-  const league = await prisma.league.findUnique({
-    where: { slug },
-    include: {
-      owner: {
-        select: { id: true, fullName: true, avatar: true },
-      },
-      members: {
-        include: {
-          user: {
-            select: { id: true, fullName: true, email: true, avatar: true },
-          },
-        },
-      },
-      championships: {
-        orderBy: { createdAt: "desc" },
-        include: {
-          teams: {
-            where: { isActive: true },
-            include: {
-              drivers: {
-                where: { isActive: true },
-              },
-              f1Team: true,
-            },
-          },
-          races: {
-            orderBy: { roundNumber: "asc" },
-            include: {
-              track: true,
-              raceResults: true,
-            },
-          },
-          members: {
-            include: {
-              user: {
-                select: { id: true, fullName: true },
-              },
-            },
-          },
-          _count: {
-            select: { teams: true, drivers: true, races: true },
-          },
-        },
-      },
-      _count: {
-        select: { members: true, championships: true },
-      },
-    },
-  });
-
-  if (!league) {
-    notFound();
-  }
-
-  // Check user's role in this league
-  const userMembership = dbUser 
-    ? league.members.find((m) => m.userId === dbUser.id)
-    : null;
-  const isLeagueOwner = userMembership?.role === LeagueRole.OWNER;
-  const isLeagueAdmin = userMembership?.role === LeagueRole.ADMIN || isLeagueOwner;
-
-  // Get active championship (most recent)
-  const activeChampionship = league.championships[0];
-
-  // Calculate stats
-  const totalTeams = activeChampionship?._count.teams || 0;
-  const totalDrivers = activeChampionship?._count.drivers || 0;
-  const totalRaces = activeChampionship?.races.length || 0;
-  const completedRaces = activeChampionship?.races.filter((r) => r.status === "COMPLETED").length || 0;
-
-  // Get upcoming races
-  const upcomingRaces = activeChampionship?.races
-    .filter((r) => r.status === "SCHEDULED" && r.scheduledDate && new Date(r.scheduledDate) > new Date())
-    .sort((a, b) => new Date(a.scheduledDate!).getTime() - new Date(b.scheduledDate!).getTime())
-    .slice(0, 5) || [];
-
-  const nextRace = upcomingRaces[0];
-
-  // Calculate Driver Standings from race results
-  const driverStandings: { driverId: string; points: number }[] = [];
-  if (activeChampionship) {
-    const raceResultsByDriver = new Map<string, number>();
-    
-    for (const race of activeChampionship.races) {
-      if (race.status === "COMPLETED") {
-        for (const result of race.raceResults) {
-          const current = raceResultsByDriver.get(result.driverId) || 0;
-          raceResultsByDriver.set(result.driverId, current + result.totalPoints);
-        }
-      }
-    }
-
-    for (const [driverId, points] of raceResultsByDriver) {
-      driverStandings.push({ driverId, points });
-    }
-    driverStandings.sort((a, b) => b.points - a.points);
-  }
-
-  // Get driver details for standings
-  const driverIds = driverStandings.map((d) => d.driverId);
-  const driversData = await prisma.championshipDriver.findMany({
-    where: { id: { in: driverIds } },
-    include: { team: { include: { f1Team: true } } },
-  });
-  const driverMap = new Map(driversData.map((d) => [d.id, d]));
-
-  const driverStandingsWithDetails = driverStandings.map((standing, index) => ({
-    position: index + 1,
-    driver: driverMap.get(standing.driverId),
-    points: standing.points,
-  }));
-
-  // Calculate Constructor Standings
-  const teamPoints = new Map<string, number>();
-  for (const standing of driverStandings) {
-    const driver = driverMap.get(standing.driverId);
-    if (driver?.teamId) {
-      const current = teamPoints.get(driver.teamId) || 0;
-      teamPoints.set(driver.teamId, current + standing.points);
-    }
-  }
-
-  const constructorStandings = Array.from(teamPoints.entries())
-    .map(([teamId, points]) => ({ teamId, points }))
-    .sort((a, b) => b.points - a.points);
-
-  // Get team details
-  const teamIds = constructorStandings.map((t) => t.teamId);
-  const teamsData = await prisma.championshipTeam.findMany({
-    where: { id: { in: teamIds } },
-    include: { f1Team: true },
-  });
-  const teamMap = new Map(teamsData.map((t) => [t.id, t]));
-
-  const constructorStandingsWithDetails = constructorStandings.map((standing, index) => ({
-    position: index + 1,
-    team: teamMap.get(standing.teamId),
-    points: standing.points,
-  }));
+  const upcomingRounds = league.rounds.filter(
+    (r) => r.status === "SCHEDULED" && new Date(r.scheduledAt) > new Date(),
+  );
+  const nextRace = upcomingRounds[0];
+  const completedRounds = league.rounds.filter((r) => r.status === "COMPLETED");
+  const totalDrivers = league.teams.reduce(
+    (acc, t) => acc + t.drivers.length,
+    0,
+  );
 
   return (
     <DashboardLayout user={{ email: user.email || "" }}>
@@ -241,30 +196,18 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
               <div className="flex items-center gap-2 mb-4">
                 <Badge
                   className={
-                    league.isPublic
+                    league.visibility === "PUBLIC"
                       ? "bg-[#2ECC71]/10 text-[#2ECC71] border-[#2ECC71]/30"
                       : "bg-gray-800 text-gray-400 border-gray-700"
                   }
                 >
                   <Globe className="mr-1 h-3 w-3" />
-                  {league.isPublic ? "Public" : "Private"}
+                  {league.visibility === "PUBLIC" ? t("public") : t("private")}
                 </Badge>
                 <Badge className="bg-white/5 text-gray-400 border-white/10">
                   <Clock className="mr-1 h-3 w-3" />
                   {league.timezone}
                 </Badge>
-                {isLeagueOwner && (
-                  <Badge className="bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30">
-                    <Crown className="mr-1 h-3 w-3" />
-                    Owner
-                  </Badge>
-                )}
-                {isLeagueAdmin && !isLeagueOwner && (
-                  <Badge className="bg-[#3B82F6]/10 text-[#3B82F6] border-[#3B82F6]/30">
-                    <Shield className="mr-1 h-3 w-3" />
-                    Admin
-                  </Badge>
-                )}
               </div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">
                 {league.name}
@@ -276,50 +219,45 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
               )}
             </div>
             <div className="flex gap-3">
-              {isLeagueAdmin && (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-white/10 text-gray-300 hover:text-white hover:bg-white/5 hover:border-white/20"
-                >
-                  <Link href={`/leagues/${slug}/admin`}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Admin
-                  </Link>
-                </Button>
-              )}
-              {!userMembership && (
-                <Button className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20">
-                  Join League
-                </Button>
-              )}
+              <Button
+                asChild
+                variant="outline"
+                className="border-white/10 text-gray-300 hover:text-white hover:bg-white/5 hover:border-white/20"
+              >
+                <Link href={`/leagues/${slug}/admin`}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Admin
+                </Link>
+              </Button>
+              <Button className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20">
+                Join League
+              </Button>
             </div>
           </div>
-
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
               {
                 icon: Users,
-                value: league._count.members,
-                label: "Members",
+                value: league.memberships.length,
+                label: t("members"),
                 color: "#2ECC71",
               },
               {
-                icon: Trophy,
-                value: league._count.championships,
-                label: "Championships",
-                color: "#F59E0B",
-              },
-              {
                 icon: Flag,
-                value: totalTeams,
-                label: "Teams",
+                value: league.teams.length,
+                label: t("teams"),
                 color: "#3B82F6",
               },
               {
+                icon: Trophy,
+                value: totalDrivers,
+                label: t("drivers"),
+                color: "#F59E0B",
+              },
+              {
                 icon: Calendar,
-                value: `${completedRaces}/${totalRaces}`,
-                label: "Races",
+                value: `${completedRounds.length}/${league.rounds.length}`,
+                label: "Rounds",
                 color: "#8B5CF6",
               },
             ].map((stat, i) => (
@@ -349,36 +287,6 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
           </div>
         </div>
 
-        {/* Active Championship Banner */}
-        {activeChampionship && (
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#F59E0B]/10 to-[#D97706]/5 border border-[#F59E0B]/20 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Crown className="h-5 w-5 text-[#F59E0B]" />
-                <div>
-                  <p className="text-sm text-gray-400">Active Championship</p>
-                  <p className="font-semibold text-white">{activeChampionship.name}</p>
-                </div>
-                <Badge className={
-                  activeChampionship.status === "ACTIVE" 
-                    ? "bg-[#2ECC71]/20 text-[#2ECC71] border-[#2ECC71]/30"
-                    : activeChampionship.status === "COMPLETED"
-                      ? "bg-gray-500/20 text-gray-400 border-gray-500/30"
-                      : "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30"
-                }>
-                  {activeChampionship.status}
-                </Badge>
-              </div>
-              <Link 
-                href={`/leagues/${slug}/championships`}
-                className="text-sm text-gray-400 hover:text-white flex items-center gap-1"
-              >
-                All Championships <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        )}
-
         {/* Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="bg-white/5 border border-white/10 p-1">
@@ -386,37 +294,36 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
               value="overview"
               className="data-[state=active]:bg-[#2ECC71] data-[state=active]:text-white"
             >
-              Overview
+              {t("overview")}
             </TabsTrigger>
             <TabsTrigger
               value="schedule"
               className="data-[state=active]:bg-[#2ECC71] data-[state=active]:text-white"
             >
-              Schedule
+              {t("schedule")}
             </TabsTrigger>
             <TabsTrigger
               value="standings"
               className="data-[state=active]:bg-[#2ECC71] data-[state=active]:text-white"
             >
-              Standings
+              {t("standings")}
             </TabsTrigger>
             <TabsTrigger
               value="teams"
               className="data-[state=active]:bg-[#2ECC71] data-[state=active]:text-white"
             >
-              Teams
+              {t("teams")}
             </TabsTrigger>
             <TabsTrigger
-              value="members"
+              value="results"
               className="data-[state=active]:bg-[#2ECC71] data-[state=active]:text-white"
             >
-              Members
+              {t("results")}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              {/* Next Race */}
               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 p-6">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2ECC71] to-[#27AE60]" />
                 <div className="flex items-center gap-2 mb-4">
@@ -427,8 +334,9 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                 </div>
                 {nextRace ? (
                   <div className="flex gap-6">
+                    {/* Circuit Layout Image - White outline */}
                     <div className="hidden md:block relative w-32 h-24 bg-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      {nextRace.track?.shortName ? (
+                      {nextRace.track.shortName ? (
                         <Image
                           src={getTrackMiniUrl(nextRace.track.shortName, nextRace.track.layoutImageUrl) || ""}
                           alt={nextRace.track.name}
@@ -448,37 +356,38 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                       </h4>
                       <div className="flex items-center gap-2 text-gray-400">
                         <MapPin className="h-4 w-4" />
-                        {nextRace.track?.countryCode && (
+                        {nextRace.track.countryCode && (
                           <Image
                             src={getFlagUrl(nextRace.track.countryCode)}
-                            alt={nextRace.track.country || ""}
+                            alt={nextRace.track.country}
                             width={20}
                             height={14}
                             className="rounded-sm"
                             unoptimized
                           />
                         )}
-                        <span>{nextRace.track?.city || nextRace.track?.name}</span>
+                        <span>{nextRace.track.city || nextRace.track.name}</span>
                       </div>
                       <p className="text-sm text-gray-500">
-                        {nextRace.scheduledDate 
-                          ? formatRaceDateTime(nextRace.scheduledDate, league.timezone)
-                          : "Date TBD"}
+                        {formatRaceDateTime(
+                          nextRace.scheduledAt,
+                          league.timezone,
+                        )}
                       </p>
                       <div className="flex gap-2 mt-4">
-                        {nextRace.qualyType && nextRace.qualyType !== "NONE" && (
-                          <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                            Qualifying
-                          </Badge>
-                        )}
-                        {nextRace.sprintLength && nextRace.sprintLength !== "NONE" && (
-                          <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
-                            Sprint
-                          </Badge>
-                        )}
-                        <Badge className="bg-[#2ECC71]/20 text-[#2ECC71] border-[#2ECC71]/30">
-                          Race
+                      {nextRace.hasQuali && (
+                        <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                          {tRound("qualifying")}
                         </Badge>
+                      )}
+                      {nextRace.hasSprint && (
+                        <Badge className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+                          {tRound("sprint")}
+                        </Badge>
+                      )}
+                      <Badge className="bg-[#2ECC71]/20 text-[#2ECC71] border-[#2ECC71]/30">
+                        {tRound("race")}
+                      </Badge>
                       </div>
                     </div>
                   </div>
@@ -487,7 +396,6 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                 )}
               </div>
 
-              {/* Season Progress */}
               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 p-6">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#F59E0B] to-[#D97706]" />
                 <div className="flex items-center gap-2 mb-4">
@@ -501,33 +409,32 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-400">Races Completed</span>
                       <span className="text-white font-medium">
-                        {completedRaces}/{totalRaces}
+                        {completedRounds.length}/{league.rounds.length}
                       </span>
                     </div>
                     <div className="h-3 rounded-full bg-white/10 overflow-hidden">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-[#2ECC71] to-[#27AE60]"
                         style={{
-                          width: `${totalRaces > 0 ? (completedRaces / totalRaces) * 100 : 0}%`,
+                          width: `${league.rounds.length > 0 ? (completedRounds.length / league.rounds.length) * 100 : 0}%`,
                         }}
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div className="text-center p-3 rounded-lg bg-white/5">
-                      <p className="text-2xl font-bold text-white">{totalTeams}</p>
-                      <p className="text-xs text-gray-500">Teams</p>
-                    </div>
-                    <div className="text-center p-3 rounded-lg bg-white/5">
-                      <p className="text-2xl font-bold text-white">{totalDrivers}</p>
-                      <p className="text-xs text-gray-500">Drivers</p>
-                    </div>
-                  </div>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full border-white/10 text-gray-300 hover:text-white hover:bg-white/5"
+                  >
+                    <Link href={`/leagues/${slug}/standings`}>
+                      View Full Standings
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
 
-            {/* AI Assistant Banner */}
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#2ECC71]/10 to-[#27AE60]/5 border border-[#2ECC71]/20 p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -549,6 +456,46 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                 </Button>
               </div>
             </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-white">
+                  {t("teams")}
+                </h3>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-400 hover:text-white"
+                >
+                  <Link href={`/leagues/${slug}/teams`}>
+                    View All
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {league.teams.slice(0, 4).map((team) => (
+                  <div
+                    key={team.id}
+                    className="relative overflow-hidden rounded-xl bg-white/[0.03] border border-white/10 p-4 hover:border-white/20 transition-colors"
+                  >
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-1"
+                      style={{
+                        backgroundColor: team.primaryColor || "#2ECC71",
+                      }}
+                    />
+                    <h4 className="font-semibold text-white ml-2">
+                      {team.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 ml-2">
+                      {team.drivers.length} drivers
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="schedule">
@@ -556,45 +503,35 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
               <div className="p-6 border-b border-white/10">
                 <h3 className="text-xl font-semibold text-white flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-[#2ECC71]" />
-                  Race Schedule
+                  {t("schedule")}
                 </h3>
                 <p className="text-gray-400 mt-1">
-                  All races for {activeChampionship?.name || "current championship"}
+                  All rounds for this championship
                 </p>
               </div>
               <div className="divide-y divide-white/5">
-                {activeChampionship?.races.map((race, idx) => (
+                {league.rounds.map((round, idx) => (
                   <Link
-                    key={race.id}
-                    href={`/leagues/${slug}/races/${race.roundNumber}`}
+                    key={round.id}
+                    href={`/leagues/${slug}/results/${round.roundNumber}`}
                     className="flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors group"
                   >
                     <div className="flex items-center gap-4">
+                      {/* Round Number - Compact R1 format */}
                       <div
-                        className={`flex items-center justify-center rounded-xl font-bold px-3 py-2 min-w-[50px] ${
-                          race.status === "COMPLETED" 
-                            ? "bg-[#2ECC71]/20" 
-                            : nextRace && race.id === nextRace.id 
-                              ? "bg-[#F59E0B]/20" 
-                              : "bg-white/10"
-                        }`}
+                        className={`flex items-center justify-center rounded-xl font-bold px-3 py-2 min-w-[50px] ${round.status === "COMPLETED" ? "bg-[#2ECC71]/20" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "bg-[#F59E0B]/20" : "bg-white/10"}`}
                       >
-                        <span className={`text-xl font-bold ${
-                          race.status === "COMPLETED" 
-                            ? "text-[#2ECC71]" 
-                            : nextRace && race.id === nextRace.id 
-                              ? "text-[#F59E0B]" 
-                              : "text-gray-300"
-                        }`}>
-                          R{race.roundNumber}
+                        <span className={`text-xl font-bold ${round.status === "COMPLETED" ? "text-[#2ECC71]" : idx === 0 && upcomingRounds.length > 0 && round.id === upcomingRounds[0].id ? "text-[#F59E0B]" : "text-gray-300"}`}>
+                          R{round.roundNumber}
                         </span>
                       </div>
 
+                      {/* Track Mini Image - White outline */}
                       <div className="hidden md:block relative w-20 h-14 bg-white/5 rounded-lg overflow-hidden">
-                        {race.track?.shortName ? (
+                        {round.track.shortName ? (
                           <Image
-                            src={getTrackMiniUrl(race.track.shortName, race.track.layoutImageUrl) || ""}
-                            alt={race.track.name}
+                            src={getTrackMiniUrl(round.track.shortName, round.track.layoutImageUrl) || ""}
+                            alt={round.track.name}
                             fill
                             className="object-contain p-1 group-hover:scale-105 transition-transform"
                             unoptimized
@@ -606,34 +543,36 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                         )}
                       </div>
 
+                      {/* Track Info with Flag */}
                       <div>
                         <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors flex items-center gap-2">
-                          {race.track?.countryCode && (
+                          {round.track.countryCode && (
                             <Image
-                              src={getFlagUrl(race.track.countryCode)}
-                              alt={race.track.country || ""}
+                              src={getFlagUrl(round.track.countryCode)}
+                              alt={round.track.country}
                               width={24}
                               height={16}
                               className="rounded-sm"
                               unoptimized
                             />
                           )}
-                          {race.name || race.track?.name || "TBD"}
+                          {round.name || round.track.name}
                         </h4>
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <MapPin className="h-3 w-3" />
-                          {race.track?.city || race.track?.country || "Location TBD"}
+                          {round.track.city || round.track.country}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p className="text-sm text-gray-300">
-                          {race.scheduledDate
-                            ? formatRaceDateTime(race.scheduledDate, league.timezone)
-                            : "Date TBD"}
+                          {formatRaceDateTime(
+                            round.scheduledAt,
+                            league.timezone,
+                          )}
                         </p>
-                        {race.sprintLength && race.sprintLength !== "NONE" && (
+                        {round.hasSprint && (
                           <Badge className="text-xs bg-orange-500/20 text-orange-400 border-orange-500/30 mt-1">
                             Sprint
                           </Badge>
@@ -641,25 +580,23 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                       </div>
                       <Badge
                         className={
-                          race.status === "COMPLETED"
+                          round.status === "COMPLETED"
                             ? "bg-[#2ECC71]/20 text-[#2ECC71] border-[#2ECC71]/30"
-                            : race.status === "CANCELLED"
+                            : round.status === "ANNULLED"
                               ? "bg-red-500/20 text-red-400 border-red-500/30"
                               : "bg-white/10 text-gray-400 border-white/10"
                         }
                       >
-                        {race.status}
+                        {round.status === "COMPLETED"
+                          ? tRound("completed")
+                          : round.status === "ANNULLED"
+                            ? tRound("annulled")
+                            : tRound("scheduled")}
                       </Badge>
                       <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-[#2ECC71] transition-colors" />
                     </div>
                   </Link>
                 ))}
-                {(!activeChampionship || activeChampionship.races.length === 0) && (
-                  <div className="p-10 text-center">
-                    <Calendar className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-gray-500">No races scheduled yet</p>
-                  </div>
-                )}
               </div>
             </div>
           </TabsContent>
@@ -673,7 +610,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   <div className="flex items-center gap-2">
                     <Trophy className="h-5 w-5 text-[#F59E0B]" />
                     <h3 className="text-lg font-semibold text-white">
-                      Driver Standings
+                      {tStandings("driverStandings")}
                     </h3>
                   </div>
                 </div>
@@ -708,7 +645,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                             className="h-8 w-1 rounded-full"
                             style={{
                               backgroundColor:
-                                standing.driver?.team?.f1Team?.primaryColor || "#2ECC71",
+                                standing.driver?.team?.primaryColor || "#2ECC71",
                             }}
                           />
                           <div>
@@ -716,7 +653,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                               {standing.driver?.fullName}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {standing.driver?.team?.name || standing.driver?.team?.f1Team?.name}
+                              {standing.driver?.team?.name}
                             </p>
                           </div>
                         </div>
@@ -739,7 +676,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   <div className="flex items-center gap-2">
                     <Flag className="h-5 w-5 text-[#3B82F6]" />
                     <h3 className="text-lg font-semibold text-white">
-                      Constructor Standings
+                      {tStandings("constructorStandings")}
                     </h3>
                   </div>
                 </div>
@@ -774,12 +711,15 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                             className="h-8 w-1 rounded-full"
                             style={{
                               backgroundColor:
-                                standing.team?.f1Team?.primaryColor || "#2ECC71",
+                                standing.team?.primaryColor || "#2ECC71",
                             }}
                           />
                           <div>
                             <p className="font-medium text-white">
-                              {standing.team?.name || standing.team?.f1Team?.name}
+                              {standing.team?.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {standing.team?.country}
                             </p>
                           </div>
                         </div>
@@ -799,32 +739,32 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
 
           <TabsContent value="teams">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {activeChampionship?.teams.map((team) => (
+              {league.teams.map((team) => (
                 <div
                   key={team.id}
                   className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 hover:border-white/20 transition-colors"
                 >
                   <div
                     className="absolute top-0 left-0 right-0 h-1"
-                    style={{ backgroundColor: team.f1Team?.primaryColor || "#2ECC71" }}
+                    style={{ backgroundColor: team.primaryColor || "#2ECC71" }}
                   />
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-4">
                       <div
                         className="h-10 w-10 rounded-xl flex items-center justify-center text-white font-bold"
                         style={{
-                          backgroundColor: `${team.f1Team?.primaryColor || "#2ECC71"}40`,
+                          backgroundColor: `${team.primaryColor || "#2ECC71"}40`,
                         }}
                       >
-                        {(team.name || team.f1Team?.name || "").substring(0, 2).toUpperCase()}
+                        {team.name.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
                         <h4 className="font-semibold text-white">
-                          {team.name || team.f1Team?.name}
+                          {team.name}
                         </h4>
-                        {team.f1Team?.country && (
+                        {team.country && (
                           <p className="text-sm text-gray-500">
-                            {team.f1Team.country}
+                            {team.country}
                           </p>
                         )}
                       </div>
@@ -839,8 +779,8 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                             <div
                               className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold"
                               style={{
-                                backgroundColor: `${team.f1Team?.primaryColor || "#2ECC71"}30`,
-                                color: team.f1Team?.primaryColor || "#2ECC71",
+                                backgroundColor: `${team.primaryColor || "#2ECC71"}30`,
+                                color: team.primaryColor || "#2ECC71",
                               }}
                             >
                               {driver.number || driver.shortName || "?"}
@@ -854,7 +794,7 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                               </p>
                             </div>
                           </div>
-                          {driver.status === "RESERVE" && (
+                          {driver.isReserve && (
                             <Badge className="text-xs bg-white/10 text-gray-400 border-white/10">
                               Reserve
                             </Badge>
@@ -870,61 +810,58 @@ export default async function LeaguePage({ params }: LeaguePageProps) {
                   </div>
                 </div>
               ))}
-              {(!activeChampionship || activeChampionship.teams.length === 0) && (
-                <div className="col-span-full p-10 text-center">
-                  <Flag className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-500">No teams in this championship yet</p>
-                </div>
-              )}
             </div>
           </TabsContent>
 
-          <TabsContent value="members">
+          <TabsContent value="results">
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10">
               <div className="p-6 border-b border-white/10">
                 <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                  <Users className="h-5 w-5 text-[#2ECC71]" />
-                  League Members
+                  <Trophy className="h-5 w-5 text-[#2ECC71]" />
+                  {t("results")}
                 </h3>
                 <p className="text-gray-400 mt-1">
-                  {league._count.members} members in this league
+                  Race results for completed rounds
                 </p>
               </div>
-              <div className="divide-y divide-white/5">
-                {league.members.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white font-bold">
-                        {member.user.fullName?.charAt(0) || member.user.email?.charAt(0) || "?"}
-                      </div>
-                      <div>
-                        <p className="font-medium text-white">
-                          {member.user.fullName || member.user.email}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Joined {new Date(member.joinedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge
-                      className={
-                        member.role === "OWNER"
-                          ? "bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30"
-                          : member.role === "ADMIN"
-                            ? "bg-[#3B82F6]/20 text-[#3B82F6] border-[#3B82F6]/30"
-                            : "bg-white/10 text-gray-400 border-white/10"
-                      }
-                    >
-                      {member.role === "OWNER" && <Crown className="mr-1 h-3 w-3" />}
-                      {member.role === "ADMIN" && <Shield className="mr-1 h-3 w-3" />}
-                      {member.role}
-                    </Badge>
+              {completedRounds.length === 0 ? (
+                <div className="p-8 text-center">
+                  <div className="h-16 w-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="h-8 w-8 text-gray-600" />
                   </div>
-                ))}
-              </div>
+                  <p className="text-gray-500">No results available yet.</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Results will appear after races are completed.
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-white/5">
+                  {completedRounds.map((round) => (
+                    <Link
+                      key={round.id}
+                      href={`/leagues/${slug}/results/${round.roundNumber}`}
+                      className="flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors group"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#2ECC71]/20 text-[#2ECC71] font-bold">
+                          {round.roundNumber}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors">
+                            Round {round.roundNumber}:{" "}
+                            {round.name || round.track.name}
+                          </h4>
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <MapPin className="h-3 w-3" />
+                            {round.track.country}
+                          </div>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-600 group-hover:text-[#2ECC71] transition-colors" />
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>

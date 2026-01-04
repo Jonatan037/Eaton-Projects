@@ -122,8 +122,8 @@ export async function checkLimit(
 export async function canCreateLeague(userId: string): Promise<LimitGateResult> {
   const tier = await getUserTier(userId);
   
-  // Count user's owned leagues
-  const leagueCount = await prisma.membership.count({
+  // Count user's owned leagues (using LeagueMember with OWNER role)
+  const leagueCount = await prisma.leagueMember.count({
     where: {
       userId,
       role: 'OWNER',
@@ -149,8 +149,8 @@ export async function canCreateLeague(userId: string): Promise<LimitGateResult> 
  * Check if a league can accept new members
  */
 export async function canAddMember(leagueId: string): Promise<LimitGateResult> {
-  // Get league owner's tier
-  const ownerMembership = await prisma.membership.findFirst({
+  // Get league owner's tier via LeagueMember
+  const ownerMember = await prisma.leagueMember.findFirst({
     where: {
       leagueId,
       role: 'OWNER',
@@ -165,10 +165,10 @@ export async function canAddMember(leagueId: string): Promise<LimitGateResult> {
     },
   });
 
-  const tier = (ownerMembership?.user?.subscriptionTier as SubscriptionTier) || 'FREE';
+  const tier = (ownerMember?.user?.subscriptionTier as SubscriptionTier) || 'FREE';
   
   // Count current members
-  const memberCount = await prisma.membership.count({
+  const memberCount = await prisma.leagueMember.count({
     where: { leagueId },
   });
 
@@ -221,8 +221,8 @@ export async function getSubscriptionInfo(userId: string) {
   const tier = user.subscriptionTier as SubscriptionTier;
   const plan = getPlan(tier);
 
-  // Get current usage
-  const leagueCount = await prisma.membership.count({
+  // Get current usage (using LeagueMember with OWNER role)
+  const leagueCount = await prisma.leagueMember.count({
     where: {
       userId,
       role: 'OWNER',
