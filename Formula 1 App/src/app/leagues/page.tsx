@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Plus, Search, Users, Trophy, Globe, Lock, Calendar, Sparkles, ArrowRight, Flag, Filter } from 'lucide-react';
+import { Plus, Search, Users, Trophy, Globe, Calendar, ArrowRight, Flag, Filter, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -17,34 +17,55 @@ export const metadata: Metadata = {
 
 export default async function LeaguesPage() {
   const t = await getTranslations('league');
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  
+  let user = null;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    user = data?.user;
+  } catch (error) {
+    console.error('Error getting user:', error);
+  }
 
   if (!user) {
     redirect('/auth/signin');
   }
 
-  // Fetch user's leagues
-  const memberships = await prisma.membership.findMany({
+  // Fetch user's leagues using the new LeagueMember model
+  const leagueMembers = await prisma.leagueMember.findMany({
     where: { userId: user.id },
     include: {
       league: {
         include: {
           _count: {
-            select: { memberships: true, rounds: true, teams: true },
+            select: { 
+              members: true,
+              championships: true,
+            },
           },
-          rounds: {
-            where: { status: 'COMPLETED' },
-            select: { id: true },
+          championships: {
+            where: { status: { in: ['ACTIVE', 'DRAFT'] } },
+            include: {
+              _count: {
+                select: { races: true, teams: true },
+              },
+              races: {
+                where: { status: 'COMPLETED' },
+                select: { id: true },
+              },
+            },
+            take: 1,
+            orderBy: { createdAt: 'desc' },
           },
         },
       },
     },
   });
 
-  const myLeagues = memberships.map((m: typeof memberships[0]) => ({
+  const myLeagues = leagueMembers.map((m) => ({
     ...m.league,
     role: m.role,
+    activeChampionship: m.league.championships[0] || null,
   }));
 
   // Fetch public leagues for discovery
@@ -53,12 +74,12 @@ export default async function LeaguesPage() {
       visibility: 'PUBLIC',
       isActive: true,
       NOT: {
-        id: { in: myLeagues.map((l: { id: string }) => l.id) },
+        id: { in: myLeagues.map((l) => l.id) },
       },
     },
     include: {
       _count: {
-        select: { memberships: true, rounds: true },
+        select: { members: true, championships: true },
       },
     },
     orderBy: { createdAt: 'desc' },
@@ -80,7 +101,7 @@ export default async function LeaguesPage() {
             asChild
             className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20"
           >
-            <Link href="/leagues/create">
+            <Link href="/leagues/new">
               <Plus className="mr-2 h-4 w-4" />
               {t('create')}
             </Link>
@@ -118,7 +139,7 @@ export default async function LeaguesPage() {
                 asChild 
                 className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold"
               >
-                <Link href="/leagues/create">
+                <Link href="/leagues/new">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Your First League
                 </Link>
@@ -128,9 +149,10 @@ export default async function LeaguesPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {myLeagues.map((league) => {
-              const completedRounds = league.rounds.length;
-              const totalRounds = league._count.rounds;
-              const progress = totalRounds > 0 ? (completedRounds / totalRounds) * 100 : 0;
+              const championship = league.activeChampionship;
+              const completedRaces = championship?.races?.length || 0;
+              const totalRaces = championship?._count?.races || 0;
+              const progress = totalRaces > 0 ? (completedRaces / totalRaces) * 100 : 0;
               
               return (
                 <Link 
@@ -153,7 +175,12 @@ export default async function LeaguesPage() {
                             {league.name}
                           </h3>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <Badge className="text-xs bg-[#2ECC71]/10 text-[#2ECC71] border-[#2ECC71]/30">
+                            <Badge className={`text-xs ${
+                              league.role === 'OWNER' 
+                                ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' 
+                                : 'bg-[#2ECC71]/10 text-[#2ECC71] border-[#2ECC71]/30'
+                            }`}>
+                              {league.role === 'OWNER' && <Crown className="h-3 w-3 mr-1" />}
                               {league.role}
                             </Badge>
                           </div>
@@ -165,27 +192,39 @@ export default async function LeaguesPage() {
                     <div className="flex items-center gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-1.5">
                         <Users className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-400">{league._count.memberships}</span>
+                        <span className="text-gray-400">{league._count.members}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Trophy className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-400">{league._count.teams} teams</span>
+                        <span className="text-gray-400">{league._count.championships} champ.</span>
                       </div>
+                      {championship && (
+                        <div className="flex items-center gap-1.5">
+                          <Flag className="h-4 w-4 text-gray-500" />
+                          <span className="text-gray-400">{championship._count.teams} teams</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Progress Bar */}
-                    <div>
-                      <div className="flex justify-between text-xs mb-1.5">
-                        <span className="text-gray-500">Season Progress</span>
-                        <span className="text-gray-400">{completedRounds}/{totalRounds}</span>
+                    {championship && totalRaces > 0 && (
+                      <div>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="text-gray-500">Season Progress</span>
+                          <span className="text-gray-400">{completedRaces}/{totalRaces}</span>
+                        </div>
+                        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                          <div 
+                            className="h-full rounded-full bg-gradient-to-r from-[#2ECC71] to-[#27AE60]"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                        <div 
-                          className="h-full rounded-full bg-gradient-to-r from-[#2ECC71] to-[#27AE60]"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                    </div>
+                    )}
+
+                    {!championship && (
+                      <p className="text-xs text-gray-500">No active championship</p>
+                    )}
                   </div>
                 </Link>
               );
@@ -230,11 +269,11 @@ export default async function LeaguesPage() {
                   <div className="flex items-center gap-3 text-xs text-gray-500">
                     <span className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
-                      {league._count.memberships}
+                      {league._count.members}
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {league._count.rounds} rounds
+                      {league._count.championships} championships
                     </span>
                   </div>
                 </Link>
