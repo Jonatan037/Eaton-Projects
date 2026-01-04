@@ -71,7 +71,7 @@ export default async function LeaguesPage() {
   // Fetch public leagues for discovery
   const publicLeagues = await prisma.league.findMany({
     where: {
-      visibility: 'PUBLIC',
+      isPublic: true,
       isActive: true,
       NOT: {
         id: { in: myLeagues.map((l) => l.id) },
