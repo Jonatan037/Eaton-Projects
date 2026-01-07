@@ -57,15 +57,10 @@
   status = 301
   force = true
 
-# Legacy redirects
+# Legacy redirects - removed /dashboard -> /leagues redirect
 [[redirects]]
   from = "/app"
-  to = "/leagues"
-  status = 301
-
-[[redirects]]
-  from = "/dashboard"
-  to = "/leagues"
+  to = "/dashboard"
   status = 301
 
 [[redirects]]
