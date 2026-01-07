@@ -620,4 +620,94 @@ public partial class TED_Settings : System.Web.UI.Page
         ScriptManager.RegisterStartupScript(this, GetType(), "showError", 
             "showToast('" + message.Replace("'", "\\'") + "', 'error');", true);
     }
+
+    protected void btnSaveGoals_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string plant = ddlYieldPlant.SelectedValue;
+            decimal yieldGoal;
+            
+            if (!decimal.TryParse(txtYieldGoal.Text, out yieldGoal) || yieldGoal <= 0 || yieldGoal > 100)
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "showError", 
+                    "showToast('Please enter a valid yield goal (1-100)', 'error'); switchTab('quality');", true);
+                return;
+            }
+
+            // Convert percentage to decimal (e.g., 98% -> 0.98)
+            decimal goalValue = yieldGoal / 100m;
+
+            string connString = ConfigurationManager.ConnectionStrings["TestEngineeringConnectionString"].ConnectionString;
+            string userName = Session["TED:FullName"] as string ?? "System";
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+
+                // Check if goal exists for this plant (plant-wide goal)
+                string checkQuery = @"
+                    SELECT GoalID FROM Quality_Goals 
+                    WHERE Plant = @Plant 
+                      AND MetricType = 'Yield' 
+                      AND ProductionLine IS NULL
+                      AND EffectiveDate <= GETDATE()
+                      AND (EndDate IS NULL OR EndDate >= GETDATE())";
+
+                int existingGoalId = 0;
+                using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                {
+                    checkCmd.Parameters.AddWithValue("@Plant", plant);
+                    var result = checkCmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        existingGoalId = Convert.ToInt32(result);
+                    }
+                }
+
+                if (existingGoalId > 0)
+                {
+                    // Update existing goal
+                    string updateQuery = @"
+                        UPDATE Quality_Goals 
+                        SET GoalValue = @GoalValue, 
+                            ModifiedBy = @ModifiedBy, 
+                            ModifiedDate = GETDATE()
+                        WHERE GoalID = @GoalID";
+
+                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@GoalValue", goalValue);
+                        updateCmd.Parameters.AddWithValue("@ModifiedBy", userName);
+                        updateCmd.Parameters.AddWithValue("@GoalID", existingGoalId);
+                        updateCmd.ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    // Insert new goal
+                    string insertQuery = @"
+                        INSERT INTO Quality_Goals (Plant, ProductionLine, MetricType, GoalValue, EffectiveDate, CreatedBy)
+                        VALUES (@Plant, NULL, 'Yield', @GoalValue, GETDATE(), @CreatedBy)";
+
+                    using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
+                    {
+                        insertCmd.Parameters.AddWithValue("@Plant", plant);
+                        insertCmd.Parameters.AddWithValue("@GoalValue", goalValue);
+                        insertCmd.Parameters.AddWithValue("@CreatedBy", userName);
+                        insertCmd.ExecuteNonQuery();
+                    }
+                }
+            }
+
+            ScriptManager.RegisterStartupScript(this, GetType(), "showSuccess", 
+                "showToast('Quality goals saved successfully!', 'success'); switchTab('quality');", true);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("SaveGoals Error: " + ex.Message);
+            ScriptManager.RegisterStartupScript(this, GetType(), "showError", 
+                "showToast('Error saving goals: " + ex.Message.Replace("'", "\\'") + "', 'error'); switchTab('quality');", true);
+        }
+    }
 }

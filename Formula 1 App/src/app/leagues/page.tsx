@@ -6,7 +6,7 @@ import { Plus, Search, Users, Trophy, Globe, Calendar, ArrowRight, Flag, Filter,
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { AppLayout } from '@/components/layout/app-layout';
 import { createClient } from '@/lib/supabase/server';
 import prisma from '@/lib/db';
 
@@ -87,7 +87,7 @@ export default async function LeaguesPage() {
   });
 
   return (
-    <DashboardLayout user={{ email: user.email || '' }}>
+    <AppLayout user={{ email: user.email || '' }}>
       <div className="space-y-8">
         {/* Page Header */}
         <div className="flex items-start justify-between">
@@ -99,7 +99,7 @@ export default async function LeaguesPage() {
           </div>
           <Button 
             asChild
-            className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold hover:from-[#27AE60] hover:to-[#229954] shadow-lg shadow-[#2ECC71]/20"
+            className="bg-gradient-to-r from-[#DC2626] to-[#B91C1C] text-white font-semibold hover:from-[#B91C1C] hover:to-[#991B1B] shadow-lg shadow-red-600/20"
           >
             <Link href="/leagues/new">
               <Plus className="mr-2 h-4 w-4" />
@@ -114,7 +114,7 @@ export default async function LeaguesPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <Input
               placeholder="Search leagues..."
-              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#2ECC71]/50"
+              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#DC2626]/50"
             />
           </div>
           <Button variant="outline" className="border-white/10 text-gray-400 hover:text-white hover:bg-white/5">
@@ -128,8 +128,8 @@ export default async function LeaguesPage() {
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 p-12 text-center">
             <div className="absolute inset-0 bg-grid-pattern opacity-10" />
             <div className="relative z-10">
-              <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#2ECC71]/20 to-[#2ECC71]/5 flex items-center justify-center">
-                <Trophy className="h-10 w-10 text-[#2ECC71]" />
+              <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-gradient-to-br from-[#DC2626]/20 to-[#DC2626]/5 flex items-center justify-center">
+                <Trophy className="h-10 w-10 text-[#DC2626]" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">No leagues yet</h3>
               <p className="text-gray-400 mb-6 max-w-md mx-auto">
@@ -137,7 +137,7 @@ export default async function LeaguesPage() {
               </p>
               <Button 
                 asChild 
-                className="bg-gradient-to-r from-[#2ECC71] to-[#27AE60] text-white font-semibold"
+                className="bg-gradient-to-r from-[#DC2626] to-[#B91C1C] text-white font-semibold"
               >
                 <Link href="/leagues/new">
                   <Plus className="mr-2 h-4 w-4" />
@@ -158,27 +158,27 @@ export default async function LeaguesPage() {
                 <Link 
                   key={league.id}
                   href={`/leagues/${league.slug}`}
-                  className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 transition-all duration-300 hover:border-[#2ECC71]/50 hover:shadow-lg hover:shadow-[#2ECC71]/10"
+                  className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 transition-all duration-300 hover:border-[#DC2626]/50 hover:shadow-lg hover:shadow-[#DC2626]/10"
                 >
                   {/* Top Accent Bar */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2ECC71] to-[#27AE60]" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#DC2626] to-[#B91C1C]" />
                   
                   <div className="p-5">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-[#2ECC71]/20 to-[#2ECC71]/5 flex items-center justify-center border border-[#2ECC71]/20">
-                          <Flag className="h-5 w-5 text-[#2ECC71]" />
+                        <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-[#DC2626]/20 to-[#DC2626]/5 flex items-center justify-center border border-[#DC2626]/20">
+                          <Flag className="h-5 w-5 text-[#DC2626]" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-white group-hover:text-[#2ECC71] transition-colors line-clamp-1">
+                          <h3 className="font-semibold text-white group-hover:text-[#DC2626] transition-colors line-clamp-1">
                             {league.name}
                           </h3>
                           <div className="flex items-center gap-2 mt-0.5">
                             <Badge className={`text-xs ${
                               league.role === 'OWNER' 
                                 ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' 
-                                : 'bg-[#2ECC71]/10 text-[#2ECC71] border-[#2ECC71]/30'
+                                : 'bg-[#DC2626]/10 text-[#DC2626] border-[#DC2626]/30'
                             }`}>
                               {league.role === 'OWNER' && <Crown className="h-3 w-3 mr-1" />}
                               {league.role}
@@ -215,7 +215,7 @@ export default async function LeaguesPage() {
                         </div>
                         <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                           <div 
-                            className="h-full rounded-full bg-gradient-to-r from-[#2ECC71] to-[#27AE60]"
+                            className="h-full rounded-full bg-gradient-to-r from-[#DC2626] to-[#B91C1C]"
                             style={{ width: `${progress}%` }}
                           />
                         </div>
@@ -258,7 +258,7 @@ export default async function LeaguesPage() {
                       <Globe className="h-5 w-5 text-gray-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-white group-hover:text-[#2ECC71] transition-colors truncate">
+                      <h3 className="font-medium text-white group-hover:text-[#DC2626] transition-colors truncate">
                         {league.name}
                       </h3>
                       <p className="text-xs text-gray-500 truncate">
@@ -282,6 +282,6 @@ export default async function LeaguesPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </AppLayout>
   );
 }

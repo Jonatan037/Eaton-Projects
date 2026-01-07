@@ -66,7 +66,7 @@ export function Sidebar({ onCollapsedChange, defaultCollapsed = true }: SidebarP
           <Link href="/dashboard" className="flex items-center justify-center">
             {collapsed ? (
               <Image
-                src="/images/ApexGrid - Icon Only - Transparent.png"
+                src="/images/apexgrid-icon.png"
                 alt="ApexGrid"
                 width={40}
                 height={40}
@@ -74,7 +74,7 @@ export function Sidebar({ onCollapsedChange, defaultCollapsed = true }: SidebarP
               />
             ) : (
               <Image
-                src="/images/ApexGrid - Red Logo - Transparent.png"
+                src="/images/apexgrid-logo.png"
                 alt="ApexGrid"
                 width={180}
                 height={45}

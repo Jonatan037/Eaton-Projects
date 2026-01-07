@@ -202,6 +202,41 @@
     .toast.error { background: rgba(255,80,80,.95); color: white; border: 1px solid rgba(255,80,80,1); }
     
     @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    
+    /* Tab styles for settings sections */
+    .settings-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,.08); padding-bottom: 16px; flex-wrap: wrap; }
+    html.theme-light .settings-tabs, html[data-theme='light'] .settings-tabs { border-bottom: 1px solid rgba(0,0,0,.08); }
+    .settings-tab { padding: 10px 20px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; }
+    .settings-tab:hover { background: rgba(255,255,255,.08); }
+    html.theme-light .settings-tab:hover, html[data-theme='light'] .settings-tab:hover { background: rgba(0,0,0,.05); }
+    .settings-tab.active { background: rgba(77,141,255,.15); border-color: rgba(77,141,255,.35); color: #bcd4ff; }
+    html.theme-light .settings-tab.active, html[data-theme='light'] .settings-tab.active { background: #e8f0ff; border-color: rgba(77,141,255,.35); color: #0063ce; }
+    .settings-tab svg { width: 16px; height: 16px; }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Quality Goals section styles */
+    .goals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .goal-card { background: rgba(0,0,0,.12); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 20px; }
+    html.theme-light .goal-card, html[data-theme='light'] .goal-card { background: #f8fafc; border: 1px solid rgba(0,0,0,.08); }
+    .goal-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .goal-card-title { font-size: 16px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .goal-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .goal-badge.yield { background: rgba(16,185,129,.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,.3); }
+    .goal-badge.scrap { background: rgba(245,158,11,.15); color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
+    .goal-badge.ncm { background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
+    html.theme-light .goal-badge.yield, html[data-theme='light'] .goal-badge.yield { background: rgba(16,185,129,.1); color: #059669; }
+    html.theme-light .goal-badge.scrap, html[data-theme='light'] .goal-badge.scrap { background: rgba(245,158,11,.1); color: #d97706; }
+    html.theme-light .goal-badge.ncm, html[data-theme='light'] .goal-badge.ncm { background: rgba(239,68,68,.1); color: #dc2626; }
+    .goal-input-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
+    .goal-input-group { flex: 1; }
+    .goal-input-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; opacity: 0.7; margin-bottom: 6px; display: block; }
+    .goal-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.12); color: inherit; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+    .goal-input:focus { outline: none; border-color: rgba(77,141,255,.5); box-shadow: 0 0 0 3px rgba(77,141,255,.15); }
+    html.theme-light .goal-input, html[data-theme='light'] .goal-input { background: #ffffff; border: 1px solid rgba(0,0,0,.12); }
+    .goal-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .goal-unit { font-size: 13px; opacity: 0.7; padding: 10px 0; min-width: 30px; }
   </style>
 </asp:Content>
 
@@ -233,7 +268,7 @@
         </ul>
         <div class="nav-title">Quality</div>
         <ul class="nav-list">
-          <li><a class="nav-link disabled" href="javascript:void(0)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>First Pass Yield</span></a></li>
+          <li><a class="nav-link" href="PlantQualityDashboard.aspx"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Plant Quality Performance</span></a></li>
           <li><a class="nav-link disabled" href="javascript:void(0)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M13 17l5-5-5-5"/><path d="M8 12h10"/></svg><span>Test Yield</span></a></li>
           <li><a class="nav-link disabled" href="javascript:void(0)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Device Test History</span></a></li>
           <li><a class="nav-link disabled" href="javascript:void(0)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Failure Report</span></a></li>
@@ -256,6 +291,20 @@
           <p class="settings-subtitle">Manage your account settings and preferences</p>
         </div>
         
+        <!-- Settings Tabs -->
+        <div class="settings-tabs">
+          <button type="button" class="settings-tab active" onclick="switchTab('profile')" id="tabProfile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+            Profile
+          </button>
+          <button type="button" class="settings-tab" onclick="switchTab('quality')" id="tabQuality">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Quality Goals
+          </button>
+        </div>
+        
+        <!-- Profile Tab Content -->
+        <div class="tab-content active" id="contentProfile">
         <div class="profile-section">
           <div class="profile-header">
             <div class="profile-avatar-container">
@@ -378,6 +427,73 @@
               Cancel
             </button>
             <asp:Button ID="btnSave" runat="server" Text="Save Changes" CssClass="btn btn-primary" OnClick="btnSave_Click" OnClientClick="return validateForm();" />
+          </div>
+        </div>
+        </div>
+        
+        <!-- Quality Goals Tab Content -->
+        <div class="tab-content" id="contentQuality">
+          <div class="profile-section">
+            <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 8px;">Quality Goals Management</h2>
+            <p style="font-size: 13px; opacity: 0.7; margin: 0 0 24px;">Set target goals for Yield, Scrap, and NCM metrics. These goals are used in the Plant Quality Performance Dashboard.</p>
+            
+            <div class="goals-grid">
+              <!-- Yield Goals -->
+              <div class="goal-card">
+                <div class="goal-card-header">
+                  <h3 class="goal-card-title"><span class="goal-badge yield">Yield</span> First Pass Yield Goal</h3>
+                </div>
+                <div class="goal-input-row">
+                  <div class="goal-input-group">
+                    <label class="goal-input-label">Plant</label>
+                    <asp:DropDownList ID="ddlYieldPlant" runat="server" CssClass="goal-input">
+                      <asp:ListItem Value="YPO">YPO</asp:ListItem>
+                      <asp:ListItem Value="CPO">CPO</asp:ListItem>
+                    </asp:DropDownList>
+                  </div>
+                  <div class="goal-input-group">
+                    <label class="goal-input-label">Goal Value</label>
+                    <asp:TextBox ID="txtYieldGoal" runat="server" CssClass="goal-input" Text="98" />
+                  </div>
+                  <span class="goal-unit">%</span>
+                </div>
+                <p style="font-size: 11px; opacity: 0.6; margin: 8px 0 0;">Target yield percentage for the selected plant</p>
+              </div>
+              
+              <!-- Scrap Goals (Placeholder) -->
+              <div class="goal-card" style="opacity: 0.5;">
+                <div class="goal-card-header">
+                  <h3 class="goal-card-title"><span class="goal-badge scrap">Scrap</span> Scrap Cost Goal</h3>
+                </div>
+                <div class="goal-input-row">
+                  <span class="goal-unit">$</span>
+                  <div class="goal-input-group">
+                    <label class="goal-input-label">Monthly Target</label>
+                    <input type="text" class="goal-input" value="500" disabled />
+                  </div>
+                </div>
+                <p style="font-size: 11px; opacity: 0.6; margin: 8px 0 0;">Coming soon - Scrap data source pending</p>
+              </div>
+              
+              <!-- NCM Goals (Placeholder) -->
+              <div class="goal-card" style="opacity: 0.5;">
+                <div class="goal-card-header">
+                  <h3 class="goal-card-title"><span class="goal-badge ncm">NCM</span> NCM Cost Goal</h3>
+                </div>
+                <div class="goal-input-row">
+                  <span class="goal-unit">$</span>
+                  <div class="goal-input-group">
+                    <label class="goal-input-label">Monthly Target</label>
+                    <input type="text" class="goal-input" value="1000" disabled />
+                  </div>
+                </div>
+                <p style="font-size: 11px; opacity: 0.6; margin: 8px 0 0;">Coming soon - NCM data source pending</p>
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <asp:Button ID="btnSaveGoals" runat="server" Text="Save Quality Goals" CssClass="btn btn-primary" OnClick="btnSaveGoals_Click" />
+            </div>
           </div>
         </div>
       </div>
@@ -513,6 +629,42 @@
         closePhotoModal();
       }
     });
+    
+    // Tab switching functionality
+    function switchTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(function(content) {
+        content.classList.remove('active');
+      });
+      // Deactivate all tabs
+      document.querySelectorAll('.settings-tab').forEach(function(tab) {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      var contentId = 'content' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+      var tabId = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+      
+      var content = document.getElementById(contentId);
+      var tab = document.getElementById(tabId);
+      
+      if (content) content.classList.add('active');
+      if (tab) tab.classList.add('active');
+      
+      // Update URL without reload
+      var url = new URL(window.location);
+      url.searchParams.set('tab', tabName);
+      window.history.replaceState({}, '', url);
+    }
+    
+    // Check URL parameter on load
+    (function() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var tab = urlParams.get('tab');
+      if (tab) {
+        switchTab(tab);
+      }
+    })();
     
     // Avatar fallback handling
     (function(){
