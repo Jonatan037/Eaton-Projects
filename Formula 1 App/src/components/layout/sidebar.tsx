@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -20,53 +19,47 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-interface SidebarProps {
-  onCollapsedChange?: (collapsed: boolean) => void;
-  defaultCollapsed?: boolean;
-}
-
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Leagues', href: '/leagues', icon: Trophy },
-  { name: 'Championships', href: '/championships', icon: Medal },
-  { name: 'Tracks', href: '/tracks', icon: Route },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Admin', href: '/admin', icon: Shield },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Leagues', href: '/dashboard', icon: Trophy },
+  { name: 'Championships', href: '/dashboard', icon: Medal },
+  { name: 'Tracks', href: '/dashboard', icon: Route },
+  { name: 'Analytics', href: '/dashboard', icon: BarChart3 },
+  { name: 'Admin', href: '/dashboard', icon: Shield },
+  { name: 'Settings', href: '/dashboard', icon: Settings },
 ];
 
-export function Sidebar({ onCollapsedChange, defaultCollapsed = true }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname();
-  const [collapsed] = useState(defaultCollapsed);
 
-  const isActive = (href: string) => {
-    if (href === '/dashboard') {
+  const isActive = (href: string, name: string) => {
+    if (name === 'Dashboard') {
       return pathname === '/dashboard';
     }
-    return pathname.startsWith(href);
+    return false;
   };
 
   return (
     <TooltipProvider delayDuration={0}>
-      <aside className="w-16 bg-[#0c0c0c] flex flex-col fixed h-screen z-40">
+      <aside className="w-[60px] bg-[#0a0a0a] flex flex-col fixed h-screen z-40 border-r border-white/5">
         {/* Logo */}
-        <div className="h-14 flex items-center justify-center">
-          <Link href="/dashboard" className="flex items-center justify-center">
+        <div className="h-[60px] flex items-center justify-center">
+          <Link href="/dashboard">
             <Image
               src="/images/apexgrid-icon.png"
               alt="ApexGrid"
-              width={28}
-              height={28}
-              className="h-7 w-7 opacity-90"
+              width={26}
+              height={26}
+              className="opacity-90 hover:opacity-100 transition-opacity"
             />
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 flex flex-col items-center py-4 gap-1">
+        <nav className="flex-1 flex flex-col items-center pt-2 gap-2">
           {navigation.map((item) => {
             const Icon = item.icon;
-            const active = isActive(item.href);
+            const active = isActive(item.href, item.name);
 
             return (
               <Tooltip key={item.name}>
@@ -75,17 +68,17 @@ export function Sidebar({ onCollapsedChange, defaultCollapsed = true }: SidebarP
                     href={item.href}
                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
                       active
-                        ? 'bg-[#DC2626] text-white shadow-lg shadow-red-600/30'
-                        : 'text-gray-500 hover:text-white hover:bg-white/[0.06]'
+                        ? 'bg-[#DC2626] text-white'
+                        : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
                     }`}
                   >
-                    <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2 : 1.5} />
+                    <Icon className="h-[18px] w-[18px]" strokeWidth={1.5} />
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent
                   side="right"
-                  sideOffset={12}
-                  className="bg-[#1c1c1c] border-white/10 text-white text-xs px-3 py-1.5"
+                  sideOffset={8}
+                  className="bg-[#1a1a1a] border-white/10 text-white text-xs"
                 >
                   {item.name}
                 </TooltipContent>
@@ -94,20 +87,23 @@ export function Sidebar({ onCollapsedChange, defaultCollapsed = true }: SidebarP
           })}
         </nav>
 
-        {/* Bottom Section - User Avatar */}
-        <div className="pb-4 flex flex-col items-center">
+        {/* Bottom - Settings */}
+        <div className="pb-4 flex flex-col items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="w-8 h-8 rounded-full bg-gradient-to-br from-[#DC2626] to-[#991B1B] flex items-center justify-center text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                U
-              </button>
+              <Link
+                href="/dashboard"
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-500 hover:text-gray-300 hover:bg-white/5 transition-all"
+              >
+                <Settings className="h-[18px] w-[18px]" strokeWidth={1.5} />
+              </Link>
             </TooltipTrigger>
             <TooltipContent
               side="right"
-              sideOffset={12}
-              className="bg-[#1c1c1c] border-white/10 text-white text-xs px-3 py-1.5"
+              sideOffset={8}
+              className="bg-[#1a1a1a] border-white/10 text-white text-xs"
             >
-              Profile
+              Settings
             </TooltipContent>
           </Tooltip>
         </div>
