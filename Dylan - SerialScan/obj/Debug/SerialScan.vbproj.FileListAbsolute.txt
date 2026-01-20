@@ -1,0 +1,63 @@
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\obj\Debug\ResolveAssemblyReference.cache
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.frmMain.resources
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.vbproj.GenerateResource.Cache
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\bin\SerialScan.exe
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\bin\SerialScan.pdb
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\bin\SerialScan.xml
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\bin\Interop.BarTender.dll
+C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\bin\SerialScan.exe
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\bin\SerialScan.pdb
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\bin\SerialScan.xml
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\bin\Interop.BarTender.dll
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\obj\Debug\ResolveAssemblyReference.cache
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.frmMain.resources
+C:\_TestEngineering\ePDU\Label Printing Program\New Folder (2)\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.vbproj.GenerateResource.Cache
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\bin\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\bin\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\bin\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\bin\Interop.BarTender.dll
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.frmMain.resources
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.002\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.vbproj.GenerateResource.Cache
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\bin\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\bin\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\bin\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\bin\Interop.BarTender.dll
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.frmMain.resources
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.vbproj.GenerateResource.Cache
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\bin\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\bin\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\bin\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\bin\Interop.BarTender.dll
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.frmMain.resources
+C:\Users\c9980140\Documents\ePDU\SerialScanSetUp.ForWindows7.001\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.vbproj.GenerateResource.Cache
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\bin\SerialScan.exe
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\bin\SerialScan.pdb
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\bin\SerialScan.xml
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\bin\Interop.BarTender.dll
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.frmMain.resources
+C:\Users\c9980140\Documents\ePDU\DPQ Labels\SerialScanSetUp\SerialScan\obj\Debug\SerialScan.vbproj.GenerateResource.Cache

@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EatonPWP300B", "EatonPWP300B.vbproj", "{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "EatonLabels", "..\EatonLabels\EatonLabels.vdproj", "{C2AC0CF5-1503-4D7B-BA6A-0F439ADC5A75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2AC0CF5-1503-4D7B-BA6A-0F439ADC5A75}.Debug|Any CPU.ActiveCfg = Debug
+		{C2AC0CF5-1503-4D7B-BA6A-0F439ADC5A75}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

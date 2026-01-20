@@ -1,0 +1,11 @@
+﻿ ------------------ Revision History ------------------
+
+    Date      Modified By     Changes Made
+ ----------   -----------     ------------
+ 
+01/11/2014    R.Hunnings	  Added DPQ module.
+							  Modified frmMain.
+							   
+03/11/2014	  R.Hunnings	  Modified DPQ module.
+
+		

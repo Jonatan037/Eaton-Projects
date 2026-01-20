@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="EatonPWP300B">
+</Property><Property Name="Solution File" Value="C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\EatonPWP300B.sln">
+</Property><Property Name="User Options File" Value="C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\EatonPWP300B.suo">
+</Property><Property Name="Date" Value="Thursday, September 02, 2010">
+</Property><Property Name="Time" Value="8:23 AM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="EatonPWP300B.sln" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\EatonPWP300B.sln">
+</Event><Event ErrorLevel="0" Project="" Source="EatonPWP300B.suo" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\EatonPWP300B.suo">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="EatonPWP300B.vbproj" Description="Project file successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\EatonPWP300B.vbproj">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="EatonPWP300B.vbproj.user" Description="Project user file successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\EatonPWP300B.vbproj.user">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="AssemblyInfo.vb" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\AssemblyInfo.vb">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmMain.vb" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmMain.vb">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmQuestion.vb" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmQuestion.vb">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmRL.vb" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmRL.vb">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmStatic.vb" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmStatic.vb">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="Module1.vb" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\Module1.vb">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmMain.resx" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmMain.resx">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmQuestion.resx" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmQuestion.resx">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmRL.resx" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmRL.resx">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="frmStatic.resx" Description="File successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\frmStatic.resx">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="EatonPWP300B.vbproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="EatonPWP300B" Source="EatonPWP300B.vbproj" Description="Converted">
+</Event><Event ErrorLevel="1" Project="EatonLabels" Source="..\EatonLabels\EatonLabels.vdproj" Description="Warning: The project file is being backed up to a relative path that differs from the original solution relative path.  The difference in folder hierarchy may create problems in opening or building the backed up solution and project.">
+</Event><Event ErrorLevel="0" Project="EatonLabels.vdproj" Source="..\EatonLabels\EatonLabels.vdproj" Description="Project file successfully backed up as C:\_TestEngineering\NewFolder\Copy of Source.000\EatonPWP300B\EatonPWP300B\Backup\EatonLabels\EatonLabels.vdproj">
+</Event><Event ErrorLevel="0" Project="" Source="EatonPWP300B.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="EatonPWP300B.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="EatonPWP300B" Source="EatonPWP300B.vbproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="EatonLabels.vdproj" Source="..\EatonLabels\EatonLabels.vdproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="EatonLabels.vdproj" Source="..\EatonLabels\EatonLabels.vdproj" Description="Converted">
+</Event></UpgradeLog>

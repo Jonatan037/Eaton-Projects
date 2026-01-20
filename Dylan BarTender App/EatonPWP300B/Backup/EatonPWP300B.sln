@@ -1,0 +1,44 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EatonPWP300B", "EatonPWP300B.vbproj", "{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "EatonLabels", "..\EatonLabels\EatonLabels.vdproj", "{C2AC0CF5-1503-4D7B-BA6A-0F439ADC5A75}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 3
+		SccProjectName0 = \u0022$/EatonLabels/EatonPWP300B\u0022,\u0020WVAAAAAA
+		SccLocalPath0 = ..
+		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection0 = EatonPWP300B\\
+		SolutionUniqueID = {88DE5A8B-BCBC-4DBA-9A8B-C5809121EC75}
+		SccProjectUniqueName1 = ..\\EatonLabels\\EatonLabels.vdproj
+		SccLocalPath1 = ..
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection1 = EatonLabels\\
+		SccProjectUniqueName2 = EatonPWP300B.vbproj
+		SccLocalPath2 = ..
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection2 = EatonPWP300B\\
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Debug.ActiveCfg = Debug|.NET
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Debug.Build.0 = Debug|.NET
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Release.ActiveCfg = Release|.NET
+		{77FDBB65-D3BD-46A8-8283-18B7EBFB3A69}.Release.Build.0 = Release|.NET
+		{C2AC0CF5-1503-4D7B-BA6A-0F439ADC5A75}.Debug.ActiveCfg = Debug
+		{C2AC0CF5-1503-4D7B-BA6A-0F439ADC5A75}.Release.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

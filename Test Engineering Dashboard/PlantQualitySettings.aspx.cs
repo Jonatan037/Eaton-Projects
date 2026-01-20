@@ -73,15 +73,23 @@ public partial class TED_PlantQualitySettings : Page
         // Get production lines
         List<string> lines = GetProductionLines(plant);
         
+        // Get lines grouped by ledger for Scrap display
+        Dictionary<string, List<string>> ledgerLines = GetLinesGroupedByLedger(plant);
+        
         // Load existing goals from database
         Dictionary<string, Dictionary<int, decimal>> yieldGoals = LoadGoalsFromDB("Yield", year, plant);
         Dictionary<string, Dictionary<int, decimal>> scrapGoals = LoadGoalsFromDB("Scrap", year, plant);
         Dictionary<string, Dictionary<int, decimal>> ncmGoals = LoadGoalsFromDB("NCM", year, plant);
         
         // Generate table rows
-        litYieldGoalsRows.Text = GenerateGoalRows(lines, yieldGoals, "yield", plant, 98.0m);
-        litScrapGoalsRows.Text = GenerateGoalRows(lines, scrapGoals, "scrap", plant, 2.0m);
-        litNCMGoalsRows.Text = GenerateGoalRows(lines, ncmGoals, "ncm", plant, 5.0m);
+        // Yield: Target % per line with YTD column (default 98.0%)
+        litYieldGoalsRows.Text = GenerateYieldGoalRowsWithYTD(lines, yieldGoals, plant, 98.0m);
+        
+        // Scrap: US$ per line, separate tables per Ledger with totals (default $0)
+        GenerateScrapLedgerTables(ledgerLines, scrapGoals, 0m);
+        
+        // NCM: US$ plant-level only with YTD (default $0)
+        litNCMGoalsRows.Text = GenerateNCMGoalRowsWithYTD(ncmGoals, plant, 0m);
     }
 
     private List<string> GetProductionLines(string plant)
@@ -90,29 +98,76 @@ public partial class TED_PlantQualitySettings : Page
         
         try
         {
-            string sql = @"
-                SELECT DISTINCT FAMILY 
-                FROM View_PowerBI_MASTER_INDEX 
-                WHERE PLANT LIKE @Plant + '%' 
-                  AND FAMILY NOT LIKE '%Failure Analysis%'
-                  AND FAMILY IS NOT NULL
-                  AND FAMILY <> ''
-                ORDER BY FAMILY";
+            // Get lines from MRP Controller mapping
+            string mrpSql = @"
+                SELECT DISTINCT LineName 
+                FROM MRPControllerLineMapping 
+                WHERE Plant = @Plant 
+                  AND IsActive = 1
+                ORDER BY LineName";
 
-            using (var conn = new SqlConnection(TracksConnectionString))
-            using (var cmd = new SqlCommand(sql, conn))
+            using (var conn = new SqlConnection(TEConnectionString))
             {
-                cmd.Parameters.AddWithValue("@Plant", plant);
                 conn.Open();
-
-                using (var reader = cmd.ExecuteReader())
+                
+                // Check if MRPControllerLineMapping table exists
+                string checkTableSql = @"
+                    IF OBJECT_ID('dbo.MRPControllerLineMapping', 'U') IS NOT NULL 
+                        SELECT 1 AS TableExists
+                    ELSE 
+                        SELECT 0 AS TableExists";
+                
+                using (var checkCmd = new SqlCommand(checkTableSql, conn))
                 {
-                    while (reader.Read())
+                    int exists = Convert.ToInt32(checkCmd.ExecuteScalar());
+                    if (exists == 1)
                     {
-                        string family = reader["FAMILY"].ToString();
-                        if (!string.IsNullOrWhiteSpace(family))
+                        using (var cmd = new SqlCommand(mrpSql, conn))
                         {
-                            lines.Add(family);
+                            cmd.Parameters.AddWithValue("@Plant", plant);
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string lineName = reader["LineName"].ToString();
+                                    if (!string.IsNullOrWhiteSpace(lineName) && !lines.Contains(lineName))
+                                    {
+                                        lines.Add(lineName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // If no lines from MRP mapping, try the legacy method from Tracks
+            if (lines.Count == 0)
+            {
+                string sql = @"
+                    SELECT DISTINCT FAMILY 
+                    FROM View_PowerBI_MASTER_INDEX 
+                    WHERE PLANT LIKE @Plant + '%' 
+                      AND FAMILY NOT LIKE '%Failure Analysis%'
+                      AND FAMILY IS NOT NULL
+                      AND FAMILY <> ''
+                    ORDER BY FAMILY";
+
+                using (var conn = new SqlConnection(TracksConnectionString))
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Plant", plant);
+                    conn.Open();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string family = reader["FAMILY"].ToString();
+                            if (!string.IsNullOrWhiteSpace(family))
+                            {
+                                lines.Add(family);
+                            }
                         }
                     }
                 }
@@ -124,6 +179,82 @@ public partial class TED_PlantQualitySettings : Page
         }
         
         return lines;
+    }
+    
+    /// <summary>
+    /// Get lines grouped by Ledger for Scrap Goals display
+    /// Returns Dictionary where key = Ledger, value = List of lines in that ledger
+    /// </summary>
+    private Dictionary<string, List<string>> GetLinesGroupedByLedger(string plant)
+    {
+        Dictionary<string, List<string>> ledgerLines = new Dictionary<string, List<string>>();
+        
+        try
+        {
+            string sql = @"
+                SELECT LineName, ISNULL(Ledger, 'Other') AS Ledger
+                FROM MRPControllerLineMapping 
+                WHERE Plant = @Plant 
+                  AND IsActive = 1
+                ORDER BY Ledger, LineName";
+
+            using (var conn = new SqlConnection(TEConnectionString))
+            {
+                conn.Open();
+                
+                // Check if Ledger column exists
+                string checkColumnSql = @"
+                    SELECT COUNT(*) FROM sys.columns 
+                    WHERE object_id = OBJECT_ID('dbo.MRPControllerLineMapping') 
+                    AND name = 'Ledger'";
+                
+                using (var checkCmd = new SqlCommand(checkColumnSql, conn))
+                {
+                    int hasLedger = Convert.ToInt32(checkCmd.ExecuteScalar());
+                    if (hasLedger == 0)
+                    {
+                        // Ledger column doesn't exist, return all lines under "All Lines"
+                        List<string> allLines = GetProductionLines(plant);
+                        ledgerLines["All Lines"] = allLines;
+                        return ledgerLines;
+                    }
+                }
+                
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Plant", plant);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string lineName = reader["LineName"].ToString();
+                            string ledger = reader["Ledger"].ToString();
+                            
+                            if (string.IsNullOrWhiteSpace(ledger)) ledger = "Other";
+                            
+                            if (!ledgerLines.ContainsKey(ledger))
+                            {
+                                ledgerLines[ledger] = new List<string>();
+                            }
+                            
+                            if (!string.IsNullOrWhiteSpace(lineName) && !ledgerLines[ledger].Contains(lineName))
+                            {
+                                ledgerLines[ledger].Add(lineName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Error loading lines by ledger: " + ex.Message);
+            // Fallback to simple line list
+            List<string> allLines = GetProductionLines(plant);
+            ledgerLines["All Lines"] = allLines;
+        }
+        
+        return ledgerLines;
     }
 
     private Dictionary<string, Dictionary<int, decimal>> LoadGoalsFromDB(string metricType, int year, string plant)
@@ -202,7 +333,7 @@ public partial class TED_PlantQualitySettings : Page
                 MetricType NVARCHAR(20) NOT NULL,
                 Year INT NOT NULL,
                 MonthNum INT NOT NULL,
-                GoalValue DECIMAL(10,2) NOT NULL,
+                GoalValue DECIMAL(18,2) NOT NULL,
                 UpdatedBy NVARCHAR(100) NULL,
                 UpdatedDate DATETIME DEFAULT GETDATE(),
                 CONSTRAINT UQ_QualityGoals UNIQUE (Plant, LineName, MetricType, Year, MonthNum)
@@ -214,13 +345,17 @@ public partial class TED_PlantQualitySettings : Page
         }
     }
 
-    private string GenerateGoalRows(List<string> lines, Dictionary<string, Dictionary<int, decimal>> goals, string metricPrefix, string plant, decimal defaultValue)
+    /// <summary>
+    /// Generate Yield goal rows with YTD column (Target % per line, including plant row)
+    /// </summary>
+    private string GenerateYieldGoalRowsWithYTD(List<string> lines, Dictionary<string, Dictionary<int, decimal>> goals, string plant, decimal defaultValue)
     {
         StringBuilder sb = new StringBuilder();
         
         // First row is always the Plant row
         sb.Append("<tr>");
-        sb.Append("<td class=\"plant-row\">" + plant + " (Plant)</td>");
+        sb.Append("<td class=\"plant-row\">" + Server.HtmlEncode(plant) + " (Plant)</td>");
+        sb.Append("<td class=\"ytd-cell\">--</td>"); // YTD calculated by JS
         for (int m = 1; m <= 12; m++)
         {
             decimal val = defaultValue;
@@ -228,7 +363,7 @@ public partial class TED_PlantQualitySettings : Page
             {
                 val = goals[plant][m];
             }
-            sb.Append("<td><input type=\"text\" name=\"" + metricPrefix + "_" + plant + "_" + m + "\" value=\"" + val.ToString("0.##") + "\" /></td>");
+            sb.Append("<td><input type=\"text\" class=\"goal-input percent-input\" name=\"yield_" + Server.HtmlEncode(plant) + "_" + m + "\" value=\"" + val.ToString("0.00") + "\" /></td>");
         }
         sb.Append("</tr>");
         
@@ -237,6 +372,7 @@ public partial class TED_PlantQualitySettings : Page
         {
             sb.Append("<tr>");
             sb.Append("<td>" + Server.HtmlEncode(line) + "</td>");
+            sb.Append("<td class=\"ytd-cell\">--</td>"); // YTD calculated by JS
             for (int m = 1; m <= 12; m++)
             {
                 decimal val = defaultValue;
@@ -244,12 +380,165 @@ public partial class TED_PlantQualitySettings : Page
                 {
                     val = goals[line][m];
                 }
-                sb.Append("<td><input type=\"text\" name=\"" + metricPrefix + "_" + Server.HtmlEncode(line) + "_" + m + "\" value=\"" + val.ToString("0.##") + "\" /></td>");
+                sb.Append("<td><input type=\"text\" class=\"goal-input percent-input\" name=\"yield_" + Server.HtmlEncode(line) + "_" + m + "\" value=\"" + val.ToString("0.00") + "\" /></td>");
             }
             sb.Append("</tr>");
         }
         
         return sb.ToString();
+    }
+    
+    /// <summary>
+    /// Generate Yield goal rows (Target % per line, including plant row) - Legacy
+    /// </summary>
+    private string GenerateYieldGoalRows(List<string> lines, Dictionary<string, Dictionary<int, decimal>> goals, string plant, decimal defaultValue)
+    {
+        return GenerateYieldGoalRowsWithYTD(lines, goals, plant, defaultValue);
+    }
+
+    /// <summary>
+    /// Generate Scrap goal rows (US$ per line)
+    /// </summary>
+    private string GenerateScrapGoalRows(List<string> lines, Dictionary<string, Dictionary<int, decimal>> goals, string plant, decimal defaultValue)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        // For Scrap, we show each line (no plant-level row since it's per-line only)
+        foreach (string line in lines)
+        {
+            sb.Append("<tr>");
+            sb.Append("<td>" + Server.HtmlEncode(line) + "</td>");
+            sb.Append("<td class=\"ytd-cell\">--</td>"); // YTD calculated by JS
+            for (int m = 1; m <= 12; m++)
+            {
+                decimal val = defaultValue;
+                if (goals.ContainsKey(line) && goals[line].ContainsKey(m))
+                {
+                    val = goals[line][m];
+                }
+                sb.Append("<td><span class=\"input-wrapper\"><span class=\"input-prefix\">$</span><input type=\"text\" class=\"goal-input dollar-input\" name=\"scrap_" + Server.HtmlEncode(line) + "_" + m + "\" value=\"" + val.ToString("0.00") + "\" /></span></td>");
+            }
+            sb.Append("</tr>");
+        }
+        
+        return sb.ToString();
+    }
+    
+    /// <summary>
+    /// Generate Scrap tables for each ledger with line rows, ledger totals, and YTD
+    /// </summary>
+    private void GenerateScrapLedgerTables(Dictionary<string, List<string>> ledgerLines, Dictionary<string, Dictionary<int, decimal>> goals, decimal defaultValue)
+    {
+        // SPD Ledger
+        if (ledgerLines.ContainsKey("SPD") && ledgerLines["SPD"].Count > 0)
+        {
+            litScrapSPDRows.Text = GenerateScrapRowsForLedger(ledgerLines["SPD"], goals, defaultValue, "SPD");
+        }
+        else
+        {
+            litScrapSPDRows.Text = "<tr><td colspan=\"14\" style=\"text-align:center;color:rgba(0,0,0,0.4);padding:20px;\">No lines assigned to SPD Ledger</td></tr>";
+        }
+        
+        // D-IT Ledger
+        if (ledgerLines.ContainsKey("D-IT") && ledgerLines["D-IT"].Count > 0)
+        {
+            litScrapDITRows.Text = GenerateScrapRowsForLedger(ledgerLines["D-IT"], goals, defaultValue, "D-IT");
+        }
+        else
+        {
+            litScrapDITRows.Text = "<tr><td colspan=\"14\" style=\"text-align:center;color:rgba(0,0,0,0.4);padding:20px;\">No lines assigned to D-IT Ledger</td></tr>";
+        }
+        
+        // Energy Transition Ledger
+        if (ledgerLines.ContainsKey("Energy Transition") && ledgerLines["Energy Transition"].Count > 0)
+        {
+            litScrapETRows.Text = GenerateScrapRowsForLedger(ledgerLines["Energy Transition"], goals, defaultValue, "EnergyTransition");
+        }
+        else
+        {
+            litScrapETRows.Text = "<tr><td colspan=\"14\" style=\"text-align:center;color:rgba(0,0,0,0.4);padding:20px;\">No lines assigned to Energy Transition Ledger</td></tr>";
+        }
+    }
+    
+    /// <summary>
+    /// Generate scrap rows for a specific ledger with YTD and ledger total row
+    /// </summary>
+    private string GenerateScrapRowsForLedger(List<string> lines, Dictionary<string, Dictionary<int, decimal>> goals, decimal defaultValue, string ledgerName)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        // Line rows with editable inputs
+        foreach (string line in lines)
+        {
+            sb.Append("<tr>");
+            sb.Append("<td>" + Server.HtmlEncode(line) + "</td>");
+            sb.Append("<td class=\"ytd-cell\">--</td>"); // YTD calculated by JS
+            for (int m = 1; m <= 12; m++)
+            {
+                decimal val = defaultValue;
+                if (goals.ContainsKey(line) && goals[line].ContainsKey(m))
+                {
+                    val = goals[line][m];
+                }
+                sb.Append("<td><span class=\"input-wrapper\"><span class=\"input-prefix\">$</span><input type=\"text\" class=\"goal-input dollar-input\" name=\"scrap_" + Server.HtmlEncode(line) + "_" + m + "\" value=\"" + val.ToString("0.00") + "\" /></span></td>");
+            }
+            sb.Append("</tr>");
+        }
+        
+        // Ledger total row (non-editable, calculated by JS)
+        sb.Append("<tr class=\"ledger-total-row\">");
+        sb.Append("<td>" + Server.HtmlEncode(ledgerName) + " Total</td>");
+        sb.Append("<td class=\"ytd-cell\">--</td>"); // YTD total calculated by JS
+        for (int m = 1; m <= 12; m++)
+        {
+            sb.Append("<td>--</td>"); // Monthly totals calculated by JS
+        }
+        sb.Append("</tr>");
+        
+        return sb.ToString();
+    }
+    
+    /// <summary>
+    /// Generate Scrap goal rows grouped by Ledger (US$ per line) - Legacy kept for reference
+    /// Shows ledger header rows with lines under each ledger
+    /// </summary>
+    private string GenerateScrapGoalRowsWithLedger(Dictionary<string, List<string>> ledgerLines, Dictionary<string, Dictionary<int, decimal>> goals, decimal defaultValue)
+    {
+        // This method is no longer used - we now use separate tables per ledger
+        return "";
+    }
+
+    /// <summary>
+    /// Generate NCM goal rows with YTD column (US$ plant-level only - single row)
+    /// </summary>
+    private string GenerateNCMGoalRowsWithYTD(Dictionary<string, Dictionary<int, decimal>> goals, string plant, decimal defaultValue)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        // NCM is plant-level only - single row
+        sb.Append("<tr>");
+        sb.Append("<td class=\"plant-row\">" + Server.HtmlEncode(plant) + " (Plant Total)</td>");
+        sb.Append("<td class=\"ytd-cell\">--</td>"); // YTD calculated by JS
+        for (int m = 1; m <= 12; m++)
+        {
+            decimal val = defaultValue;
+            if (goals.ContainsKey(plant) && goals[plant].ContainsKey(m))
+            {
+                val = goals[plant][m];
+            }
+            sb.Append("<td><span class=\"input-wrapper\"><span class=\"input-prefix\">$</span><input type=\"text\" class=\"goal-input dollar-input\" name=\"ncm_" + Server.HtmlEncode(plant) + "_" + m + "\" value=\"" + val.ToString("0.00") + "\" /></span></td>");
+        }
+        sb.Append("</tr>");
+        
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Generate NCM goal rows (US$ plant-level only - single row) - Legacy
+    /// </summary>
+    private string GenerateNCMGoalRows(Dictionary<string, Dictionary<int, decimal>> goals, string plant, decimal defaultValue)
+    {
+        return GenerateNCMGoalRowsWithYTD(goals, plant, defaultValue);
     }
 
     protected void btnSave_Click(object sender, EventArgs e)
@@ -293,7 +582,9 @@ public partial class TED_PlantQualitySettings : Page
                         string lineName = string.Join("_", parts, 1, parts.Length - 2);
                         
                         decimal goalValue = 0;
-                        if (!decimal.TryParse(Request.Form[key], out goalValue))
+                        // Remove any currency symbols or commas before parsing
+                        string rawValue = Request.Form[key].Replace("$", "").Replace(",", "").Trim();
+                        if (!decimal.TryParse(rawValue, out goalValue))
                         {
                             continue;
                         }
@@ -312,23 +603,27 @@ public partial class TED_PlantQualitySettings : Page
                 }
             }
             
-            pnlStatus.Visible = true;
             if (errorCount == 0)
             {
-                pnlStatus.CssClass = "status-message success";
-                litStatus.Text = "✓ Successfully saved " + savedCount.ToString() + " goal values.";
+                // Use toast notification for success
+                hfToastMessage.Value = "Successfully saved " + savedCount.ToString() + " goal values.";
+                hfToastType.Value = "success";
             }
             else
             {
-                pnlStatus.CssClass = "status-message error";
-                litStatus.Text = "⚠ Saved " + savedCount.ToString() + " values with " + errorCount.ToString() + " errors.";
+                // Use toast notification for partial success with errors
+                hfToastMessage.Value = "Saved " + savedCount.ToString() + " values with " + errorCount.ToString() + " errors.";
+                hfToastType.Value = "error";
             }
+            
+            // Reload the tables to show updated values
+            LoadGoalsTables();
         }
         catch (Exception ex)
         {
-            pnlStatus.Visible = true;
-            pnlStatus.CssClass = "status-message error";
-            litStatus.Text = "Error saving goals: " + ex.Message;
+            // Use toast notification for error
+            hfToastMessage.Value = "Error saving goals: " + ex.Message;
+            hfToastType.Value = "error";
         }
     }
 

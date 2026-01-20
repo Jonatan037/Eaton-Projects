@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SerialScan">
+</Property><Property Name="Solution File" Value="C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\SerialScan.sln">
+</Property><Property Name="User Options File" Value="C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\SerialScan.suo">
+</Property><Property Name="Date" Value="Thursday, September 15, 2011">
+</Property><Property Name="Time" Value="12:09 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="SerialScan.sln" Description="File successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\SerialScan.sln">
+</Event><Event ErrorLevel="0" Project="" Source="SerialScan.suo" Description="File successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\SerialScan.suo">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="SerialScan.vbproj" Description="Project file successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\SerialScan.vbproj">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="SerialScan.vbproj.user" Description="Project user file successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\SerialScan.vbproj.user">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="AssemblyInfo.vb" Description="File successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\AssemblyInfo.vb">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="frmMain.vb" Description="File successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\frmMain.vb">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="Module1.vb" Description="File successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\Module1.vb">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="frmMain.resx" Description="File successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\frmMain.resx">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="SerialScan.vbproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="SerialScan" Source="SerialScan.vbproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SerialScanSetUp.vdproj" Source="..\SerialScanSetUp\SerialScanSetUp.vdproj" Description="Project file successfully backed up as C:\_TestEngineering\ePDU\Label Printing Program\SerialScanSetUp\SerialScan\Backup\SerialScanSetUp.vdproj">
+</Event><Event ErrorLevel="0" Project="" Source="SerialScan.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="SerialScan.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SerialScan" Source="SerialScan.vbproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="SerialScanSetUp.vdproj" Source="..\SerialScanSetUp\SerialScanSetUp.vdproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="SerialScanSetUp.vdproj" Source="..\SerialScanSetUp\SerialScanSetUp.vdproj" Description="Converted">
+</Event></UpgradeLog>
