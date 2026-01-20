@@ -44,18 +44,6 @@
       max-height: 160px;
     }
     
-    /* NCM table scroll constraints */
-    html.font-scale-medium .ncm-table-view,
-    html.font-scale-large .ncm-table-view,
-    html.font-scale-xl .ncm-table-view {
-      max-height: 200px !important;
-    }
-    
-    html.font-scale-large .ncm-table-view,
-    html.font-scale-xl .ncm-table-view {
-      max-height: 170px !important;
-    }
-    
     /* Failures table scroll constraints */
     html.font-scale-medium .data-table-view,
     html.font-scale-large .data-table-view,
@@ -78,22 +66,50 @@
       padding: 4px 0;
     }
     
-    html.font-scale-medium .gauge-wrapper,
-    html.font-scale-large .gauge-wrapper,
-    html.font-scale-xl .gauge-wrapper {
-      width: 180px;
-      height: 90px;
+    /* Allow gauge wrapper to grow moderately */
+    html.font-scale-medium .gauge-wrapper {
+      width: 200px;
+      height: 100px;
     }
     
-    /* Don't scale gauge text as aggressively at larger sizes */
-    html.font-scale-large .gauge-value,
-    html.font-scale-xl .gauge-value {
+    html.font-scale-large .gauge-wrapper {
+      width: 220px;
+      height: 110px;
+    }
+    
+    html.font-scale-xl .gauge-wrapper {
+      width: 240px;
+      height: 120px;
+    }
+    
+    /* Allow gauge text to grow moderately (not full scale) */
+    html.font-scale-medium .gauge-value {
       font-size: 20px !important;
     }
+    html.font-scale-large .gauge-value {
+      font-size: 24px !important;
+    }
+    html.font-scale-xl .gauge-value {
+      font-size: 28px !important;
+    }
     
-    html.font-scale-large .gauge-label,
-    html.font-scale-xl .gauge-label {
+    html.font-scale-medium .gauge-label {
       font-size: 9px !important;
+    }
+    html.font-scale-large .gauge-label {
+      font-size: 10px !important;
+    }
+    html.font-scale-xl .gauge-label {
+      font-size: 11px !important;
+    }
+    
+    /* NCM table should fill available space */
+    html.font-scale-medium .ncm-table-view,
+    html.font-scale-large .ncm-table-view,
+    html.font-scale-xl .ncm-table-view {
+      flex: 1 !important;
+      max-height: none !important;
+      min-height: 0 !important;
     }
     
     /* Force light mode for this report */
@@ -1580,8 +1596,9 @@
       flex: 1;
       overflow: auto;
       padding: 0;
-      max-height: 260px;
       min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
     
     .ncm-table {
@@ -1724,11 +1741,11 @@
     html:not(.theme-light):not([data-theme='light']) .chart-toggle { background: rgba(255,255,255,0.1); }
     
     .chart-toggle button {
-      padding: calc(4px * var(--font-scale, 1)) calc(10px * var(--font-scale, 1));
+      padding: 4px 10px;
       border: none;
       background: transparent;
       color: rgba(0,0,0,0.55);
-      font-size: calc(10px * var(--font-scale, 1));
+      font-size: 10px;
       font-weight: 600;
       font-family: 'Segoe UI', 'Inter', -apple-system, sans-serif;
       border-radius: 4px;
@@ -2072,6 +2089,8 @@
       flex: 1;
       min-height: 180px;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
     
     /* Scrollable chart wrapper for many data points */
@@ -4501,6 +4520,26 @@
     return fontScaleMultipliers[currentFontScale] || 1;
   }
   
+  // Get max visible chart columns based on font scale (fewer bars at larger sizes)
+  function getMaxVisibleColumns() {
+    switch(currentFontScale) {
+      case 'xl': return 12;
+      case 'large': return 16;
+      case 'medium': return 20;
+      default: return 25;
+    }
+  }
+  
+  // Get minimum column width based on font scale
+  function getMinColumnWidth() {
+    switch(currentFontScale) {
+      case 'xl': return 60;
+      case 'large': return 50;
+      case 'medium': return 42;
+      default: return 35;
+    }
+  }
+  
   // Get chart font sizes based on focus state AND font scale - larger fonts when focused or scaled
   function getChartFontSizes(panelId) {
     var focused = isPanelFocused(panelId);
@@ -4855,9 +4894,9 @@
     
     var ctx = canvas.getContext('2d');
     
-    // Calculate width based on data points (max 25 visible, then scroll)
-    var maxVisibleColumns = 25;
-    var minColumnWidth = 35; // pixels per column
+    // Calculate width based on data points - use dynamic max based on font scale
+    var maxVisibleColumns = getMaxVisibleColumns();
+    var minColumnWidth = getMinColumnWidth();
     
     if (labels.length > maxVisibleColumns) {
       var neededWidth = labels.length * minColumnWidth;
@@ -6909,9 +6948,9 @@
     
     var ctx = canvas.getContext('2d');
     
-    // Calculate width based on data points
-    var maxVisibleColumns = 25;
-    var minColumnWidth = 35;
+    // Calculate width based on data points - use dynamic max based on font scale
+    var maxVisibleColumns = getMaxVisibleColumns();
+    var minColumnWidth = getMinColumnWidth();
     
     if (labels.length > maxVisibleColumns) {
       var neededWidth = labels.length * minColumnWidth;
