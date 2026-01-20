@@ -23,6 +23,79 @@
     html.font-scale-large { --font-scale: 1.5; }
     html.font-scale-xl { --font-scale: 1.85; }
     
+    /* Hide subtitles at larger font scales to save space */
+    html.font-scale-medium .panel-subtitle,
+    html.font-scale-large .panel-subtitle,
+    html.font-scale-xl .panel-subtitle {
+      display: none !important;
+    }
+    
+    /* Constrain table containers at larger font scales - add scroll */
+    html.font-scale-medium .line-table-container,
+    html.font-scale-large .line-table-container,
+    html.font-scale-xl .line-table-container {
+      max-height: 180px;
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+    
+    html.font-scale-large .line-table-container,
+    html.font-scale-xl .line-table-container {
+      max-height: 160px;
+    }
+    
+    /* NCM table scroll constraints */
+    html.font-scale-medium .ncm-table-view,
+    html.font-scale-large .ncm-table-view,
+    html.font-scale-xl .ncm-table-view {
+      max-height: 200px !important;
+    }
+    
+    html.font-scale-large .ncm-table-view,
+    html.font-scale-xl .ncm-table-view {
+      max-height: 170px !important;
+    }
+    
+    /* Failures table scroll constraints */
+    html.font-scale-medium .data-table-view,
+    html.font-scale-large .data-table-view,
+    html.font-scale-xl .data-table-view {
+      max-height: 240px;
+      overflow: auto;
+    }
+    
+    html.font-scale-large .data-table-view,
+    html.font-scale-xl .data-table-view {
+      max-height: 200px;
+    }
+    
+    /* Keep gauge section compact at larger font scales to leave room for tables */
+    html.font-scale-medium .gauge-view-container,
+    html.font-scale-large .gauge-view-container,
+    html.font-scale-xl .gauge-view-container {
+      flex: 0 0 auto;
+      min-height: auto;
+      padding: 4px 0;
+    }
+    
+    html.font-scale-medium .gauge-wrapper,
+    html.font-scale-large .gauge-wrapper,
+    html.font-scale-xl .gauge-wrapper {
+      width: 180px;
+      height: 90px;
+    }
+    
+    /* Don't scale gauge text as aggressively at larger sizes */
+    html.font-scale-large .gauge-value,
+    html.font-scale-xl .gauge-value {
+      font-size: 20px !important;
+    }
+    
+    html.font-scale-large .gauge-label,
+    html.font-scale-xl .gauge-label {
+      font-size: 9px !important;
+    }
+    
     /* Force light mode for this report */
     html { 
       max-width:100%; 
@@ -1876,10 +1949,11 @@
     /* Line breakdown table */
     .line-table-container {
       flex: 1;
-      overflow: hidden;
+      overflow: auto;
       margin-top: 8px;
       border-top: 1px solid rgba(0,0,0,0.06);
       padding-top: 8px;
+      min-height: 0; /* Allow flex shrinking */
     }
     
     html:not(.theme-light):not([data-theme='light']) .line-table-container { border-color: rgba(255,255,255,0.06); }
